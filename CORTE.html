@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSJ · Sala Político-Administrativa — Caso RCTV | SVP MUN</title>
+<meta name="description" content="Simulación académica del recurso de nulidad RCTV vs. Poder Ejecutivo ante la Sala Político-Administrática del Tribunal Supremo de Justicia de Venezuela. #svpmun #MUN">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0d'/%3E%3Ctext x='32' y='41' font-family='Arial' font-size='20' font-weight='bold' fill='%23c8a45c' text-anchor='middle'%3ETSJ%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+/* ============================================================
+   TRIBUNAL SUPREMO DE JUSTICIA · SALA POLÍTICO-ADMINISTRATIVA
+   Caso RCTV vs. Poder Ejecutivo — SVP MUN
+   ============================================================ */
+
+:root{
+  --negro:#0a0a0d;
+  --negro-2:#101014;
+  --carbon:#15151a;
+
+  --crema:#ece7da;
+  --texto-suave:rgba(236,231,218,.55);
+  --texto-tenue:rgba(236,231,218,.38);
+
+  --marfil:#f3eee2;
+  --papel:#faf6ec;
+  --blanco:#ffffff;
+
+  --tinta:#1b1812;
+  --tinta-2:#4c463a;
+  --tinta-3:#7d7566;
+
+  --oro:#c8a45c;
+  --oro-claro:#e2c990;
+  --oro-oscuro:#8f7239;
+  --oro-linea:rgba(200,164,92,.45);
+
+  --amarillo:#fcd116;
+  --azul:#2b4f9f;
+  --rojo:#cf142b;
+
+  --fuente:'Sora', sans-serif;
+  --vel:.85s cubic-bezier(.22,.61,.2,1);
+
+  --textura-vetas:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1000'%20height='1000'%3E%3Cfilter%20id='v'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.007%200.05'%20numOctaves='4'%20seed='9'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20values='0,0,0,0,0.58,0,0,0,0,0.53,0,0,0,0,0.44,1,0,0,0,0'/%3E%3C/filter%3E%3Crect%20width='1000'%20height='1000'%20filter='url(%23v)'%20opacity='0.07'/%3E%3C/svg%3E");
+  --textura-grano:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='300'%20height='300'%3E%3Cfilter%20id='g'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='2'%20seed='3'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20values='0,0,0,0,0.35,0,0,0,0,0.31,0,0,0,0,0.24,0.6,0,0,0,0'/%3E%3C/filter%3E%3Crect%20width='300'%20height='300'%20filter='url(%23g)'%20opacity='0.05'/%3E%3C/svg%3E");
+
+  --pad:clamp(1.25rem, 5vw, 4rem);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:90px;
+  background:var(--negro);
+}
+
+body{
+  font-family:var(--fuente);
+  background:var(--negro);
+  color:var(--crema);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+body.bloqueado{ overflow:hidden; height:100vh; }
+
+::selection{ background:var(--oro); color:var(--negro); }
+
+::-webkit-scrollbar{ width:9px; }
+::-webkit-scrollbar-track{ background:var(--negro); }
+::-webkit-scrollbar-thumb{ background:#3a3a42; border-radius:6px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--oro-oscuro); }
+
+img{ max-width:100%; display:block; }
+a{ text-decoration:none; color:inherit; }
+ul{ list-style:none; }
+
+.contenedor{
+  max-width:1240px;
+  margin-inline:auto;
+  padding-inline:var(--pad);
+}
+
+/* ================= PANTALLA DE CARGA ================= */
+
+#carga{
+  position:fixed; inset:0; z-index:100;
+  background:var(--negro);
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity .9s ease, visibility 0s linear .9s;
+}
+#carga.oculto{ opacity:0; visibility:hidden; pointer-events:none; }
+
+.carga-int{
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; padding:2rem;
+}
+
+.carga-sello{
+  width:76px; height:76px;
+  border:1px solid var(--oro-linea);
+  border-radius:50%;
+  display:grid; place-items:center;
+  color:var(--oro); font-size:1.7rem;
+  background:rgba(200,164,92,.05);
+  box-shadow:inset 0 0 0 6px rgba(200,164,92,.05);
+}
+
+.carga-vene{
+  margin-top:2.4rem;
+  font-weight:300; font-size:.6rem;
+  letter-spacing:.38em; text-transform:uppercase;
+  color:var(--texto-tenue);
+}
+
+.carga-titulo{
+  margin-top:.9rem;
+  font-weight:800; font-size:clamp(1.35rem, 4vw, 1.9rem);
+  letter-spacing:.14em; line-height:1.25;
+  color:var(--crema); text-transform:uppercase;
+}
+
+.carga-sala{
+  margin-top:.9rem;
+  font-weight:600; font-size:.66rem;
+  letter-spacing:.34em; text-transform:uppercase;
+  color:var(--oro);
+}
+
+.carga-contador{
+  margin-top:2.6rem;
+  font-weight:800; font-size:3.2rem;
+  line-height:1; color:var(--crema);
+  font-variant-numeric:tabular-nums;
+}
+.carga-contador .pc{ font-size:1rem; color:var(--oro); margin-left:.15rem; font-weight:600; }
+
+.carga-track{
+  width:min(420px, 78vw); height:3px;
+  background:rgba(255,255,255,.09);
+  margin-top:1.8rem; position:relative; overflow:hidden;
+}
+.carga-relleno{
+  position:absolute; inset:0;
+  clip-path:inset(0 calc(100% - var(--p, 0%)) 0 0);
+  background:linear-gradient(90deg,
+    var(--amarillo) 0 33.34%,
+    var(--azul) 33.34% 66.67%,
+    var(--rojo) 66.67% 100%);
+}
+
+.carga-estado{
+  margin-top:1.3rem;
+  font-weight:300; font-size:.78rem;
+  letter-spacing:.1em; color:var(--texto-suave);
+  transition:color .5s ease;
+}
+.carga-estado.listo{ color:var(--oro); font-weight:600; letter-spacing:.22em; text-transform:uppercase; font-size:.68rem; }
+
+/* ================= FONDO DE PARTÍCULAS ================= */
+
+#lienzo{
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none;
+}
+
+/* ================= BARRA DE NAVEGACIÓN ================= */
+
+#topbar{
+  position:fixed; top:0; left:0; right:0; z-index:70;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1rem var(--pad);
+  transition:background .45s ease, border-color .45s ease, padding .45s ease;
+  border-bottom:1px solid transparent;
+}
+#topbar.compacto{
+  background:rgba(10,10,13,.84);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(200,164,92,.16);
+  padding:.7rem var(--pad);
+}
+
+.marca{ display:flex; align-items:center; gap:.9rem; }
+
+.sello{
+  width:42px; height:42px; flex:none;
+  border:1px solid var(--oro-linea);
+  border-radius:50%;
+  display:grid; place-items:center;
+  color:var(--oro); font-size:.95rem;
+  background:rgba(200,164,92,.06);
+  transition:background .4s ease, box-shadow .4s ease;
+}
+.marca:hover .sello{ background:rgba(200,164,92,.14); box-shadow:0 0 0 5px rgba(200,164,92,.07); }
+
+.marca-txt{ line-height:1.3; }
+.marca-txt strong{ display:block; font-weight:800; font-size:1rem; letter-spacing:.16em; color:var(--crema); }
+.marca-txt em{
+  display:block; font-style:normal; font-weight:300;
+  font-size:.53rem; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--oro); margin-top:.2rem;
+}
+
+.links{ display:flex; gap:2.2rem; }
+.links a{
+  position:relative;
+  font-weight:600; font-size:.7rem;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--texto-suave);
+  padding:.4rem 0;
+  transition:color .3s ease;
+}
+.links a::after{
+  content:''; position:absolute; left:0; bottom:0;
+  width:100%; height:1px; background:var(--oro);
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .4s var(--vel);
+}
+.links a:hover, .links a.activo{ color:var(--oro); }
+.links a:hover::after, .links a.activo::after{ transform:scaleX(1); }
+
+.nav-der{ display:flex; align-items:center; gap:1.4rem; }
+.nav-tag{
+  font-weight:600; font-size:.7rem; letter-spacing:.14em;
+  color:var(--oro); opacity:.85;
+}
+
+.burger{
+  display:none; width:40px; height:40px;
+  background:none; border:1px solid var(--oro-linea);
+  border-radius:4px; cursor:pointer;
+  flex-direction:column; align-items:center; justify-content:center; gap:6px;
+}
+.burger span{
+  display:block; width:18px; height:1.5px;
+  background:var(--oro); transition:transform .4s var(--vel);
+}
+.burger.activo span:nth-child(1){ transform:translateY(3.75px) rotate(45deg); }
+.burger.activo span:nth-child(2){ transform:translateY(-3.75px) rotate(-45deg); }
+
+/* ================= MENÚ MÓVIL ================= */
+
+.menu{
+  position:fixed; inset:0; z-index:80;
+  background:rgba(8,8,11,.97);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  display:flex; flex-direction:column;
+  padding:1.4rem var(--pad) 3rem;
+  opacity:0; visibility:hidden;
+  transition:opacity .5s ease, visibility 0s linear .5s;
+}
+.menu.abierto{ opacity:1; visibility:visible; transition:opacity .5s ease; }
+
+.menu-cab{ display:flex; align-items:center; justify-content:space-between; height:42px; }
+.menu-cerrar{
+  width:42px; height:42px; background:none; cursor:pointer;
+  border:1px solid var(--oro-linea); border-radius:4px;
+  color:var(--oro); font-size:1rem;
+}
+
+.menu-links{ margin-top:3.5rem; display:flex; flex-direction:column; gap:1.6rem; }
+.menu-links a{
+  font-weight:800; font-size:2rem; letter-spacing:-.02em;
+  color:var(--crema);
+  opacity:0; transform:translateY(18px);
+  transition:opacity .55s var(--vel) var(--d), transform .55s var(--vel) var(--d), color .3s ease;
+}
+.menu.abierto .menu-links a{ opacity:1; transform:none; }
+.menu-links a:hover{ color:var(--oro); }
+.menu-links a small{
+  display:block; font-weight:600; font-size:.6rem;
+  letter-spacing:.3em; color:var(--oro); margin-bottom:.3rem;
+}
+
+.menu-pie{
+  margin-top:auto;
+  font-weight:300; font-size:.7rem; letter-spacing:.2em;
+  color:var(--texto-tenue); text-transform:uppercase;
+}
+
+/* ================= HERO ================= */
+
+main{ position:relative; z-index:1; }
+
+.hero{
+  position:relative;
+  min-height:100vh; min-height:100svh;
+  display:flex; flex-direction:column; align-items:center;
+  padding:118px var(--pad) 150px;
+  overflow:hidden;
+}
+.hero::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,.03), transparent 55%);
+}
+
+.hero-centro{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; width:100%; max-width:1240px;
+}
+
+.kicker{
+  display:flex; align-items:center; gap:14px;
+  font-weight:600; font-size:.66rem;
+  letter-spacing:.3em; text-transform:uppercase;
+  color:var(--oro);
+}
+.kicker::before, .kicker.centro::after{
+  content:''; width:46px; height:1px;
+  background:currentColor; flex:none; opacity:.7;
+}
+.kicker.centro{ justify-content:center; }
+
+.hero-titular{ position:relative; display:block; width:100%; }
+
+.hero-anillos{
+  position:absolute; top:50%; left:50%;
+  width:0; height:0; pointer-events:none;
+}
+.anillo{ position:absolute; top:0; left:0; border-radius:50%; pointer-events:none; }
+
+.anillo.a1{
+  width:clamp(300px, 62vw, 660px); aspect-ratio:1;
+  border:1px dashed rgba(200,164,92,.26);
+  animation:gira-anillo 120s linear infinite;
+}
+.anillo.a2{
+  width:clamp(370px, 82vw, 830px); aspect-ratio:1;
+  background:repeating-conic-gradient(rgba(200,164,92,.15) 0deg .7deg, transparent .7deg 5.5deg);
+  -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation:gira-anillo-r 200s linear infinite;
+}
+.anillo.a3{
+  width:clamp(240px, 48vw, 530px); aspect-ratio:1;
+  border:1px solid rgba(200,164,92,.16);
+}
+@keyframes gira-anillo{
+  from{ transform:translate(-50%,-50%) rotate(0deg); }
+  to{ transform:translate(-50%,-50%) rotate(360deg); }
+}
+@keyframes gira-anillo-r{
+  from{ transform:translate(-50%,-50%) rotate(360deg); }
+  to{ transform:translate(-50%,-50%) rotate(0deg); }
+}
+
+.hero-luz{
+  position:absolute; top:50%; left:50%;
+  width:min(150vw, 1150px); aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side, rgba(200,164,92,.11), rgba(200,164,92,.03) 45%, transparent 70%);
+  animation:respirar 8s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes respirar{ 0%,100%{ opacity:.7; } 50%{ opacity:1; } }
+
+.hero h1{
+  position:relative;
+  margin-top:1.6rem;
+  font-weight:800;
+  font-size:clamp(3rem, 9vw, 7.1rem);
+  line-height:.97; letter-spacing:-.035em;
+  color:var(--crema);
+  text-shadow:
+    0 0 16px rgba(230,201,140,.30),
+    0 0 64px rgba(230,201,140,.16),
+    0 0 140px rgba(230,201,140,.08);
+}
+.hero h1 .vs{
+  display:block;
+  font-weight:300; font-style:italic;
+  font-size:.3em; letter-spacing:.12em;
+  color:var(--oro);
+  margin:.45em 0 .2em;
+  text-shadow:0 0 24px rgba(200,164,92,.35);
+}
+
+.pilar{
+  position:absolute; top:calc(50% - 190px);
+  width:180px; height:380px;
+  pointer-events:none;
+}
+.p-izq{ left:0; }
+.p-der{ right:0; }
+
+.pilar::before{
+  content:''; position:absolute; top:50%; left:50%;
+  width:340px; height:340px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side, rgba(200,164,92,.1), transparent 70%);
+  animation:respirar 9s ease-in-out infinite;
+}
+
+.p-escala{ position:absolute; inset:0; perspective:800px; }
+
+.pilar-3d{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  animation:girar-pilar 34s linear infinite;
+}
+.p-der .pilar-3d{ animation-name:girar-pilar-r; }
+@keyframes girar-pilar{
+  from{ transform:rotateY(0deg); }
+  to{ transform:rotateY(360deg); }
+}
+@keyframes girar-pilar-r{
+  from{ transform:rotateY(360deg); }
+  to{ transform:rotateY(0deg); }
+}
+
+.p-aguja{
+  position:absolute; left:50%; top:16px;
+  width:1.5px; height:30px; margin-left:-.75px;
+  background:linear-gradient(180deg, rgba(200,164,92,.15), var(--oro));
+}
+.p-punta{
+  position:absolute; left:50%; top:6px;
+  width:8px; height:8px; margin-left:-4px;
+  transform:rotate(45deg);
+  border:1px solid var(--oro);
+  background:rgba(200,164,92,.25);
+}
+.p-corona{
+  position:absolute; left:50%; top:44px;
+  width:18px; height:18px; margin-left:-9px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #f0dda5, #a8874a 55%, #6b5326 88%);
+}
+
+.p-fuste{
+  position:absolute; left:50%; top:66px;
+  width:9px; height:238px; margin-left:-4.5px;
+  transform-style:preserve-3d;
+}
+.p-fuste .fca{
+  position:absolute; left:0; top:0;
+  width:9px; height:238px; border-radius:5px;
+  background:linear-gradient(180deg, #dcb872, #8f7239 50%, #b99a55);
+}
+.p-fuste .fcb{
+  transform:rotateY(90deg);
+  background:linear-gradient(180deg, #a8874a, #5e4a24 50%, #8a6f3d);
+}
+
+.p-collar{
+  position:absolute; left:50%;
+  width:62px; height:62px;
+  margin:-31px 0 0 -31px;
+  border-radius:50%;
+  border:1.5px solid rgba(212,181,120,.65);
+  background:radial-gradient(closest-side, rgba(200,164,92,.18), transparent 70%);
+  transform:rotateX(75deg);
+}
+.p-collar.c1{ top:88px; }
+.p-collar.c2{ top:282px; }
+
+.p-pedestal{
+  position:absolute; left:50%; top:302px;
+  width:56px; height:22px; margin-left:-28px;
+  transform-style:preserve-3d;
+}
+.p-pedestal .pda{
+  position:absolute; inset:0; border-radius:3px;
+  background:linear-gradient(90deg, #8a6f3d, #c8a45c 50%, #8a6f3d);
+}
+.p-pedestal .pdb{
+  position:absolute; inset:0; border-radius:3px;
+  transform:rotateY(90deg);
+  background:#6b5326;
+}
+.p-zoclo{
+  position:absolute; left:50%; top:328px;
+  width:88px; height:12px; margin-left:-44px;
+  transform-style:preserve-3d;
+}
+.p-zoclo .pza{
+  position:absolute; inset:0; border-radius:3px;
+  background:linear-gradient(90deg, #6b5326, #a8874a 50%, #6b5326);
+}
+.p-zoclo .pzb{
+  position:absolute; inset:0; border-radius:3px;
+  transform:rotateY(90deg);
+  background:#54401f;
+}
+
+.p-anillo{
+  position:absolute; left:50%; top:344px;
+  width:150px; height:150px;
+  border-radius:50%;
+  border:1px dashed rgba(200,164,92,.3);
+  animation:girar-anillo-s 46s linear infinite;
+}
+
+.p-orbita{
+  position:absolute; left:50%; top:172px;
+  border-radius:50%;
+  background:repeating-conic-gradient(rgba(200,164,92,.22) 0deg .8deg, transparent .8deg 6deg);
+  -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation:gira-p-orbita 18s linear infinite;
+}
+.p-orbita.o1{ width:104px; height:104px; margin:-52px 0 0 -52px; }
+.p-orbita.o2{
+  width:150px; height:150px; margin:-75px 0 0 -75px;
+  background:none;
+  -webkit-mask:none; mask:none;
+  border:1px dashed rgba(200,164,92,.28);
+  animation:gira-p-orbita 28s linear infinite reverse;
+}
+@keyframes gira-p-orbita{
+  from{ transform:rotateX(16deg) rotateZ(0deg); }
+  to{ transform:rotateX(16deg) rotateZ(360deg); }
+}
+
+.p-conector{
+  position:absolute; top:50%; margin-top:-.5px; height:1px;
+}
+.p-izq .p-conector{
+  left:calc(100% - 12px); width:clamp(56px, 9vw, 140px);
+  background:linear-gradient(90deg, rgba(200,164,92,.55), transparent);
+}
+.p-der .p-conector{
+  right:calc(100% - 12px); width:clamp(56px, 9vw, 140px);
+  background:linear-gradient(270deg, rgba(200,164,92,.55), transparent);
+}
+.p-conector::after{
+  content:''; position:absolute; top:-4px;
+  width:8px; height:8px;
+  transform:rotate(45deg);
+  border:1px solid rgba(200,164,92,.7);
+  background:rgba(200,164,92,.15);
+}
+.p-izq .p-conector::after{ left:-4px; }
+.p-der .p-conector::after{ right:-4px; }
+
+.p-vtext{
+  position:absolute; top:50%;
+  transform:translateY(-50%);
+  writing-mode:vertical-rl;
+  font-weight:600; font-size:.55rem;
+  letter-spacing:.5em; text-transform:uppercase;
+  color:rgba(200,164,92,.42);
+  white-space:nowrap;
+}
+.p-izq .p-vtext{ left:-30px; }
+.p-der .p-vtext{ right:-30px; transform:translateY(-50%) rotate(180deg); }
+
+.firma-tricolor{ display:flex; gap:7px; margin-top:2.2rem; }
+.firma-tricolor.centro{ justify-content:center; }
+.firma-tricolor span{ height:3px; border-radius:2px; }
+.firma-tricolor span:nth-child(1){ width:66px; background:var(--amarillo); }
+.firma-tricolor span:nth-child(2){ width:42px; background:var(--azul); }
+.firma-tricolor span:nth-child(3){ width:26px; background:var(--rojo); }
+
+.hero-sub{
+  margin-top:1.8rem; max-width:56ch;
+  font-weight:300; font-size:1.02rem; line-height:1.8;
+  color:var(--texto-suave);
+}
+.hero-sub.centro{ margin-inline:auto; }
+.hero-sub strong{ font-weight:600; color:var(--crema); }
+
+.hero-acciones{ margin-top:2.4rem; display:flex; align-items:center; gap:2rem; flex-wrap:wrap; }
+.hero-acciones.centro{ justify-content:center; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:12px;
+  padding:1rem 1.9rem;
+  border:1px solid var(--oro);
+  color:var(--oro);
+  font-weight:600; font-size:.74rem;
+  letter-spacing:.24em; text-transform:uppercase;
+  background:transparent; cursor:pointer;
+  transition:background .4s ease, color .4s ease, transform .4s var(--vel);
+}
+.btn i{ font-size:.7rem; transition:transform .4s var(--vel); }
+.btn:hover{ background:var(--oro); color:var(--negro); transform:translateY(-3px); }
+.btn:hover i{ transform:translateY(3px); }
+
+.link-linea{
+  position:relative; display:inline-block;
+  font-weight:600; font-size:.72rem;
+  letter-spacing:.24em; text-transform:uppercase;
+  color:var(--texto-suave); padding-bottom:.35rem;
+  transition:color .3s ease; text-align:center;
+}
+.link-linea::after{
+  content:''; position:absolute; left:0; bottom:0;
+  width:100%; height:1px; background:var(--oro);
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .45s var(--vel);
+}
+.link-linea:hover{ color:var(--oro); }
+.link-linea:hover::after{ transform:scaleX(1); }
+
+.hero-meta{
+  position:absolute; bottom:0; left:0; right:0;
+  display:flex; justify-content:center; flex-wrap:wrap;
+  gap:0; padding:1.15rem var(--pad) 1.35rem;
+  border-top:1px solid rgba(200,164,92,.18);
+}
+.hero-meta > div{
+  display:flex; flex-direction:column; gap:.35rem;
+  padding:0 2.2rem;
+}
+.hero-meta > div + div{ border-left:1px solid rgba(200,164,92,.22); }
+.hero-meta strong{
+  font-weight:600; font-size:.56rem;
+  letter-spacing:.26em; text-transform:uppercase;
+  color:var(--oro);
+}
+.hero-meta span{ font-weight:300; font-size:.74rem; color:var(--texto-suave); }
+
+/* ================= BALANZA ================= */
+
+.hero-3d{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  margin-top:clamp(1.2rem, 3vh, 2.4rem);
+}
+
+.escena{
+  position:relative;
+  width:400px; height:470px;
+  perspective:1100px;
+  transform:scale(.82);
+  margin-bottom:-82px;
+}
+
+.balanza{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  animation:girar 28s linear infinite;
+}
+@keyframes girar{
+  from{ transform:rotateY(0deg); }
+  to{ transform:rotateY(360deg); }
+}
+
+.b-anillo{
+  position:absolute; left:50%; top:420px;
+  width:330px; height:330px; border-radius:50%;
+  border:1px dashed rgba(200,164,92,.3);
+  transform:translate(-50%,-50%) rotateX(75deg);
+  animation:girar-anillo-s 46s linear infinite;
+}
+@keyframes girar-anillo-s{
+  from{ transform:translate(-50%,-50%) rotateX(75deg) rotateZ(0deg); }
+  to{ transform:translate(-50%,-50%) rotateX(75deg) rotateZ(360deg); }
+}
+
+.b-base{
+  position:absolute; left:50%; top:414px;
+  width:230px; height:230px; border-radius:50%;
+  border:1px solid rgba(200,164,92,.55);
+  background:radial-gradient(closest-side, rgba(200,164,92,.16), rgba(200,164,92,.03) 68%, transparent 72%);
+  transform:translate(-50%,-50%) rotateX(75deg);
+}
+
+.b-poste{
+  position:absolute; left:50%; top:96px;
+  width:7px; height:316px; margin-left:-3.5px;
+  transform-style:preserve-3d;
+}
+.pcara{
+  position:absolute; left:0; top:0;
+  width:7px; height:316px; border-radius:4px;
+  background:linear-gradient(180deg, #dcb872, #8f7239 50%, #b99a55);
+}
+.pcara.b{
+  transform:rotateY(90deg);
+  background:linear-gradient(180deg, #a8874a, #5e4a24 50%, #8a6f3d);
+}
+
+.b-esfera{
+  position:absolute; left:50%; top:70px;
+  width:22px; height:22px; margin-left:-11px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #f0dda5, #a8874a 55%, #6b5326 88%);
+}
+.b-aguja{
+  position:absolute; left:50%; top:44px;
+  width:1.5px; height:28px; margin-left:-.75px;
+  background:linear-gradient(180deg, rgba(200,164,92,.2), var(--oro));
+}
+
+.b-brazo-wrap{
+  position:absolute; left:50%; top:84px;
+  width:300px; height:8px; margin-left:-150px;
+  transform-style:preserve-3d;
+}
+.b-brazo{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  transform-origin:50% 50%;
+  animation:oscilar 7.5s ease-in-out infinite alternate;
+}
+@keyframes oscilar{
+  from{ transform:rotateZ(-5deg); }
+  to{ transform:rotateZ(5deg); }
+}
+.bcara{
+  position:absolute; inset:0; border-radius:4px;
+  background:linear-gradient(90deg, #a8874a, #e6cc8e 50%, #a8874a);
+}
+.bcara.b{
+  transform:rotateY(90deg);
+  background:linear-gradient(180deg, #8a6f3d, #6b5326);
+}
+
+.plata{
+  position:absolute; top:4px; width:0; height:0;
+  transform-style:preserve-3d;
+  animation:contraoscilar 7.5s ease-in-out infinite alternate;
+}
+@keyframes contraoscilar{
+  from{ transform:rotateZ(5deg); }
+  to{ transform:rotateZ(-5deg); }
+}
+.plata.izq{ left:0; }
+.plata.der{ left:300px; }
+
+.cable{
+  position:absolute; top:0; left:-1px;
+  width:2px; height:150px;
+  transform-origin:top center;
+  background:linear-gradient(180deg, rgba(212,181,120,.9), rgba(212,181,120,.22));
+}
+.cable.c1{ transform:rotateZ(17deg); }
+.cable.c2{ transform:rotateZ(-17deg); }
+
+.plato{
+  position:absolute; top:88px; left:-63px;
+  width:126px; height:126px; border-radius:50%;
+  border:1.5px solid rgba(212,181,120,.75);
+  background:radial-gradient(closest-side, rgba(200,164,92,.16), rgba(200,164,92,.04) 62%, transparent 72%);
+  transform:rotateX(90deg);
+}
+.plato::after{
+  content:''; position:absolute; inset:20px;
+  border-radius:50%;
+  border:1px solid rgba(212,181,120,.3);
+}
+.objeto{
+  position:absolute; top:140px; left:-17px;
+  width:34px; height:10px; border-radius:2px;
+  transform:rotateX(90deg);
+  background:rgba(200,164,92,.45);
+  border:1px solid rgba(212,181,120,.85);
+}
+
+.escena-frase{
+  margin-top:1rem; text-align:center;
+  font-weight:300; font-style:italic;
+  font-size:.9rem; letter-spacing:.06em;
+  color:var(--oro);
+}
+.escena-frase small{
+  display:block; margin-top:.4rem;
+  font-style:normal; font-weight:300;
+  font-size:.6rem; letter-spacing:.2em;
+  color:var(--texto-tenue); text-transform:uppercase;
+}
+
+.rh{
+  opacity:0; transform:translateY(28px);
+  transition:opacity 1s var(--vel), transform 1s var(--vel);
+  transition-delay:var(--d, 0s);
+}
+body.cargada .rh{ opacity:1; transform:none; }
+
+/* ================= SECCIONES ================= */
+
+.franja{
+  position:relative; z-index:1;
+  height:3px;
+  background:linear-gradient(90deg,
+    var(--amarillo) 0 33.34%,
+    var(--azul) 33.34% 66.67%,
+    var(--rojo) 66.67% 100%);
+}
+
+section{ padding-block:clamp(5rem, 10vw, 8.5rem); position:relative; }
+
+.claro{
+  background-color:var(--marfil);
+  background-image:
+    var(--textura-vetas),
+    var(--textura-grano),
+    radial-gradient(1100px 700px at 75% -5%, rgba(255,255,255,.75), rgba(255,255,255,0) 60%),
+    radial-gradient(900px 600px at 0% 105%, rgba(200,164,92,.14), transparent 60%);
+}
+.claro.papel{ background-color:var(--papel); }
+
+.oscuro{ color:var(--crema); }
+.oscuro::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(130% 100% at 50% 0%, rgba(255,255,255,.025), transparent 55%);
+}
+.oscuro > .contenedor{ position:relative; }
+
+.sec-cab{ margin-bottom:clamp(2.6rem, 6vw, 4.5rem); }
+.claro .kicker{ color:var(--oro-oscuro); }
+
+.sec-titulo{
+  margin-top:1.3rem;
+  font-weight:800;
+  font-size:clamp(2.1rem, 5vw, 3.5rem);
+  line-height:1.06; letter-spacing:-.03em;
+}
+.claro .sec-titulo{ color:var(--tinta); }
+.oscuro .sec-titulo{ color:var(--crema); }
+.sec-titulo em{ font-weight:300; font-style:italic; letter-spacing:0; }
+.claro .sec-titulo em{ color:var(--oro-oscuro); }
+.oscuro .sec-titulo em{ color:var(--oro); }
+
+.sec-sub{
+  margin-top:1.2rem; max-width:58ch;
+  font-weight:300; font-size:.98rem; line-height:1.8;
+}
+.claro .sec-sub{ color:var(--tinta-2); }
+.oscuro .sec-sub{ color:var(--texto-suave); }
+
+.reveal{
+  opacity:0; transform:translateY(36px);
+  transition:opacity .95s var(--vel), transform .95s var(--vel);
+  transition-delay:var(--d, 0s);
+}
+.reveal.visible{ opacity:1; transform:none; }
+
+/* ================= 01 · EL CASO ================= */
+
+.monumental{ position:relative; }
+.monumental .kicker,
+.monumental .titulo-grande,
+.monumental .ornamento{ position:relative; z-index:1; }
+
+.marca-agua{
+  position:absolute; top:-2.2rem; right:-.5rem;
+  font-weight:800;
+  font-size:clamp(9rem, 20vw, 17rem); line-height:.78;
+  color:transparent;
+  -webkit-text-stroke:1.5px rgba(143,114,57,.17);
+  user-select:none; pointer-events:none;
+}
+
+.titulo-grande{
+  margin-top:1.4rem;
+  font-weight:800;
+  font-size:clamp(2.7rem, 6.4vw, 4.6rem);
+  line-height:1.02; letter-spacing:-.035em;
+  color:var(--tinta);
+}
+.titulo-grande em{
+  font-weight:300; font-style:italic;
+  color:var(--oro-oscuro);
+}
+
+.ornamento{
+  display:flex; align-items:center; gap:16px;
+  margin-top:2.4rem; max-width:500px;
+}
+.o-linea{ flex:1; height:1px; }
+.o-linea.a{ background:linear-gradient(90deg, rgba(143,114,57,.85), rgba(143,114,57,.08)); }
+.o-linea.b{ background:linear-gradient(90deg, rgba(143,114,57,.08), rgba(143,114,57,.85)); }
+.o-rombo{
+  width:9px; height:9px; flex:none;
+  transform:rotate(45deg);
+  border:1px solid var(--oro-oscuro);
+  background:rgba(143,114,57,.14);
+}
+
+.vistos{
+  margin:clamp(2.4rem, 6vw, 4rem) 0;
+  padding:2rem clamp(1.2rem, 4vw, 3.5rem);
+  border-top:3px double rgba(143,114,57,.6);
+  border-bottom:3px double rgba(143,114,57,.6);
+  text-align:center;
+}
+.vistos p{
+  max-width:64ch; margin-inline:auto;
+  font-weight:300; font-size:1rem; line-height:1.95;
+  color:var(--tinta-2);
+}
+.vistos strong{
+  font-weight:600; color:var(--oro-oscuro);
+  letter-spacing:.22em; font-size:.82em;
+}
+
+.editorial{
+  display:grid; grid-template-columns:.8fr 1.2fr;
+  gap:clamp(2rem, 6vw, 5rem); align-items:start;
+}
+.editorial-izq{ position:sticky; top:110px; }
+
+.romano{
+  display:block; margin-bottom:1.8rem;
+  font-weight:300; font-style:italic;
+  font-size:4.6rem; line-height:1;
+  color:rgba(143,114,57,.45);
+}
+.frase::before{
+  content:'«'; display:block;
+  font-weight:800; font-style:normal;
+  font-size:4.6rem; line-height:.55;
+  color:rgba(143,114,57,.4);
+  margin-bottom:1.1rem;
+}
+.frase{
+  font-weight:600;
+  font-size:clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height:1.35; letter-spacing:-.02em;
+  color:var(--tinta);
+}
+.frase-autor{
+  margin-top:1.4rem;
+  font-weight:600; font-size:.62rem;
+  letter-spacing:.28em; text-transform:uppercase;
+  color:var(--oro-oscuro);
+}
+
+.editorial-der{
+  border-left:1px solid rgba(143,114,57,.4);
+  padding-left:clamp(1.6rem, 4vw, 3.2rem);
+}
+.editorial-der p{
+  font-weight:300;
+  font-size:1.02rem; line-height:1.9;
+  color:var(--tinta-2);
+}
+.editorial-der p + p{ margin-top:1.5rem; }
+.editorial-der strong{ font-weight:600; color:var(--tinta); }
+
+.caratula{
+  position:relative;
+  margin-top:clamp(3rem, 7vw, 5rem);
+  background:var(--blanco);
+  border:1px solid rgba(27,24,18,.15);
+  box-shadow:0 24px 50px -35px rgba(27,24,18,.35);
+}
+.caratula-cab{
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:1rem;
+  padding:1.1rem 1.8rem;
+  border-bottom:1px solid rgba(27,24,18,.12);
+}
+.caratula-titulo{
+  display:flex; align-items:center; gap:.7rem;
+  font-weight:700; font-size:.74rem;
+  letter-spacing:.24em; text-transform:uppercase;
+  color:var(--tinta);
+}
+.caratula-titulo i{ color:var(--oro-oscuro); font-size:.9rem; }
+.caratula-est{
+  display:flex; align-items:center; gap:.6rem;
+  font-weight:600; font-size:.64rem;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--oro-oscuro);
+}
+.dot{
+  width:7px; height:7px; border-radius:50%;
+  background:var(--rojo);
+  animation:latir 2s ease-in-out infinite;
+}
+@keyframes latir{ 50%{ opacity:.3; } }
+
+.caratula dl{ padding:0 1.8rem; }
+.caratula dl > div{
+  display:grid; grid-template-columns:180px 1fr;
+  gap:1.2rem; padding:1.05rem 0;
+}
+.caratula dl > div + div{ border-top:1px solid rgba(27,24,18,.09); }
+.caratula dt{
+  font-weight:600; font-size:.6rem;
+  letter-spacing:.24em; text-transform:uppercase;
+  color:var(--oro-oscuro); padding-top:.25rem;
+}
+.caratula dd{ font-weight:300; font-size:.92rem; line-height:1.6; color:var(--tinta-2); }
+
+.sello-academico{
+  position:absolute; top:-16px; right:30px;
+  transform:rotate(-7deg);
+  border:2px solid rgba(143,114,57,.5);
+  border-radius:6px;
+  padding:.55rem .9rem;
+  font-weight:700; font-size:.62rem;
+  letter-spacing:.2em; text-transform:uppercase;
+  line-height:1.5; text-align:center;
+  color:rgba(143,114,57,.72);
+  background:rgba(250,246,236,.9);
+}
+
+.stats{
+  margin-top:clamp(3rem, 7vw, 5rem);
+  display:grid; grid-template-columns:repeat(4, 1fr);
+}
+.stat{
+  padding:1.4rem 1.6rem;
+  border-top:2px solid rgba(143,114,57,.65);
+}
+.stat + .stat{ border-left:1px solid rgba(27,24,18,.14); }
+.stat .n{
+  display:block;
+  font-weight:800;
+  font-size:clamp(2.7rem, 5vw, 4rem);
+  line-height:1; letter-spacing:-.03em;
+  color:var(--oro-oscuro);
+  font-variant-numeric:tabular-nums;
+}
+.stat .l{
+  display:block; margin-top:.7rem;
+  font-weight:600; font-size:.64rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--tinta-3); line-height:1.6;
+}
+
+/* ================= 02 · LOS RETOS ================= */
+
+.retos-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr);
+  gap:26px;
+}
+
+.tarjeta{
+  position:relative;
+  background:var(--blanco);
+  border:1px solid rgba(27,24,18,.13);
+  padding:2.6rem 2rem 2rem;
+  transition:transform .5s var(--vel), box-shadow .5s var(--vel), border-color .5s ease;
+}
+.tarjeta::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:rgba(143,114,57,.55);
+}
+.tarjeta.bandera::before{
+  background:linear-gradient(90deg,
+    var(--amarillo) 0 33.34%,
+    var(--azul) 33.34% 66.67%,
+    var(--rojo) 66.67% 100%);
+}
+.tarjeta:hover{
+  transform:translateY(-10px);
+  box-shadow:0 34px 60px -32px rgba(27,24,18,.4);
+  border-color:rgba(143,114,57,.55);
+}
+
+.t-arriba{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:1.8rem;
+}
+.t-num{
+  font-weight:800; font-size:2.1rem; line-height:1;
+  color:rgba(143,114,57,.38); letter-spacing:-.03em;
+}
+.t-icono{
+  width:46px; height:46px;
+  border:1px solid rgba(143,114,57,.4);
+  display:grid; place-items:center;
+  color:var(--oro-oscuro); font-size:1rem;
+  transition:background .4s ease, color .4s ease, border-color .4s ease;
+}
+.tarjeta:hover .t-icono{
+  background:var(--oro-oscuro); color:var(--blanco); border-color:var(--oro-oscuro);
+}
+
+.tarjeta h3{
+  font-weight:700; font-size:1.32rem;
+  letter-spacing:-.02em; color:var(--tinta);
+  line-height:1.3;
+}
+.t-txt{
+  margin-top:1rem;
+  font-weight:300; font-size:.92rem; line-height:1.8;
+  color:var(--tinta-2);
+}
+.t-lista{ margin-top:1.6rem; }
+.t-lista li{
+  font-weight:300; font-size:.84rem;
+  color:var(--tinta-2);
+  padding:.6rem 0;
+  display:flex; align-items:center; gap:.9rem;
+}
+.t-lista li + li{ border-top:1px solid rgba(27,24,18,.08); }
+.t-lista li::before{
+  content:''; flex:none;
+  width:18px; height:1px;
+  background:var(--oro-oscuro);
+}
+
+/* ================= 03 · CRONOLOGÍA ================= */
+
+.tl{ position:relative; max-width:1080px; margin-inline:auto; }
+.tl::before{
+  content:''; position:absolute; left:50%; top:0; bottom:0; width:1px;
+  background:linear-gradient(180deg, transparent, var(--oro-linea) 6%, var(--oro-linea) 94%, transparent);
+}
+
+.chronos-wrap{
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  pointer-events:none;
+}
+.chronos-wrap.reveal{ transform:none; } 
+
+.chronos{
+  position:relative;
+  width:clamp(280px, 64vw, 680px); aspect-ratio:1;
+  perspective:1100px;
+}
+
+.chronos-luz{
+  position:absolute; top:50%; left:50%;
+  width:150%; aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side, rgba(200,164,92,.14), rgba(200,164,92,.045) 42%, transparent 68%);
+  animation:respirar 7s ease-in-out infinite;
+}
+
+.chronos-anillos{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  animation:precesion 80s linear infinite;
+}
+@keyframes precesion{
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(360deg); }
+}
+
+.ca{
+  position:absolute; top:50%; left:50%;
+  aspect-ratio:1; border-radius:50%;
+  transform:translate(-50%,-50%) rotateX(var(--rx,70deg)) rotateY(var(--ry,0deg));
+  animation:ca-giro var(--dur,50s) linear infinite;
+}
+@keyframes ca-giro{
+  from{ transform:translate(-50%,-50%) rotateX(var(--rx,70deg)) rotateY(var(--ry,0deg)) rotateZ(0deg); }
+  to{ transform:translate(-50%,-50%) rotateX(var(--rx,70deg)) rotateY(var(--ry,0deg)) rotateZ(360deg); }
+}
+@keyframes ca-giro-r{
+  from{ transform:translate(-50%,-50%) rotateX(var(--rx,70deg)) rotateY(var(--ry,0deg)) rotateZ(360deg); }
+  to{ transform:translate(-50%,-50%) rotateX(var(--rx,70deg)) rotateY(var(--ry,0deg)) rotateZ(0deg); }
+}
+
+.ca.ticks{
+  background:repeating-conic-gradient(
+    rgba(200,164,92,var(--op,.2)) 0deg var(--tick,.6deg),
+    transparent var(--tick,.6deg) var(--paso,5deg));
+  -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+}
+
+.ca.a1{ width:100%; border:1px dashed rgba(200,164,92,.22); --rx:74deg; --dur:70s; }
+.ca.a2{ width:88%; --rx:64deg; --ry:22deg; --dur:52s; --tick:.6deg; --paso:5deg; --op:.2; animation-name:ca-giro-r; }
+.ca.a3{ width:76%; --rx:82deg; --ry:-30deg; --dur:92s; --tick:1.8deg; --paso:24deg; --op:.26; }
+.ca.a4{ width:64%; border:1px dashed rgba(200,164,92,.26); --rx:58deg; --ry:34deg; --dur:40s; animation-name:ca-giro-r; }
+.ca.a5{ width:52%; --rx:76deg; --ry:-14deg; --dur:30s; --tick:.5deg; --paso:4deg; --op:.18; }
+.ca.a6{ width:40%; --rx:52deg; --ry:48deg; --dur:46s; --tick:2.4deg; --paso:32deg; --op:.24; animation-name:ca-giro-r; }
+.ca.a7{ width:28%; border:1px dashed rgba(200,164,92,.32); --rx:70deg; --ry:8deg; --dur:24s; }
+
+.chronos-nucleo{
+  position:absolute; top:50%; left:50%;
+  width:30px; height:30px; margin:-15px 0 0 -15px;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 34%, #f6e6b4, #d8ae5e 48%, #8f7239 82%);
+  box-shadow:
+    0 0 14px rgba(232,205,148,.9),
+    0 0 44px rgba(226,201,144,.5),
+    0 0 100px rgba(200,164,92,.32),
+    0 0 180px rgba(200,164,92,.16);
+  animation:latido 4.5s ease-in-out infinite;
+}
+@keyframes latido{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.14); }
+}
+.chronos-nucleo::after{
+  content:''; position:absolute; inset:-6px;
+  border-radius:50%;
+  border:1px solid rgba(232,205,148,.5);
+  animation:onda 4.5s ease-out infinite;
+}
+@keyframes onda{
+  0%{ transform:scale(1); opacity:.7; }
+  100%{ transform:scale(2.6); opacity:0; }
+}
+
+.orb{ position:absolute; top:50%; left:50%; width:0; height:0; }
+.orb i{
+  position:absolute; top:-3px;
+  width:6px; height:6px; border-radius:50%;
+  background:var(--oro-claro);
+  box-shadow:0 0 8px rgba(232,205,148,.85), 0 0 18px rgba(226,201,144,.4);
+}
+.orb.o1{ animation:girar-o 14s linear infinite; }
+.orb.o1 i{ left:120px; }
+.orb.o2{ animation:girar-o 23s linear infinite reverse; }
+.orb.o2 i{ left:88px; }
+.orb.o3{ animation:girar-o 31s linear infinite; }
+.orb.o3 i{ left:52px; width:5px; height:5px; top:-2.5px; }
+@keyframes girar-o{
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(360deg); }
+}
+
+.tl-flujo{
+  position:absolute; left:50%; margin-left:-.5px; top:-160px;
+  width:1px; height:160px;
+  background:linear-gradient(180deg, transparent, rgba(230,203,148,.8), transparent);
+  opacity:.7;
+  animation:fluir 5.5s linear infinite;
+  pointer-events:none;
+}
+@keyframes fluir{
+  from{ top:-160px; }
+  to{ top:100%; }
+}
+
+.tl-item{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:1fr 90px 1fr;
+  padding:2.4rem 0;
+}
+.tl-item > *{ grid-row:1; }
+
+.tl-nodo{
+  grid-column:2;
+  justify-self:center; align-self:start;
+  width:13px; height:13px; margin-top:8px;
+  border-radius:50%;
+  background:var(--oro);
+  box-shadow:0 0 0 6px rgba(200,164,92,.12);
+}
+.tl-item.hoy .tl-nodo{
+  width:15px; height:15px; margin-top:7px;
+  border:2.5px solid var(--negro);
+  background:conic-gradient(var(--amarillo) 0 33.34%, var(--azul) 0 66.67%, var(--rojo) 0 100%);
+  box-shadow:0 0 0 6px rgba(200,164,92,.14);
+}
+
+.tl-cont{ grid-column:1; text-align:right; padding-right:34px; }
+.tl-fecha{
+  font-weight:600; font-size:.66rem;
+  letter-spacing:.26em; text-transform:uppercase;
+  color:var(--oro);
+}
+.tl-cont h3{
+  margin-top:.6rem;
+  font-weight:700; font-size:1.3rem;
+  letter-spacing:-.02em; color:var(--crema);
+}
+.tl-cont p{
+  margin-top:.7rem;
+  font-weight:300; font-size:.9rem; line-height:1.8;
+  color:var(--texto-suave);
+  max-width:44ch;
+}
+.tl-item.impar .tl-cont p{ margin-left:auto; }
+
+.tl-anio{
+  grid-column:3; align-self:center;
+  font-weight:800;
+  font-size:clamp(2.8rem, 5vw, 4.4rem);
+  line-height:1; letter-spacing:-.03em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(200,164,92,.42);
+  user-select:none;
+}
+.tl-item.impar .tl-anio{ padding-left:34px; }
+
+.tl-item.par .tl-cont{ grid-column:3; text-align:left; padding-right:0; padding-left:34px; }
+.tl-item.par .tl-cont p{ margin-right:auto; }
+.tl-item.par .tl-anio{ grid-column:1; text-align:right; padding-right:34px; }
+
+/* ================= 04 · LA SALA ================= */
+
+.mandatos{ border-top:1px solid rgba(200,164,92,.25); }
+.mandato{
+  display:grid; grid-template-columns:96px 260px 1fr;
+  gap:1.6rem; align-items:start;
+  padding:2.4rem 0;
+  border-bottom:1px solid rgba(200,164,92,.25);
+}
+.m-num{
+  font-weight:800; font-size:2.5rem;
+  line-height:1; letter-spacing:-.03em;
+  color:var(--oro);
+  font-variant-numeric:tabular-nums;
+}
+.mandato h3{
+  font-weight:700; font-size:1.5rem;
+  letter-spacing:-.02em; color:var(--crema);
+  padding-top:.4rem;
+}
+.mandato p{
+  font-weight:300; font-size:.94rem; line-height:1.85;
+  color:var(--texto-suave); max-width:60ch;
+  padding-top:.5rem;
+}
+.mandato p strong{ font-weight:600; color:var(--crema); }
+
+.cta{
+  margin-top:clamp(3.5rem, 8vw, 5.5rem);
+  text-align:center;
+}
+.cta h3{
+  font-weight:700; font-size:clamp(1.7rem, 4vw, 2.4rem);
+  letter-spacing:-.03em; color:var(--crema);
+}
+.cta h3 em{ font-weight:300; font-style:italic; color:var(--oro); }
+
+.hashtags{ margin-top:2.2rem; display:flex; justify-content:center; gap:clamp(1.4rem, 5vw, 3rem); flex-wrap:wrap; }
+.tag{
+  cursor:pointer;
+  font-weight:800;
+  font-size:clamp(2.4rem, 7vw, 4.4rem);
+  letter-spacing:-.03em; line-height:1;
+  color:rgba(236,231,218,.15);
+  transition:color .45s ease, transform .45s var(--vel);
+}
+.tag:hover{ color:var(--oro); transform:translateY(-4px); }
+
+.cta-nota{
+  margin-top:2rem;
+  font-weight:600; font-size:.6rem;
+  letter-spacing:.3em; text-transform:uppercase;
+  color:var(--texto-tenue);
+}
+
+/* ================= PIE DE PÁGINA ================= */
+
+footer{
+  position:relative; z-index:1;
+  border-top:1px solid rgba(200,164,92,.22);
+  padding:3.2rem var(--pad) 2rem;
+}
+.pie{
+  max-width:1240px; margin-inline:auto;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:2rem; flex-wrap:wrap;
+}
+.pie-marca{ display:flex; align-items:center; gap:.9rem; }
+.pie-marca strong{ display:block; font-weight:800; font-size:.95rem; letter-spacing:.14em; color:var(--crema); }
+.pie-marca em{
+  display:block; font-style:normal; font-weight:300;
+  font-size:.55rem; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--oro); margin-top:.2rem;
+}
+.pie-centro{
+  font-weight:300; font-size:.72rem;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--texto-suave);
+}
+.pie-tags{
+  font-weight:600; font-size:.78rem;
+  letter-spacing:.16em; color:var(--oro);
+}
+.pie-nota{
+  max-width:1240px; margin:2.2rem auto 0;
+  padding-top:1.6rem;
+  border-top:1px solid rgba(236,231,218,.08);
+  font-weight:300; font-size:.68rem;
+  letter-spacing:.1em; line-height:1.7;
+  color:var(--texto-tenue);
+  text-align:center;
+}
+
+/* ================= AVISO ================= */
+
+#toast{
+  position:fixed; left:50%; bottom:32px; z-index:90;
+  transform:translate(-50%, 20px);
+  display:flex; align-items:center; gap:.8rem;
+  background:var(--carbon);
+  border:1px solid var(--oro-linea);
+  color:var(--crema);
+  padding:.9rem 1.5rem;
+  font-weight:600; font-size:.72rem;
+  letter-spacing:.14em;
+  opacity:0; visibility:hidden;
+  transition:opacity .4s ease, transform .5s var(--vel), visibility 0s linear .4s;
+}
+#toast.visible{ opacity:1; visibility:visible; transform:translate(-50%, 0); transition:opacity .4s ease, transform .5s var(--vel); }
+#toast i{ color:var(--oro); font-size:.8rem; }
+
+/* ================= RESPONSIVE MEJORADO ================= */
+
+@media (max-width: 1200px){
+  .p-escala{ transform:scale(.85); }
+}
+
+@media (max-width: 1020px){
+  .retos-grid{ grid-template-columns:1fr; max-width:620px; margin-inline:auto; }
+  .p-vtext{ display:none; }
+  .p-escala{ transform:scale(.78); }
+  .tl-item, .tl-item.par, .tl-item.impar{
+    grid-template-columns:44px 1fr;
+  }
+  .tl::before{ left:21px; }
+  .tl-flujo{ left:21px; }
+  .chronos{ opacity:.55; }
+  .tl-nodo{ grid-column:1; margin-left:1px; }
+  .tl-cont, .tl-item.par .tl-cont, .tl-item.impar .tl-cont{
+    grid-column:2; text-align:left; padding:0;
+  }
+  .tl-cont p, .tl-item.par .tl-cont p, .tl-item.impar .tl-cont p{ margin-right:0; margin-left:0; }
+  .tl-anio, .tl-item.par .tl-anio, .tl-item.impar .tl-anio{
+    grid-column:2; grid-row:auto; text-align:left; padding:0;
+    font-size:2.4rem; margin-bottom:.4rem; align-self:auto;
+    -webkit-text-stroke-width:.8px;
+  }
+  .tl-item > *{ grid-row:auto; }
+}
+
+@media (max-width: 940px){
+  .pilar{ display:none; }
+  .escena{ transform:scale(.68); margin-bottom:-148px; }
+  .hero{ padding-bottom:150px; }
+  .editorial{ grid-template-columns:1fr; }
+  .editorial-izq{ position:static; }
+  .stats{ grid-template-columns:repeat(2, 1fr); }
+  .stat + .stat{ border-left:none; }
+  .stat:nth-child(even){ border-left:1px solid rgba(27,24,18,.14); }
+  .stat:nth-child(n+3){ border-top:2px solid rgba(143,114,57,.65); }
+  .mandato{ grid-template-columns:70px 1fr; }
+  .mandato p{ grid-column:2; }
+  .marca-agua{ top:-1.2rem; right:-.5rem; }
+}
+
+@media (max-width: 720px){
+  .links{ display:none; }
+  .nav-tag{ display:none; }
+  .burger{ display:flex; }
+  .hero-meta{
+    position:static;
+    flex-direction:column; gap:1.1rem; align-items:center;
+    margin-top:1.8rem; padding:1.4rem var(--pad);
+  }
+  .hero-meta > div{ align-items:center; padding:0; }
+  .hero-meta > div + div{ border-left:none; }
+  .hero{ padding-bottom:0; }
+  .escena-frase{ display:none; }
+  .caratula dl > div{ grid-template-columns:1fr; gap:.5rem; padding: 1.2rem 0; }
+  .sello-academico{ right:14px; }
+  .editorial-der{ border-left:none; padding-left:0; }
+  .pie{ flex-direction:column; text-align:center; }
+  .pie-marca{ flex-direction:column; text-align:center; }
+}
+
+@media (max-width: 480px){
+  .escena{ transform:scale(.56); margin-bottom:-200px; }
+  .hero-3d{ margin-top:.5rem; }
+  .stats{ grid-template-columns:1fr; }
+  .stat{ border-left:none !important; border-top:2px solid rgba(143,114,57,.65) !important; }
+  .hero-acciones{ flex-direction: column; width: 100%; gap:1.2rem; }
+  .btn { width: 100%; justify-content: center; }
+  .mandato { grid-template-columns: 1fr; gap: 0.8rem; text-align: center; }
+  .m-num { margin: 0 auto; font-size: 2rem; }
+  .mandato p { grid-column: 1; margin: 0 auto; }
+  .tl-anio, .tl-item.par .tl-anio, .tl-item.impar .tl-anio { font-size: 1.8rem; }
+  .titulo-grande { font-size: 2.2rem; }
+  .vistos { padding: 1.5rem 1rem; }
+}
+
+/* ================= MOVIMIENTO REDUCIDO ================= */
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.2s !important;
+  }
+  .reveal, .rh{ transform:none; }
+  html{ scroll-behavior:auto; }
+}
+</style>
+</head>
+
+<body class="bloqueado">
+
+<div id="carga">
+  <div class="carga-int">
+    <div class="carga-sello"><i class="fa-solid fa-scale-balanced"></i></div>
+    <p class="carga-vene">República Bolivariana de Venezuela</p>
+    <h1 class="carga-titulo">Tribunal Supremo<br>de Justicia</h1>
+    <p class="carga-sala">Sala Político-Administrativa</p>
+    <div class="carga-contador"><span id="porcentaje">0</span><span class="pc">%</span></div>
+    <div class="carga-track"><div class="carga-relleno" id="relleno"></div></div>
+    <p class="carga-estado" id="estado">Abriendo el expediente…</p>
+  </div>
+</div>
+
+<canvas id="lienzo" aria-hidden="true"></canvas>
+
+<script src="/static/navbar.js"></script>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="hero-centro">
+      <p class="kicker centro rh" style="--d:.05s">Recurso contencioso administrativo de nulidad</p>
+      <div class="hero-titular rh" style="--d:.18s">
+        <div class="hero-anillos" aria-hidden="true">
+          <span class="anillo a3"></span>
+          <span class="anillo a1"></span>
+          <span class="anillo a2"></span>
+        </div>
+        <span class="hero-luz" aria-hidden="true"></span>
+        <div class="pilar p-izq rh" style="--d:.3s" aria-hidden="true">
+          <div class="p-escala">
+            <div class="pilar-3d">
+              <span class="p-aguja"></span>
+              <span class="p-punta"></span>
+              <span class="p-corona"></span>
+              <div class="p-fuste">
+                <span class="fca"></span>
+                <span class="fcb"></span>
+              </div>
+              <span class="p-collar c1"></span>
+              <span class="p-collar c2"></span>
+              <div class="p-pedestal">
+                <span class="pda"></span>
+                <span class="pdb"></span>
+              </div>
+              <div class="p-zoclo">
+                <span class="pza"></span>
+                <span class="pzb"></span>
+              </div>
+              <span class="p-anillo"></span>
+            </div>
+            <span class="p-orbita o1"></span>
+            <span class="p-orbita o2"></span>
+            <span class="p-conector"></span>
+            <span class="p-vtext">Sala Político-Administrativa · MMXXV</span>
+          </div>
+        </div>
+
+        <div class="pilar p-der rh" style="--d:.38s" aria-hidden="true">
+          <div class="p-escala">
+            <div class="pilar-3d">
+              <span class="p-aguja"></span>
+              <span class="p-punta"></span>
+              <span class="p-corona"></span>
+              <div class="p-fuste">
+                <span class="fca"></span>
+                <span class="fcb"></span>
+              </div>
+              <span class="p-collar c1"></span>
+              <span class="p-collar c2"></span>
+              <div class="p-pedestal">
+                <span class="pda"></span>
+                <span class="pdb"></span>
+              </div>
+              <div class="p-zoclo">
+                <span class="pza"></span>
+                <span class="pzb"></span>
+              </div>
+              <span class="p-anillo"></span>
+            </div>
+            <span class="p-orbita o1"></span>
+            <span class="p-orbita o2"></span>
+            <span class="p-conector"></span>
+            <span class="p-vtext">República Bolivariana de Venezuela</span>
+          </div>
+        </div>
+
+        <h1>
+          RCTV
+          <span class="vs">vs.</span>
+          PODER<br>EJECUTIVO
+        </h1>
+      </div>
+
+      <div class="firma-tricolor centro rh" style="--d:.34s" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+
+      <p class="hero-sub centro rh" style="--d:.46s">
+        Caracas, 2007. Una concesión que no se renueva, un recurso que no se rinde
+        y un país entero mirando hacia la Sala. Bienvenido al expediente más discutido
+        del <strong>derecho administrativo venezolano</strong>.
+      </p>
+
+      <div class="hero-acciones centro rh" style="--d:.58s">
+        <a class="btn" href="#caso">Sustanciar el caso <i class="fa-solid fa-arrow-down"></i></a>
+        <a class="link-linea" href="#cronologia">Ver cronología</a>
+      </div>
+    </div>
+
+    <div class="hero-3d rh" style="--d:.5s">
+      <div class="escena">
+        <div class="balanza">
+          <div class="b-anillo"></div>
+          <div class="b-base"></div>
+          <div class="b-poste">
+            <div class="pcara a"></div>
+            <div class="pcara b"></div>
+          </div>
+          <div class="b-aguja"></div>
+          <div class="b-esfera"></div>
+          <div class="b-brazo-wrap">
+            <div class="b-brazo">
+              <div class="bcara a"></div>
+              <div class="bcara b"></div>
+              <div class="plata izq">
+                <div class="cable c1"></div>
+                <div class="cable c2"></div>
+                <div class="plato"></div>
+              </div>
+              <div class="plata der">
+                <div class="cable c1"></div>
+                <div class="cable c2"></div>
+                <div class="plato"></div>
+                <div class="objeto"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="escena-frase">
+        «Fiat justitia, ruat caelum»
+        <small>Hágase justicia aunque caiga el cielo</small>
+      </p>
+    </div>
+
+    <div class="hero-meta rh" style="--d:.9s">
+      <div>
+        <strong>Expediente</strong>
+        <span>N.º 2007 · Sala Político-Administrativa</span>
+      </div>
+      <div>
+        <strong>Sede</strong>
+        <span>Caracas — Venezuela</span>
+      </div>
+      <div>
+        <strong>Carácter</strong>
+        <span>Caso académico · alta controversia</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="franja" aria-hidden="true"></div>
+
+  <section id="caso" class="claro">
+    <div class="contenedor">
+      <header class="sec-cab monumental reveal">
+        <span class="marca-agua" aria-hidden="true">I</span>
+        <p class="kicker">Expediente · 01 — Contexto</p>
+        <h2 class="titulo-grande">Un acto administrativo,<br><em>un país en vilo.</em></h2>
+        <div class="ornamento" aria-hidden="true">
+          <span class="o-linea a"></span>
+          <span class="o-rombo"></span>
+          <span class="o-linea b"></span>
+        </div>
+      </header>
+
+      <div class="vistos reveal" style="--d:.1s">
+        <p>
+          <strong>VISTOS:</strong> el expediente contentivo del recurso contencioso
+          administrativo de nulidad interpuesto por Radio Caracas Televisión, C.A.,
+          contra los actos mediante los cuales el Poder Ejecutivo Nacional dispuso
+          la no renovación de la concesión para el uso y aprovechamiento de la señal 2,
+          así como los actos de ejecución concomitantes.
+        </p>
+      </div>
+
+      <div class="editorial">
+        <div class="editorial-izq reveal">
+          <span class="romano">I.</span>
+          <p class="frase">«El poder público se ejerce bajo la ley, no sobre ella.»</p>
+          <p class="frase-autor">Premisa del debate en Sala</p>
+        </div>
+        <div class="editorial-der reveal" style="--d:.15s">
+          <p>
+            El 27 de mayo de 2007, la señal 2 dejó de emitir la programación de
+            <strong>Radio Caracas Televisión</strong>. No fue un apagón técnico: fue una
+            <strong>decisión administrativa</strong> — la no renovación de una concesión —
+            convertida en el caso judicial más discutido del derecho venezolano reciente.
+          </p>
+          <p>
+            Frente al Poder Ejecutivo, RCTV acudió a la Sala Político-Administrática e
+            interpuso un <strong>recurso de nulidad</strong>: la vía por la que cualquier
+            particular pide al Tribunal Supremo que anule los actos de la Administración
+            que considere ilegales. El caso obliga a la Sala a responder una pregunta
+            incómoda: ¿dónde termina la discrecionalidad del Estado y dónde empieza el derecho?
+          </p>
+          <p>
+            En esta simulación, los delegados no reciben un caso cerrado, sino un
+            <strong>expediente vivo</strong>: los mismos hechos, las mismas normas
+            y toda la presión de un país mirando por encima del hombro.
+          </p>
+        </div>
+      </div>
+
+      <div class="caratula reveal">
+        <div class="caratula-cab">
+          <span class="caratula-titulo"><i class="fa-solid fa-folder-open"></i>Carátula del expediente</span>
+          <span class="caratula-est"><span class="dot"></span>En sustanciación</span>
+        </div>
+        <dl>
+          <div><dt>Tribunal</dt><dd>Sala Político-Administrativa · Tribunal Supremo de Justicia</dd></div>
+          <div><dt>Acción</dt><dd>Recurso contencioso administrativo de nulidad</dd></div>
+          <div><dt>Recurrente</dt><dd>Radio Caracas Televisión, C.A.</dd></div>
+          <div><dt>Recurridos</dt><dd>Presidencia de la República · CONATEL</dd></div>
+          <div><dt>Objeto</dt><dd>No renovación de la concesión de la señal 2</dd></div>
+          <div><dt>Materia</dt><dd>Telecomunicaciones y libertad de expresión</dd></div>
+        </dl>
+        <div class="sello-academico">Simulación<br>académica</div>
+      </div>
+
+      <div class="stats reveal">
+        <div class="stat"><span class="n">53</span><span class="l">años de la señal 2 al aire (1953–2007)</span></div>
+        <div class="stat"><span class="n">0026</span><span class="l">decisión presidencial que originó el caso</span></div>
+        <div class="stat"><span class="n">1</span><span class="l">frecuencia en el centro del litigio</span></div>
+        <div class="stat"><span class="n">3</span><span class="l">frentes simultáneos para cada delegado</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="retos" class="claro papel">
+    <div class="contenedor">
+      <header class="sec-cab reveal">
+        <p class="kicker">Expediente · 02 — Análisis</p>
+        <h2 class="sec-titulo">Los tres frentes <em>de la Sala.</em></h2>
+        <p class="sec-sub">
+          Cada delegado de la Sala Político-Administrativa sostendrá el caso
+          en tres frentes a la vez. Ninguno admite improvisación.
+        </p>
+      </header>
+
+      <div class="retos-grid">
+        <div class="reveal">
+          <article class="tarjeta">
+            <div class="t-arriba">
+              <span class="t-num">01</span>
+              <span class="t-icono"><i class="fa-solid fa-scale-balanced"></i></span>
+            </div>
+            <h3>El Ordenamiento Jurídico</h3>
+            <p class="t-txt">
+              El expediente exige dominio fino del bloque normativo: la Constitución,
+              la Ley Orgánica de Telecomunicaciones y la Ley de Responsabilidad Social
+              en Radio y Televisión. El espectro es un bien público; administrarlo es un
+              acto discrecional — pero ni siquiera la discrecionalidad vive fuera de la ley.
+            </p>
+            <ul class="t-lista">
+              <li>Constitución: derecho a información oportuna y veraz</li>
+              <li>Concesiones: ¿derecho adquirido o simple expectativa?</li>
+              <li>Control judicial de la discrecionalidad administrativa</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="reveal" style="--d:.12s">
+          <article class="tarjeta bandera">
+            <div class="t-arriba">
+              <span class="t-num">02</span>
+              <span class="t-icono"><i class="fa-solid fa-hurricane"></i></span>
+            </div>
+            <h3>El Ojo del Huracán</h3>
+            <p class="t-txt">
+              Un caso que partió al país en dos. Cada sesión se seguirá como un evento
+              nacional y cada lectura del fallo encenderá la plaza. La Sala delibera con
+              la frente fría mientras el termómetro de la opinión pública marca máximos.
+            </p>
+            <ul class="t-lista">
+              <li>Polarización: cada voto será titular</li>
+              <li>Rigor argumental bajo presión máxima</li>
+              <li>Imparcialidad a prueba de aplausos</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="reveal" style="--d:.24s">
+          <article class="tarjeta">
+            <div class="t-arriba">
+              <span class="t-num">03</span>
+              <span class="t-icono"><i class="fa-solid fa-tower-broadcast"></i></span>
+            </div>
+            <h3>Presión Mediática</h3>
+            <p class="t-txt">
+              La Sala no solo juzga: es observada. Comunicados, filtraciones y ruedas de
+              prensa intentarán fijar el relato antes de que caiga la sentencia.
+              El expediente pesa más que el titular.
+            </p>
+            <ul class="t-lista">
+              <li>La Sala habla por sus decisiones, no por sus titulares</li>
+              <li>Manejo de comunicados y prensa</li>
+              <li>Ruido mediático vs. fondo jurídico</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cronologia" class="oscuro">
+    <div class="contenedor">
+      <header class="sec-cab reveal">
+        <p class="kicker">Expediente · 03 — Cronología</p>
+        <h2 class="sec-titulo">Cinco décadas <em>en una frecuencia.</em></h2>
+        <p class="sec-sub">
+          Del nacimiento de la señal a la reapertura académica del expediente:
+          la línea de tiempo que cada delegado debe conocer de memoria.
+        </p>
+      </header>
+
+      <div class="tl">
+        <div class="chronos-wrap reveal" aria-hidden="true">
+          <div class="chronos">
+            <div class="chronos-luz"></div>
+            <div class="chronos-anillos">
+              <span class="ca a1"></span>
+              <span class="ca a2 ticks"></span>
+              <span class="ca a3 ticks"></span>
+              <span class="ca a4"></span>
+              <span class="ca a5 ticks"></span>
+              <span class="ca a6 ticks"></span>
+              <span class="ca a7"></span>
+            </div>
+            <div class="chronos-nucleo"></div>
+            <span class="orb o1"><i></i></span>
+            <span class="orb o2"><i></i></span>
+            <span class="orb o3"><i></i></span>
+          </div>
+        </div>
+
+        <span class="tl-flujo" aria-hidden="true"></span>
+
+        <article class="tl-item impar reveal">
+          <span class="tl-nodo"></span>
+          <div class="tl-cont">
+            <p class="tl-fecha">22 · Nov · 1953</p>
+            <h3>Nace Radio Caracas Televisión</h3>
+            <p>El Canal 2 inicia transmisiones y se convierte, con los años, en la señal privada más antigua y de mayor audiencia del país.</p>
+          </div>
+          <span class="tl-anio" aria-hidden="true">1953</span>
+        </article>
+
+        <article class="tl-item par reveal">
+          <span class="tl-nodo"></span>
+          <div class="tl-cont">
+            <p class="tl-fecha">Dic · 2004</p>
+            <h3>Un nuevo marco para las ondas</h3>
+            <p>Se aprueba la Ley de Responsabilidad Social en Radio y Televisión: contenidos, sanciones y renovación de concesiones pasan a regirse bajo nuevas reglas.</p>
+          </div>
+          <span class="tl-anio" aria-hidden="true">2004</span>
+        </article>
+
+        <article class="tl-item impar reveal">
+          <span class="tl-nodo"></span>
+          <div class="tl-cont">
+            <p class="tl-fecha">May · 2006</p>
+            <h3>La decisión presidencial</h3>
+            <p>En cadena nacional, el Ejecutivo anuncia que la concesión de RCTV no será renovada al vencer en mayo de 2007. La Decisión Presidencial N.º 0026 ordena abrir la adjudicación de la señal.</p>
+          </div>
+          <span class="tl-anio" aria-hidden="true">2006</span>
+        </article>
+
+        <article class="tl-item par reveal">
+          <span class="tl-nodo"></span>
+          <div class="tl-cont">
+            <p class="tl-fecha">27 · May · 2007</p>
+            <h3>La medianoche del cese</h3>
+            <p>A las 11:59 p. m., RCTV termina sus transmisiones en señal abierta. La frecuencia 2 amanece bajo la administración del canal público TVes.</p>
+          </div>
+          <span class="tl-anio" aria-hidden="true">2007</span>
+        </article>
+
+        <article class="tl-item impar reveal">
+          <span class="tl-nodo"></span>
+          <div class="tl-cont">
+            <p class="tl-fecha">Jun · 2007</p>
+            <h3>El recurso de nulidad</h3>
+            <p>RCTV acude a la Sala Político-Administrática del TSJ e interpone recurso de nulidad contra los actos del Ejecutivo y del ente regulador. Las medidas cautelares solicitadas son negadas; el fondo queda en sustanciación.</p>
+          </div>
+          <span class="tl-anio" aria-hidden="true">2007</span>
+        </article>
+
+        <article class="tl-item par reveal">
+          <span class="tl-nodo"></span>
+          <div class="tl-cont">
+            <p class="tl-fecha">Ene · 2010</p>
+            <h3>Ni siquiera el cable</h3>
+            <p>El regulador exige requisitos de producción nacional a los canales distribuidos por suscripción: RCTV queda también fuera de las parrillas de cable.</p>
+          </div>
+          <span class="tl-anio" aria-hidden="true">2010</span>
+        </article>
+
+        <article class="tl-item hoy reveal">
+          <span class="tl-nodo"></span>
+          <div class="tl-cont">
+            <p class="tl-fecha">Sesión actual</p>
+            <h3>La Sala vuelve a sesionar</h3>
+            <p>El expediente se reabre con fines académicos: los delegados de esta Sala sustanciarán el recurso, deliberarán y sentenciarán. El ojo del huracán es, ahora, suyo.</p>
+          </div>
+          <span class="tl-anio" aria-hidden="true">HOY</span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="sala" class="oscuro">
+    <div class="contenedor">
+      <header class="sec-cab reveal">
+        <p class="kicker">Expediente · 04 — Mandato</p>
+        <h2 class="sec-titulo">La Sala <em>te convoca.</em></h2>
+      </header>
+
+      <div class="mandatos">
+        <article class="mandato reveal">
+          <span class="m-num">01</span>
+          <h3>Promover</h3>
+          <p>
+            Llevar la <strong>rama administrativa</strong> a sus últimas consecuencias legales basándose en los hechos dictaminados.
+          </p>
+        </article>
+      </div>
+
+      <div class="cta reveal">
+        <h3>El país observa. <em>¿Qué decidirá la Sala?</em></h3>
+        <div class="hashtags">
+          <span class="tag">#SVPMUN</span>
+          <span class="tag">#RCTV</span>
+        </div>
+        <p class="cta-nota">Simulación de la Sala Político-Administrativa</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="pie">
+    <div class="pie-marca">
+      <strong>SVP MUN</strong>
+      <em>Tribunal Supremo de Justicia</em>
+    </div>
+    <div class="pie-centro">Derecho Administrativo · 2026</div>
+    <div class="pie-tags">Caso RCTV</div>
+  </div>
+  <div class="pie-nota">
+    Desarrollado para la delegación del Modelo de Naciones Unidas San Vicente de Paul (SVPMUN) — Barquisimeto, Venezuela.
+  </div>
+</footer>
+
+</body>
+</html>

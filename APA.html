@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APA — SVPMUN · Asociación Americana de Psicología</title>
+<meta name="description" content="Comité APA · SVPMUN — Diagnóstico de secuelas disociativas y psicopatológicas en víctimas de trauma complejo.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23A63B2C' d='M12 4.6C10.6 3.4 8.9 5 7.2 4.4 5.6 3.9 3.9 5 4.3 6.7 2.7 7.3 2.5 9.4 3.8 10.5 2.7 11.9 3.4 13.9 5.2 14.3 4.5 15.9 6 17.6 7.7 17.1 8.6 18.6 10.6 19 11.9 17.7L12 17.2Z'/><path fill='%23A63B2C' transform='scale(-1 1) translate(-24 0)' d='M12 4.6C10.6 3.4 8.9 5 7.2 4.4 5.6 3.9 3.9 5 4.3 6.7 2.7 7.3 2.5 9.4 3.8 10.5 2.7 11.9 3.4 13.9 5.2 14.3 4.5 15.9 6 17.6 7.7 17.1 8.6 18.6 10.6 19 11.9 17.7L12 17.2Z'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<!-- Carga de React y ReactDOM -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- Carga de Babel para interpretar JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* ============ SISTEMA ============ */
+:root{
+  --paper:#F1EBDD; --paper-2:#E9E1CE;
+  --ink:#211D16; --ink-2:#5B5445;
+  --line:rgba(33,29,22,.16); --line-soft:rgba(33,29,22,.09);
+  --carmine:#A63B2C; --carmine-deep:#7E2A1F; --gold:#A9853B;
+  --dark:#17140F; --paper-on-dark:#EDE6D4; --line-dark:rgba(237,230,212,.16);
+  --carmine-lt:#D96A50;
+  --serif:"Fraunces", Georgia, serif;
+  --mono:"IBM Plex Mono", ui-monospace, monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--serif); font-optical-sizing:auto;
+  font-size:17px; line-height:1.62;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+::selection{background:var(--carmine); color:var(--paper)}
+a{color:inherit; text-decoration:none}
+button{font:inherit; color:inherit; background:none; border:0; cursor:pointer}
+img,svg,canvas{display:block; max-width:100%}
+.wrap{max-width:1240px; margin-inline:auto; padding-inline:clamp(20px,5vw,72px)}
+.mono{font-family:var(--mono)}
+.eyebrow{
+  font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--carmine); font-weight:600;
+}
+/* grano de papel */
+body::after{
+  content:""; position:fixed; inset:0; z-index:200; pointer-events:none;
+  mix-blend-mode:multiply; opacity:.55;
+  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
+}
+/* ============ REVEAL / PROGRESO ============ */
+.js .reveal{opacity:0; transform:translateY(22px); transition:opacity .8s ease var(--rd,0s), transform .8s cubic-bezier(.2,.65,.25,1) var(--rd,0s)}
+.js .reveal.in{opacity:1; transform:none}
+#progress{position:fixed; top:0; left:0; height:2px; width:0; background:var(--carmine); z-index:210}
+/* ============ HEADER ============ */
+.head{position:fixed; top:0; left:0; right:0; z-index:100; transition:background .35s, box-shadow .35s, border-color .35s; border-bottom:1px solid transparent}
+.head.scrolled{background:rgba(241,235,223,.88); backdrop-filter:blur(10px); border-color:var(--line)}
+.head-in{display:flex; align-items:center; justify-content:space-between; height:66px}
+.brand{display:flex; align-items:center; gap:11px}
+.brand svg{width:26px; height:26px; flex:none}
+.brand-t{font-family:var(--mono); font-size:12px; letter-spacing:.22em; font-weight:600}
+.brand-t b{color:var(--carmine); font-weight:600}
+.nav{display:flex; align-items:center; gap:clamp(14px,2.4vw,34px)}
+.nav a{font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2); position:relative; padding:4px 0}
+.nav a::after{content:""; position:absolute; left:0; bottom:0; height:1.5px; width:0; background:var(--carmine); transition:width .3s}
+.nav a:hover::after,.nav a.active::after{width:100%}
+.nav a.active{color:var(--ink)}
+.nav-cta{border:1px solid var(--ink); padding:8px 16px !important; color:var(--ink) !important; transition:background .3s,color .3s}
+.nav-cta::after{display:none}
+.nav-cta:hover{background:var(--ink); color:var(--paper) !important}
+.nav-toggle{display:none; flex-direction:column; gap:6px; padding:8px; z-index:130}
+.nav-toggle span{width:24px; height:2px; background:var(--ink); transition:.35s}
+.nav-toggle[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
+/* ============ HERO ============ */
+.hero{padding:150px 0 70px; position:relative}
+.hero-grid{display:grid; grid-template-columns:1.04fr .96fr; gap:clamp(36px,5vw,72px); align-items:center}
+.hero h1{
+  font-size:clamp(2.7rem,6.3vw,5.3rem); line-height:.99; font-weight:560;
+  letter-spacing:-.02em; margin:22px 0 26px; text-wrap:balance;
+}
+.fragment{font-style:italic; color:var(--carmine); font-weight:500; white-space: nowrap;}
+.fragment .l{display:inline-block; animation:drift var(--t,8s) ease-in-out var(--d,0s) infinite; will-change:transform}
+@keyframes drift{
+  0%,100%{transform:translate(0,0) rotate(0deg)}
+  50%{transform:translate(calc(var(--dx)*var(--amp,1)),calc(var(--dy)*var(--amp,1))) rotate(calc(var(--dr)*var(--amp,1)))}
+}
+.hero h1:hover .fragment{--amp:.08}
+.lede{font-size:clamp(1.05rem,1.6vw,1.28rem); line-height:1.6; color:var(--ink-2); max-width:34em; margin-bottom:34px}
+.hero-cta{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:44px}
+.btn{display:inline-flex; align-items:center; gap:12px; font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; padding:15px 26px; transition:.3s}
+.btn svg{width:15px; height:15px; transition:transform .3s}
+.btn-solid{background:var(--ink); color:var(--paper)}
+.btn-solid:hover{background:var(--carmine)}
+.btn-solid:hover svg{transform:translateX(5px)}
+.btn-line{border:1px solid var(--ink)}
+.btn-line:hover{background:var(--ink); color:var(--paper)}
+.hero-meta{display:grid; grid-template-columns:repeat(3,auto); gap:clamp(18px,3vw,48px); padding-top:22px; border-top:1px solid var(--line)}
+.hero-meta div{font-family:var(--mono)}
+.hero-meta dt{font-size:9.5px; letter-spacing:.18em; color:var(--ink-2); text-transform:uppercase; margin-bottom:6px}
+.hero-meta dd{font-size:12.5px; font-weight:500; line-height:1.45}
+/* la lámina Rorschach */
+.plate{position:relative; border:1px solid var(--line); background:var(--paper); padding:14px 14px 18px;
+  transform:rotate(-1.3deg); box-shadow:0 18px 44px -18px rgba(33,29,22,.28); max-width:520px; margin-left:auto}
+.plate::before{ /* cinta adhesiva */
+  content:""; position:absolute; top:-13px; left:50%; width:96px; height:26px;
+  transform:translateX(-50%) rotate(-2deg);
+  background:rgba(196,178,142,.42); border-left:1px dashed rgba(33,29,22,.12); border-right:1px dashed rgba(33,29,22,.12);
+}
+.plate-head{display:flex; justify-content:space-between; font-family:var(--mono); font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-2); padding:2px 4px 12px}
+.plate-canvas{position:relative; aspect-ratio:1/1; background:var(--paper); border:1px solid var(--line-soft)}
+#rorschach{width:100%; height:100%; cursor:crosshair; transition:transform 1s cubic-bezier(.2,.6,.2,1)}
+.plate.flash .plate-canvas{outline:2px solid var(--carmine); outline-offset:4px; transition:outline-color .05s}
+.plate-foot{padding:16px 4px 0; display:grid; gap:8px}
+.interp{font-style:italic; font-size:15.5px; min-height:1.6em; color:var(--ink)}
+.interp .cursor{display:inline-block; width:2px; height:1em; background:var(--carmine); vertical-align:-.12em; margin-left:2px; animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.plate-sub{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-2)}
+.plate-sub b{color:var(--carmine); font-weight:600}
+/* ============ TICKER ============ */
+.ticker{border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden; padding:13px 0; background:var(--paper)}
+.ticker-in{display:flex; width:max-content; animation:tick 46s linear infinite}
+.ticker:hover .ticker-in{animation-play-state:paused}
+.ticker span{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); padding:0 18px; white-space:nowrap}
+.ticker span::after{content:"·"; margin-left:36px; color:var(--carmine)}
+@keyframes tick{to{transform:translateX(-50%)}}
+/* ============ SECCIONES ============ */
+.sec{padding:clamp(88px,12vh,150px) 0}
+.sec-alt{background:var(--paper-2)}
+.sec--dark{background:var(--dark); color:var(--paper-on-dark)}
+.sec--dark .eyebrow{color:var(--carmine-lt)}
+.sec-head{display:flex; align-items:baseline; gap:clamp(16px,3vw,38px); margin-bottom:clamp(38px,6vh,64px)}
+.sec-no{
+  font-family:var(--serif); font-weight:300; font-size:clamp(3.6rem,6.5vw,5.6rem); line-height:.8;
+  color:transparent; -webkit-text-stroke:1px rgba(33,29,22,.4); flex:none;
+}
+.sec--dark .sec-no{-webkit-text-stroke:1px rgba(237,230,212,.42)}
+.sec-head h2{font-size:clamp(1.9rem,3.8vw,3.1rem); font-weight:560; line-height:1.05; letter-spacing:-.015em; margin-top:10px; text-wrap:balance}
+.sec-intro{max-width:44em; color:var(--ink-2); font-size:1.06rem; margin-bottom:clamp(40px,6vh,60px)}
+.sec--dark .sec-intro{color:rgba(237,230,212,.72)}
+/* ---- 01 TÓPICO ---- */
+.topic-grid{display:grid; grid-template-columns:250px 1fr; gap:clamp(40px,5vw,80px)}
+.topic-meta{border-left:1px solid var(--line); padding-left:26px; align-self:start; position:sticky; top:110px}
+.topic-meta dt{font-family:var(--mono); font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--carmine); margin-bottom:5px}
+.topic-meta dd{font-size:14.5px; margin-bottom:22px; line-height:1.5}
+.topic-body p{font-size:clamp(1.06rem,1.5vw,1.22rem); line-height:1.72; margin-bottom:26px; color:#2A251C; max-width:36em}
+.dropcap::first-letter{font-size:3.6em; float:left; line-height:.8; padding-right:.14em; padding-top:.06em; font-weight:600; color:var(--carmine)}
+em.hl{font-style:italic; text-decoration:underline; text-decoration-color:var(--carmine); text-decoration-thickness:2px; text-underline-offset:4px}
+.pull{
+  font-size:clamp(1.55rem,2.9vw,2.3rem); line-height:1.28; font-style:italic; font-weight:420;
+  margin:52px 0; padding-left:28px; border-left:3px solid var(--carmine); text-wrap:balance; color:var(--ink);
+}
+/* ---- 02 ANATOMÍA ---- */
+.a-row{border-top:1px solid var(--line)}
+.a-row:last-child{border-bottom:1px solid var(--line)}
+.a-head{
+  display:grid; grid-template-columns:84px 1fr 190px 44px; align-items:center; gap:clamp(14px,2.5vw,32px);
+  width:100%; text-align:left; padding:30px 8px; transition:background .3s;
+}
+.a-row:hover .a-head,.a-row.open .a-head{background:rgba(33,29,22,.035)}
+.a-no{font-family:var(--serif); font-size:clamp(1.8rem,3vw,2.6rem); font-weight:340; font-style:italic; color:var(--ink-2); transition:color .3s; line-height:1}
+.a-row:hover .a-no,.a-row.open .a-no{color:var(--carmine)}
+.a-title{font-size:clamp(1.35rem,2.4vw,2rem); font-weight:560; line-height:1.12}
+.a-title small{display:block; font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-2); margin-bottom:8px; font-weight:400}
+.a-fig{color:var(--ink-2); transition:color .4s}
+.a-row:hover .a-fig{color:var(--ink)}
+.a-plus{width:30px; height:30px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; justify-self:end; transition:.35s}
+.a-plus svg{width:12px; height:12px; transition:transform .4s}
+.a-row.open .a-plus{background:var(--ink); border-color:var(--ink)}
+.a-row.open .a-plus svg{transform:rotate(45deg); stroke:var(--paper)}
+.a-body{display:grid; grid-template-rows:0fr; transition:grid-template-rows .55s cubic-bezier(.25,.7,.25,1)}
+.a-row.open .a-body{grid-template-rows:1fr}
+.a-body-in{overflow:hidden}
+.a-body-in>div{padding:0 8px 36px; margin-left:calc(84px + clamp(14px,2.5vw,32px)); max-width:44em}
+.a-body p{font-size:1.04rem; color:#2A251C}
+.a-markers{margin-top:18px; font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; line-height:2; color:var(--ink-2)}
+.a-markers b{color:var(--carmine); font-weight:600; letter-spacing:.18em; margin-right:10px}
+/* figuras SVG */
+.a-fig svg{width:100%; height:auto; overflow:visible}
+.wedge{fill:none; stroke:currentColor; stroke-width:1.6; transition:transform .55s cubic-bezier(.3,.7,.3,1.1)}
+.a-row:hover .w0{transform:translate(4.5px,2.6px)} .a-row:hover .w1{transform:translate(0,5.5px)}
+.a-row:hover .w2{transform:translate(-4.5px,2.6px)} .a-row:hover .w3{transform:translate(-4.5px,-2.6px)}
+.a-row:hover .w4{transform:translate(0,-5.5px)} .a-row:hover .w5{transform:translate(4.5px,-2.6px)}
+.mem-line{stroke:currentColor; stroke-width:1.2; stroke-dasharray:5 6; opacity:.55; animation:dashmove 14s linear infinite}
+@keyframes dashmove{to{stroke-dashoffset:-220}}
+.mem-dot{fill:currentColor; transition:opacity .5s, transform .5s}
+.mem-gap{fill:none; stroke:var(--carmine); stroke-width:1.4; stroke-dasharray:3 4; opacity:.5; transition:opacity .5s}
+.a-row:hover .mem-dot{opacity:.22}
+.a-row:hover .mem-gap{opacity:1; animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{stroke-width:2.4}}
+.reg-band{fill:rgba(33,29,22,.06)}
+.reg-limit{stroke:currentColor; stroke-width:1; stroke-dasharray:3 5; opacity:.5}
+.reg-chaos{fill:none; stroke:currentColor; stroke-width:1.4; opacity:.8; transition:opacity .6s}
+.reg-calm{fill:none; stroke:var(--carmine); stroke-width:2; stroke-dasharray:100; stroke-dashoffset:100; transition:stroke-dashoffset 1.3s ease .1s}
+.a-row:hover .reg-chaos{opacity:.14}
+.a-row:hover .reg-calm{stroke-dashoffset:0}
+/* ---- 03 LENTES (oscura) ---- */
+.lenses-grid{display:grid; grid-template-columns:.9fr 1.35fr; gap:clamp(36px,5vw,80px); align-items:start}
+.lens-tab{
+  display:grid; grid-template-columns:44px 1fr; gap:8px 18px; width:100%; text-align:left;
+  padding:24px 14px; border-top:1px solid var(--line-dark); align-items:baseline; transition:background .3s;
+}
+.lens-tab:last-of-type{border-bottom:1px solid var(--line-dark)}
+.lens-tab[aria-selected="true"]{background:rgba(237,230,212,.05)}
+.lens-no{font-family:var(--serif); font-style:italic; font-size:1.7rem; font-weight:340; color:rgba(237,230,212,.5); transition:color .3s}
+.lens-tab[aria-selected="true"] .lens-no{color:var(--carmine-lt)}
+.lens-name{font-size:clamp(1.25rem,2vw,1.65rem); font-weight:560; line-height:1.1}
+.lens-tag{font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:rgba(237,230,212,.55); margin-top:6px}
+.lens-seen{grid-column:2; font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--carmine-lt); text-transform:uppercase; opacity:0; transition:opacity .4s; margin-top:4px}
+.lens-tab.seen .lens-seen{opacity:1}
+.convergence{padding:24px 14px 4px; display:grid; gap:12px}
+.convergence>span{font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:rgba(237,230,212,.5)}
+.pips{display:flex; gap:10px}
+.pip{width:12px; height:12px; border:1px solid rgba(237,230,212,.4); transition:.4s}
+.pip.on{background:var(--carmine-lt); border-color:var(--carmine-lt)}
+#convNote{font-family:var(--mono); font-size:11px; line-height:1.7; color:rgba(237,230,212,.6); letter-spacing:.04em}
+.case-panel{position:relative; border:1px solid var(--line-dark); padding:clamp(24px,3vw,40px)}
+.case-file{padding-bottom:24px; border-bottom:1px solid var(--line-dark); margin-bottom:26px}
+.file-tag{font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--carmine-lt); display:block; margin-bottom:12px}
+.case-text{font-size:1.02rem; line-height:1.7; color:rgba(237,230,212,.85)}
+.lens-reading{transition:opacity .22s, transform .22s; min-height:300px}
+.lens-reading.out{opacity:0; transform:translateY(10px)}
+.lr-kicker{font-family:var(--mono); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:rgba(237,230,212,.5); margin-bottom:10px}
+.lr-title{font-size:clamp(1.5rem,2.4vw,2rem); font-weight:560; line-height:1.1; margin-bottom:8px}
+.lr-lead{font-style:italic; color:var(--carmine-lt); font-size:1.1rem; margin-bottom:26px}
+.lr-h{font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:rgba(237,230,212,.5); margin:22px 0 10px}
+.lr-list{list-style:none}
+.lr-list li{padding-left:22px; position:relative; margin-bottom:10px; font-size:15.5px; line-height:1.6; color:rgba(237,230,212,.9)}
+.lr-list li::before{content:"—"; position:absolute; left:0; color:var(--carmine-lt)}
+.lr-inst{font-family:var(--mono); font-size:12px; letter-spacing:.06em; line-height:1.8; color:rgba(237,230,212,.8)}
+.lr-give{font-size:15.5px; line-height:1.65; color:rgba(237,230,212,.9); border-left:2px solid var(--carmine-lt); padding-left:16px; margin-top:8px}
+.stamp{
+  position:absolute; right:22px; bottom:14px; border:2px solid var(--carmine-lt); color:var(--carmine-lt);
+  padding:10px 16px 9px; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; line-height:1.5; transform:rotate(-7deg); cursor:pointer;
+  animation:stampIn .55s cubic-bezier(.2,1.4,.4,1) both; user-select:none; text-align:center;
+}
+.stamp::after{content:""; position:absolute; inset:3px; border:1px solid rgba(217,106,80,.55)}
+@keyframes stampIn{
+  0%{opacity:0; transform:rotate(-7deg) scale(2.8)}
+  55%{opacity:1; transform:rotate(-7deg) scale(.9)}
+  78%{transform:rotate(-7deg) scale(1.05)}
+  100%{transform:rotate(-7deg) scale(1)}
+}
+/* ---- 04 VENN ---- */
+.venn-layout{display:grid; grid-template-columns:1.15fr .85fr; gap:clamp(32px,4vw,64px); align-items:center}
+#venn{max-width:560px; margin-inline:auto; touch-action:manipulation}
+#venn circle{mix-blend-mode:multiply; transition:fill-opacity .45s; cursor:crosshair}
+.zone-links{display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:34px; padding-top:24px; border-top:1px solid var(--line)}
+.zone-links button{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--ink-2); padding:4px 0; border-bottom:1px solid transparent; transition:.25s; text-transform:uppercase}
+.zone-links button:hover,.zone-links button.on{color:var(--carmine); border-color:var(--carmine)}
+.venn-panel{border-left:1px solid var(--line); padding-left:clamp(20px,2.5vw,36px)}
+.zone-name{font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--carmine); font-weight:600; display:block; margin-bottom:16px}
+.venn-panel p{font-size:1.08rem; line-height:1.68; min-height:9.5em; color:#2A251C}
+.venn-note{margin-top:24px; font-style:italic; font-size:14.5px; color:var(--ink-2); padding-left:16px; border-left:2px solid var(--gold)}
+/* ---- 05 PROTOCOLO ---- */
+.timeline{position:relative; padding-top:46px}
+.tl-rule{position:absolute; top:0; left:0; right:0; height:9px;
+  background:repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px calc(100%/48)); opacity:.5}
+.tl-items{display:flex; gap:clamp(24px,4vw,64px)}
+.tl-item{flex:1; position:relative; padding-top:6px}
+.tl-item::before{content:""; position:absolute; top:-46px; left:0; width:1.5px; height:34px; background:var(--ink)}
+.tl-item{margin-top:var(--st,0)}
+.tl-no{font-family:var(--mono); font-size:10.5px; letter-spacing:.22em; color:var(--carmine); font-weight:600; text-transform:uppercase}
+.tl-item h3{font-size:clamp(1.15rem,1.9vw,1.55rem); font-weight:560; margin:10px 0 12px; line-height:1.15}
+.tl-item p{font-size:14.5px; color:var(--ink-2); line-height:1.65}
+.tl-item{transition:transform .4s}
+.tl-item:hover{transform:translateY(-6px)}
+/* ---- CTA ---- */
+.cta{text-align:center; padding:clamp(100px,14vh,170px) 0}
+.cta h2{font-size:clamp(2.4rem,5.6vw,4.4rem); font-weight:560; line-height:1.02; letter-spacing:-.02em; margin:20px 0 24px; text-wrap:balance}
+.cta h2 em{font-style:italic; color:var(--carmine); font-weight:500}
+.cta p{max-width:32em; margin:0 auto 42px; color:var(--ink-2); font-size:1.08rem}
+.cta-actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:36px}
+.hashtags{font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:var(--ink-2)}
+/* ---- FOOTER ---- */
+footer{background:var(--dark); color:rgba(237,230,212,.65); padding:34px 0; font-family:var(--mono); font-size:11px; letter-spacing:.08em; line-height:1.9}
+.foot-in{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap}
+.foot-in a{color:var(--paper-on-dark); border-bottom:1px solid var(--carmine-lt)}
+.foot-in a:hover{color:var(--carmine-lt)}
+
+/* ============ UTILIDADES RESPONSIVAS DE TEXTO ============ */
+.mobile-only { display: none !important; }
+.desktop-only { display: block; }
+span.desktop-only { display: inline; }
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1000px){
+  .hero-grid{grid-template-columns:1fr}
+  .plate{margin:14px auto 0}
+  .topic-grid{grid-template-columns:1fr}
+  .topic-meta{position:static; border-left:0; border-top:1px solid var(--line); padding:20px 0 0; display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .lenses-grid,.venn-layout{grid-template-columns:1fr}
+  .a-head{grid-template-columns:52px 1fr 34px}
+  .a-fig{display:none}
+  .a-body-in>div{margin-left:calc(52px + clamp(14px,2.5vw,32px))}
+}
+@media(max-width:920px){
+  .nav-toggle{display:flex}
+  .nav{
+    position:fixed; inset:0; background:var(--paper); flex-direction:column; justify-content:center;
+    align-items:flex-start; gap:6px; padding:100px 9vw; transform:translateY(-102%);
+    transition:transform .5s cubic-bezier(.3,.7,.3,1); z-index:120;
+  }
+  .nav.open{transform:none}
+  .nav a{font-family:var(--serif); font-size:clamp(1.7rem,7vw,2.4rem); font-weight:560; text-transform:none; letter-spacing:0; color:var(--ink)}
+  .nav-cta{border:1px solid var(--ink); padding:12px 22px !important; font-family:var(--serif)}
+  body.lock{overflow:hidden}
+}
+@media(max-width:760px){
+  /* Alternancia de visibilidad para vista movil */
+  .mobile-only { display: block !important; }
+  span.mobile-only { display: inline !important; }
+  .desktop-only { display: none !important; }
+
+  /* Adaptación visual de móvil */
+  .hero { padding: 110px 0 40px; }
+  .hero h1 { font-size: clamp(2.2rem, 8.5vw, 3.2rem); margin: 16px 0 20px; }
+  .sec { padding: 56px 0; }
+  .sec-head { margin-bottom: 28px; }
+  .sec-intro { margin-bottom: 28px; }
+  .plate { max-width: 100%; transform: none; }
+  .pull { margin: 24px 0; font-size: 1.28rem; padding-left: 18px; }
+  .a-body-in>div { margin-left: 0; padding: 0 0 24px; }
+  .case-panel { padding: 20px 16px; }
+  .lens-reading { min-height: auto; }
+  .stamp { position: relative; right: auto; bottom: auto; margin-top: 20px; width: 100%; transform: none; }
+  .stamp::after { display: none; }
+  .venn-panel { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; padding-top: 20px; }
+  .venn-panel p { min-height: auto; }
+
+  .tl-items{flex-direction:column; gap:40px}
+  .tl-rule{left:0; right:auto; top:0; bottom:0; width:9px; height:auto;
+    background:repeating-linear-gradient(180deg, var(--ink) 0 1px, transparent 1px 14px)}
+  .timeline{padding:0 0 0 34px}
+  .tl-item{margin-top:0 !important}
+  .tl-item::before{top:4px; left:-34px; width:34px; height:1.5px}
+  .hero-meta{grid-template-columns:1fr 1fr}
+  .topic-meta{grid-template-columns:1fr 1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s !important; transition-duration:.001s !important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+<div id="progress"></div>
+
+<!-- ============ HEADER ============ -->
+<header class="head" id="head">
+  <div class="wrap head-in">
+    <a class="brand" href="/i" aria-label="Volver al inicio de SVPMUN">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#211D16" d="M12 4.6C10.6 3.4 8.9 5 7.2 4.4 5.6 3.9 3.9 5 4.3 6.7 2.7 7.3 2.5 9.4 3.8 10.5 2.7 11.9 3.4 13.9 5.2 14.3 4.5 15.9 6 17.6 7.7 17.1 8.6 18.6 10.6 19 11.9 17.7L12 17.2Z"/>
+        <path fill="#211D16" transform="scale(-1 1) translate(-24 0)" d="M12 4.6C10.6 3.4 8.9 5 7.2 4.4 5.6 3.9 3.9 5 4.3 6.7 2.7 7.3 2.5 9.4 3.8 10.5 2.7 11.9 3.4 13.9 5.2 14.3 4.5 15.9 6 17.6 7.7 17.1 8.6 18.6 10.6 19 11.9 17.7L12 17.2Z"/>
+        <circle cx="2.6" cy="8.4" r="1" fill="#A63B2C"/><circle cx="21.4" cy="15.2" r=".8" fill="#A63B2C"/>
+      </svg>
+      <span class="brand-t">SVPMUN&nbsp;·&nbsp;<b>APA</b></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navegación del comité">
+   
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-label="Abrir menú">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+    <script src="/static/navbar.js"></script>
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow reveal">Asociación Americana de Psicología · Sesión de expertos</p>
+      <h1 class="reveal" style="--rd:.08s">Anatomía de una mente <span class="fragment" id="fragWord">  
+        fragmentada</span>.</h1>
+      
+      <!-- Texto extenso para Computadora -->
+      <p class="lede reveal desktop-only" style="--rd:.16s">Tópico: diagnóstico de secuelas disociativas y psicopatológicas en víctimas de trauma complejo. Un comité donde la clínica no se defiende con adjetivos, sino con rigor, evidencia y disenso documentado.</p>
+      <!-- Texto resúmen corto para Teléfono -->
+      <p class="lede reveal mobile-only" style="--rd:.16s">Tópico: Diagnóstico de trauma complejo y secuelas disociativas con rigor y evidencia clínica.</p>
+      
+      <div class="hero-cta reveal" style="--rd:.24s">
+        <a class="btn btn-solid" href="#topico">Leer el expediente
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-line" href="#lentes">Contrastar las lentes</a>
+      </div>
+      <dl class="hero-meta reveal" style="--rd:.32s">
+        <div><dt>Expediente</dt><dd>CASO 07-C · tópico único</dd></div>
+        <div><dt>Encuadre</dt><dd>DSM-5-TR · ICD-11 (6B69)</dd></div>
+        <div><dt>Formato</dt><dd>Deliberación por casos clínicos</dd></div>
+      </dl>
+    </div>
+
+    <figure class="plate reveal" id="plate" style="--rd:.2s">
+      <figcaption class="plate-head"><span>Lámina perceptual</span><span>Tinta · s/papel</span></figcaption>
+      <div class="plate-canvas"><canvas id="rorschach" aria-label="Test de Rorschach generativo: haz clic para estampar una nueva mancha"></canvas></div>
+      <div class="plate-foot">
+        <p class="interp" id="interp"><span id="interpTxt"></span><span class="cursor"></span></p>
+        <div class="plate-sub">
+          <span id="plateNo">Lámina n.º 001</span>
+          <span>Estampa una nueva → <b>clic</b></span>
+        </div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- cinta de códigos clínicos -->
+<div class="ticker" aria-hidden="true"><div class="ticker-in" id="tickerIn"></div></div>
+
+<!-- ============ 01 · TÓPICO ============ -->
+<section class="sec" id="topico">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-no" aria-hidden="true">01</span>
+      <div><p class="eyebrow">El expediente</p><h2>Mucho más que catalogar síntomas</h2></div>
+    </div>
+    <div class="topic-grid">
+      <dl class="topic-meta reveal">
+        <dt>Naturaleza</dt><dd>Deliberación clínica entre especialistas de distintas escuelas.</dd>
+        <dt>Objeto</dt><dd>Secuelas disociativas y psicopatológicas del trauma complejo.</dd>
+        <dt>Meta</dt><dd>Criterios de consenso que orienten el futuro de la intervención.</dd>
+        <dt>Material</dt><dd>Historiales clínicos anonimizados de alta complejidad.</dd>
+      </dl>
+
+      <!-- Versión larga en computadora -->
+      <div class="topic-body desktop-only">
+        <p class="dropcap reveal">El diagnóstico en psicología clínica es mucho más que catalogar síntomas: es un proceso de <em class="hl">precisión</em>, análisis riguroso y constante reevaluación. Frente a cuadros de trauma complejo, la línea entre la <em class="hl">disociación</em>, los <em class="hl">trastornos de la personalidad</em> y otras manifestaciones psicopatológicas puede volverse difusa, planteando un reto metodológico y conceptual de primer nivel para la comunidad profesional.</p>
+        <blockquote class="pull reveal">Cuando la respuesta al trauma fragmenta la identidad, la memoria y la autorregulación emocional, los modelos de abordaje tradicionales son puestos a prueba.</blockquote>
+        <p class="reveal">La variabilidad en la presentación sintomática de cada paciente exige que la evaluación trascienda el estándar: integrar perspectivas <em class="hl">neurobiológicas</em>, <em class="hl">psicodinámicas</em> y <em class="hl">cognitivo-conductuales</em> es la única vía hacia diagnósticos integrales, éticos y verdaderamente efectivos.</p>
+        <p class="reveal">Como espacio de convergencia para los mayores expertos de la disciplina, la Asociación Americana de Psicología se convierte en el foro idóneo para debatir los casos clínicos más intrincados: revisión profunda de historiales, contraste de paradigmas y deliberación entre especialistas, para trazar consensos que delimiten el perfil de la patología y orienten el futuro de las intervenciones clínicas.</p>
+      </div>
+
+      <!-- Versión resumida en teléfono -->
+      <div class="topic-body mobile-only">
+        <p class="dropcap reveal">El diagnóstico de trauma complejo exige precisión. La frontera entre la <em class="hl">disociación</em> y los trastornos de la personalidad suele volverse difusa.</p>
+        <blockquote class="pull reveal">Frente a la fragmentación de la mente, los modelos tradicionales son puestos a prueba.</blockquote>
+        <p class="reveal">Integrar las perspectivas <em class="hl">neurobiológica</em>, <em class="hl">psicodinámica</em> y <em class="hl">cognitivo-conductual</em> es esencial para lograr consensos diagnósticos éticos y precisos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 · ANATOMÍA ============ -->
+<section class="sec sec-alt" id="anatomia">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-no" aria-hidden="true">02</span>
+      <div><p class="eyebrow">Anatomía del trauma</p><h2>Lo que el trauma fragmenta</h2></div>
+    </div>
+    
+    <p class="sec-intro reveal desktop-only">Antes del debate, el mapa. Tres dominios que el trauma complejo suele deshacer — y que todo diagnóstico del comité deberá volver a articular.</p>
+    <p class="sec-intro reveal mobile-only">Tres dominios fundamentales que el trauma complejo quiebra:</p>
+
+    <article class="a-row reveal">
+      <button class="a-head" aria-expanded="false" aria-controls="aBody1">
+        <span class="a-no" aria-hidden="true">I</span>
+        <span class="a-title"><small>La identidad</small>El yo discontinuo</span>
+        <span class="a-fig" aria-hidden="true">
+          <svg viewBox="0 0 140 110">
+            <path class="wedge w0" d="M70 55 L101.9 57.8 A32 32 0 0 1 88.3 81.2 Z"/>
+            <path class="wedge w1" d="M70 55 L83.5 84 A32 32 0 0 1 56.5 84 Z"/>
+            <path class="wedge w2" d="M70 55 L51.7 81.2 A32 32 0 0 1 38.1 57.8 Z"/>
+            <path class="wedge w3" d="M70 55 L38.1 52.2 A32 32 0 0 1 51.7 28.8 Z"/>
+            <path class="wedge w4" d="M70 55 L56.4 26 A32 32 0 0 1 83.5 26 Z"/>
+            <path class="wedge w5" d="M70 55 L88.3 28.8 A32 32 0 0 1 101.9 52.2 Z"/>
+          </svg>
+        </span>
+        <span class="a-plus"><svg viewBox="0 0 12 12" fill="none" stroke="#211D16" stroke-width="1.6"><path d="M6 0v12M0 6h12"/></svg></span>
+      </button>
+      <div class="a-body" id="aBody1"><div class="a-body-in"><div>
+        <p class="desktop-only">El sentido estable de quién se es se quiebra: partes que sienten, recuerdan o niegan por separado conviven sin integrarse. La pregunta clínica deja de ser «¿qué tiene este paciente?» y pasa a ser «¿quiénes lo habitan?».</p>
+        <p class="mobile-only">El sentido del yo se quiebra en partes que sienten y recuerdan de forma separada sin integrarse.</p>
+        <p class="a-markers"><b>Marcadores</b> conmutación de identidad · pérdida de agencia · voz interior crítica</p>
+      </div></div></div>
+    </article>
+
+    <article class="a-row reveal" style="--rd:.08s">
+      <button class="a-head" aria-expanded="false" aria-controls="aBody2">
+        <span class="a-no" aria-hidden="true">II</span>
+        <span class="a-title"><small>La memoria</small>El archivo con huecos</span>
+        <span class="a-fig" aria-hidden="true">
+          <svg viewBox="0 0 140 110">
+            <line class="mem-line" x1="12" y1="62" x2="128" y2="62"/>
+            <circle class="mem-dot" cx="20" cy="62" r="4.5"/><circle class="mem-dot" cx="37" cy="62" r="4.5"/>
+            <circle class="mem-gap" cx="53" cy="62" r="5.5"/>
+            <circle class="mem-dot" cx="70" cy="62" r="4.5"/><circle class="mem-dot" cx="87" cy="62" r="4.5"/>
+            <circle class="mem-gap" cx="103" cy="62" r="5.5"/>
+            <circle class="mem-gap" cx="120" cy="62" r="5.5"/>
+            <text x="66" y="34" font-family="IBM Plex Mono" font-size="8" letter-spacing="2" fill="currentColor" opacity=".55">AUTOBIOGRÁFICA</text>
+          </svg>
+        </span>
+        <span class="a-plus"><svg viewBox="0 0 12 12" fill="none" stroke="#211D16" stroke-width="1.6"><path d="M6 0v12M0 6h12"/></svg></span>
+      </button>
+      <div class="a-body" id="aBody2"><div class="a-body-in"><div>
+        <p class="desktop-only">La memoria autobiográfica deja de ser un relato continuo: amnesias <em class="hl">lacunares</em>, recuerdos intrusivos que no encuentran lugar en el tiempo y episodios vividos «como si no hubieran pasado». La historia deja de ser historia.</p>
+        <p class="mobile-only">Amnesias situacionales y recuerdos intrusivos desorganizan el relato autobiográfico.</p>
+        <p class="a-markers"><b>Marcadores</b> amnesia lacunar · recuerdos sensoriales sin narrativa · desrealización</p>
+      </div></div></div>
+    </article>
+
+    <article class="a-row reveal" style="--rd:.16s">
+      <button class="a-head" aria-expanded="false" aria-controls="aBody3">
+        <span class="a-no" aria-hidden="true">III</span>
+        <span class="a-title"><small>La autorregulación</small>El termostato roto</span>
+        <span class="a-fig" aria-hidden="true">
+          <svg viewBox="0 0 140 110">
+            <rect class="reg-band" x="8" y="44" width="124" height="32"/>
+            <line class="reg-limit" x1="8" y1="44" x2="132" y2="44"/>
+            <line class="reg-limit" x1="8" y1="76" x2="132" y2="76"/>
+            <path class="reg-chaos" d="M8 60 L14 20 22 88 30 30 38 95 48 26 58 86 70 18 80 92 90 34 100 90 112 28 124 80 132 40"/>
+            <path class="reg-calm" pathLength="100" d="M8 60 C28 42 44 78 68 60 92 42 112 78 132 60"/>
+            <text x="16" y="14" font-family="IBM Plex Mono" font-size="7.5" letter-spacing="1.5" fill="currentColor" opacity=".55">VENTANA DE TOLERANCIA</text>
+          </svg>
+        </span>
+        <span class="a-plus"><svg viewBox="0 0 12 12" fill="none" stroke="#211D16" stroke-width="1.6"><path d="M6 0v12M0 6h12"/></svg></span>
+      </button>
+      <div class="a-body" id="aBody3"><div class="a-body-in"><div>
+        <p class="desktop-only">El sistema de alarma no se apaga: la <em class="hl">ventana de tolerancia</em> se estrecha y la persona oscila entre la sobreactivación y el colapso, sin escala intermedia. Lo que otros llaman «exageración» es fisiología defendiéndose.</p>
+        <p class="mobile-only">La ventana de tolerancia se estrecha, oscilando de forma abrupta entre hiperactivación y colapso.</p>
+        <p class="a-markers"><b>Marcadores</b> hipervigilancia · analgesia física · autolesión como regulación</p>
+      </div></div></div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 03 · LENTES (oscura) ============ -->
+<section class="sec sec--dark" id="lentes">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-no" aria-hidden="true">03</span>
+      <div><p class="eyebrow">Contraste de paradigmas</p><h2>Tres lentes, un solo diagnóstico</h2></div>
+    </div>
+    
+    <p class="sec-intro reveal desktop-only">El mismo caso, leído por cada escuela. Contrasta las tres perspectivas — como hará el comité en sesión — y observa qué aporta cada una al consenso.</p>
+    <p class="sec-intro reveal mobile-only">Contrasta las tres perspectivas para construir el consenso:</p>
+
+    <div class="lenses-grid">
+      <div class="reveal">
+        <div class="lens-tabs" role="tablist" aria-label="Perspectivas de análisis" id="lensTabs">
+          <button class="lens-tab" role="tab" aria-selected="true" data-lens="neuro">
+            <span class="lens-no" aria-hidden="true">I</span>
+            <span><span class="lens-name">Neurobiológica</span><span class="lens-tag">el cerebro que se defiende</span></span>
+            <span class="lens-seen">✕ perspectiva contrastada</span>
+          </button>
+          <button class="lens-tab" role="tab" aria-selected="false" data-lens="psico">
+            <span class="lens-no" aria-hidden="true">II</span>
+            <span><span class="lens-name">Psicodinámica</span><span class="lens-tag">el síntoma que protege</span></span>
+            <span class="lens-seen">✕ perspectiva contrastada</span>
+          </button>
+          <button class="lens-tab" role="tab" aria-selected="false" data-lens="cc">
+            <span class="lens-no" aria-hidden="true">III</span>
+            <span><span class="lens-name">Cognitivo-conductual</span><span class="lens-tag">el circuito que se refuerza</span></span>
+            <span class="lens-seen">✕ perspectiva contrastada</span>
+          </button>
+        </div>
+        <div class="convergence">
+          <span>Convergencia</span>
+          <div class="pips"><span class="pip" data-pip="neuro"></span><span class="pip" data-pip="psico"></span><span class="pip" data-pip="cc"></span></div>
+          <p id="convNote">Contrasta las tres perspectivas para alcanzar el consenso parcial del comité.</p>
+        </div>
+      </div>
+
+      <div class="case-panel reveal" style="--rd:.1s">
+        <div class="case-file">
+          <span class="file-tag">Caso 07-C · expediente anonimizado</span>
+          <p class="case-text desktop-only">Paciente de 27 años. Adversidad interpersonal sostenida durante la infancia; tres diagnósticos previos que no sostuvieron el tratamiento. Episodios de despersonalización, amnesias lacunares y autolesión durante estados de «no sentir nada».</p>
+          <p class="case-text mobile-only">Paciente 27 años. Trauma infantil sostenido. Presenta despersonalización, amnesias lacunares y autolesiones en estados anestésicos.</p>
+        </div>
+        <div class="lens-reading" id="lensReading" role="tabpanel" aria-live="polite"></div>
+        <button class="stamp" id="stamp" hidden title="Reestampar sello">Perspectivas<br>contrastadas · APA</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 · DIAGNÓSTICO / VENN ============ -->
+<section class="sec" id="diagnostico">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-no" aria-hidden="true">04</span>
+      <div><p class="eyebrow">El reto diagnóstico</p><h2>Donde los diagnósticos se solapan</h2></div>
+    </div>
+    
+    <p class="sec-intro reveal desktop-only">La misma presentación clínica puede reclamarse desde tres encuadres distintos. Tres tintas, superpuestas — literalmente — sobre el mismo papel. Explora cada zona.</p>
+    <p class="sec-intro reveal mobile-only">Explora las zonas de superposición entre los tres encuadres clínicos:</p>
+
+    <div class="venn-layout">
+      <div class="reveal">
+        <svg id="venn" viewBox="0 0 560 520" role="img" aria-label="Diagrama de solapamiento entre TEPT, TRP y TLP">
+          <rect x="0" y="0" width="560" height="520" fill="#F1EBDD"/>
+          <circle id="cA" cx="235" cy="195" r="150" fill="#211D16" fill-opacity=".28"/>
+          <circle id="cB" cx="325" cy="195" r="150" fill="#A63B2C" fill-opacity=".3"/>
+          <circle id="cC" cx="280" cy="285" r="150" fill="#A9853B" fill-opacity=".32"/>
+          <g font-family="IBM Plex Mono" font-size="12" letter-spacing="2" fill="#5B5445" pointer-events="none" font-weight="600">
+            <text x="52" y="70">TEPT</text>
+            <text x="474" y="70">TRP</text>
+            <text x="258" y="500">TLP</text>
+            <line x1="70" y1="80" x2="118" y2="118" stroke="#5B5445" stroke-width="1" opacity=".5"/>
+            <line x1="480" y1="80" x2="442" y2="118" stroke="#5B5445" stroke-width="1" opacity=".5"/>
+            <line x1="280" y1="490" x2="280" y2="452" stroke="#5B5445" stroke-width="1" opacity=".5"/>
+          </g>
+        </svg>
+        <div class="zone-links" role="group" aria-label="Zonas del diagrama">
+          <button data-zone="A">TEPT</button>
+          <button data-zone="B">TRP</button>
+          <button data-zone="C">TLP</button>
+          <button data-zone="AB">TEPT ∩ TRP</button>
+          <button data-zone="AC">TEPT ∩ TLP</button>
+          <button data-zone="BC">TRP ∩ TLP</button>
+          <button data-zone="ABC">El dilema — los tres</button>
+        </div>
+      </div>
+      <aside class="venn-panel reveal" style="--rd:.1s" aria-live="polite">
+        <span class="zone-name" id="zoneName">Pasa el cursor por las tintas</span>
+        <p id="zoneText">Cada círculo es un encuadre distinto sobre el mismo caso. Su superposición — literal, en tinta — es exactamente el problema que este comité vino a resolver.</p>
+        <p class="venn-note">Nota del comité: el solapamiento no es un error del dibujo. Es el hallazgo.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 · PROTOCOLO ============ -->
+<section class="sec sec-alt" id="protocolo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-no" aria-hidden="true">05</span>
+      <div><p class="eyebrow">Protocolo del comité</p><h2>El método de la sesión</h2></div>
+    </div>
+    
+    <p class="sec-intro reveal desktop-only">Cuatro fases, un solo objetivo: que el disenso quede documentado y el consenso, firmado.</p>
+    <p class="sec-intro reveal mobile-only">Proceso en cuatro fases para alcanzar el consenso:</p>
+
+    <div class="timeline">
+      <div class="tl-rule" aria-hidden="true"></div>
+      <div class="tl-items">
+        <div class="tl-item reveal" style="--st:0">
+          <span class="tl-no">Fase 01</span>
+          <h3>Revisión de historiales</h3>
+          <p class="desktop-only">Las delegaciones reciben expedientes clínicos anonimizados: síntomas, curso del trastorno y respuestas previas al tratamiento.</p>
+          <p class="mobile-only">Análisis de expedientes clínicos anonimizados y tratamientos previos.</p>
+        </div>
+        <div class="tl-item reveal" style="--st:34px; --rd:.08s">
+          <span class="tl-no">Fase 02</span>
+          <h3>Contraste de paradigmas</h3>
+          <p class="desktop-only">Cada escuela defiende su lectura del caso ante las demás. Aquí las preguntas duran más que las respuestas — y así debe ser.</p>
+          <p class="mobile-only">Debate directo entre escuelas de pensamiento sobre el caso.</p>
+        </div>
+        <div class="tl-item reveal" style="--st:68px; --rd:.16s">
+          <span class="tl-no">Fase 03</span>
+          <h3>Deliberación de casos</h3>
+          <p class="desktop-only">Sesiones por bloques: el comité debate los casos que ningún manual resuelve solo, con la evidencia sobre la mesa.</p>
+          <p class="mobile-only">Deliberación de casos clínicos complejos no estandarizados.</p>
+        </div>
+        <div class="tl-item reveal" style="--st:102px; --rd:.24s">
+          <span class="tl-no">Fase 04</span>
+          <h3>Documento de consenso</h3>
+          <p class="desktop-only">Criterios delimitados, disensos documentados y una guía clínica redactada a muchas manos. El producto real de la APA.</p>
+          <p class="mobile-only">Redacción de la guía clínica y firma del documento de consenso.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta sec">
+  <div class="wrap">
+    <p class="eyebrow reveal">Asamblea final · Inscripciones</p>
+    <h2 class="reveal" style="--rd:.08s">La silla del experto <em>está vacía.</em></h2>
+    
+    <p class="reveal desktop-only" style="--rd:.16s">Si tu delegación puede sostener la complejidad — sin atajos, sin etiquetas fáciles — la Asociación Americana de Psicología la necesita.</p>
+    <p class="reveal mobile-only" style="--rd:.16s">Si tu delegación sostiene el rigor clínico sin etiquetas fáciles, la APA la necesita.</p>
+    
+    <div class="cta-actions reveal" style="--rd:.24s">
+      <a class="btn btn-solid" href="/i">Volver a SVPMUN
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn-line" href="#topico">Releer el expediente</a>
+    </div>
+    <p class="hashtags reveal" style="--rd:.32s">#svpmun · #MUN · #psicología</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>SVPMUN — Simulación académica · Comité APA</span>
+    <span>Expediente 07-C · <a href="/i">svpmun</a> · Láminas estampadas: <span id="plateTotal">0</span></span>
+    <span id="year"></span>
+  </div>
+</footer>
+
+<script>
+/* ============ utilidades ============ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ============ header + progreso ============ */
+const head = $('#head'), prog = $('#progress');
+addEventListener('scroll', () => {
+  head.classList.toggle('scrolled', scrollY > 20);
+  const h = document.documentElement;
+  prog.style.width = (scrollY / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, {passive:true});
+
+/* ============ menú móvil ============ */
+const nav = $('#nav'), navToggle = $('#navToggle');
+navToggle.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', open);
+  document.body.classList.toggle('lock', open);
+});
+ $$('#nav a').forEach(a => a.addEventListener('click', () => {
+  nav.classList.remove('open'); document.body.classList.remove('lock');
+  navToggle.setAttribute('aria-expanded', 'false');
+}));
+
+/* ============ reveals + nav activa ============ */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.12});
+ $$('.reveal').forEach(el => io.observe(el));
+
+const secIds = ['topico','anatomia','lentes','diagnostico','protocolo'];
+const navIO = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){
+    $$('#nav a[href^="#"]').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+e.target.id));
+  }
+}), {rootMargin:'-40% 0px -55% 0px'});
+secIds.forEach(id => { const s = document.getElementById(id); if (s) navIO.observe(s); });
+
+/* ============ palabra "fragmentada" ============ */
+(function(){
+  const w = $('#fragWord'), txt = w.textContent;
+  w.textContent = '';
+  [...txt].forEach(ch => {
+    const s = document.createElement('span');
+    s.className = 'l'; s.textContent = ch;
+    s.style.cssText = `--dx:${(Math.random()*9-4.5).toFixed(1)}px;--dy:${(Math.random()*7-3.5).toFixed(1)}px;--dr:${(Math.random()*7-3.5).toFixed(1)}deg;--t:${(5.5+Math.random()*4).toFixed(1)}s;--d:${(Math.random()*3).toFixed(1)}s`;
+    w.appendChild(s);
+  });
+})();
+
+/* ============ ticker ============ */
+(function(){
+  const items = ['DSM-5-TR 300.14 / F44.81','ICD-11 6B69 · trauma complejo','SCID-D · entrevista estructurada','DES-II · escala de disociación','CAPS-5 · TEPT','amnesia lacunar','despersonalización / desrealización','apego desorganizado','ventana de tolerancia','red por defecto','esquemas maladaptativos','eje HPA'];
+  $('#tickerIn').innerHTML = [...items, ...items].map(t => `<span>${t}</span>`).join('');
+})();
+
+/* ============ RORSCHACH GENERATIVO ============ */
+(function(){
+  const plate = $('#plate'), cv = $('#rorschach'), ctx = cv.getContext('2d');
+  const interpTxt = $('#interpTxt'), plateNo = $('#plateNo');
+  let W = 0, H = 0, blot = null, anim = 0, typing = null, lastI = -1, t0 = 0;
+
+  const READINGS = [
+    'Dos figuras que se reconocen en un espejo roto.',
+    'Una mariposa que recuerda haber sido dos.',
+    'El mapa de una ciudad que nunca visitaste, pero sueñas.',
+    'Pulmones inhalando un recuerdo ajeno.',
+    'Un animal de pie sobre sus propias huellas invertidas.',
+    'Dos manos intentando sostener la misma agua.',
+    'La silueta de algo que prefiere no ser nombrado.',
+    'Un rostro de perfil discutiendo con su reflejo.',
+    'Un recuerdo a medio formar, todavía tibio.',
+    'El eco de un cuerpo en dos tiempos distintos.',
+    'Una herida que aprendió a volar.',
+    'Polvo de hueso suspendido en el aire.'
+  ];
+
+  let plates = 0;
+  try { plates = parseInt(localStorage.getItem('apa-plates')) || 0; } catch(e){}
+  const savePlates = () => { try { localStorage.setItem('apa-plates', plates); } catch(e){} };
+  const syncTotal = () => { const t = $('#plateTotal'); if (t) t.textContent = String(plates).padStart(3,'0'); };
+  syncTotal();
+
+  function type(text){
+    clearInterval(typing);
+    interpTxt.textContent = '';
+    let i = 0;
+    typing = setInterval(() => {
+      interpTxt.textContent = text.slice(0, ++i);
+      if (i >= text.length) clearInterval(typing);
+    }, 26);
+  }
+
+  /* blob irregular suavizado con curvas cuadráticas */
+  function blobPath(c, x, y, r){
+    const n = 9 + (Math.random()*4|0), pts = [];
+    for (let i = 0; i < n; i++){
+      const a = (i/n) * Math.PI * 2, rad = r * (0.55 + Math.random()*0.62);
+      pts.push([x + Math.cos(a)*rad, y + Math.sin(a)*rad]);
+    }
+    const mid = (p,q) => [(p[0]+q[0])/2, (p[1]+q[1])/2];
+    c.beginPath();
+    let m = mid(pts[n-1], pts[0]);
+    c.moveTo(m[0], m[1]);
+    for (let i = 0; i < n; i++){
+      const p = pts[i], mm = mid(p, pts[(i+1)%n]);
+      c.quadraticCurveTo(p[0], p[1], mm[0], mm[1]);
+    }
+    c.closePath();
+  }
+  function dot(c, x, y, r){
+    c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+    c.beginPath(); c.arc(W - x, y, r, 0, 7); c.fill();
+  }
+
+  function makeBlot(){
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const off = document.createElement('canvas');
+    off.width = W * dpr; off.height = H * dpr;
+    const c = off.getContext('2d');
+    c.scale(dpr, dpr);
+    c.fillStyle = '#231D14';
+    const clusters = [], nC = 4 + (Math.random()*3|0);
+    for (let k = 0; k < nC; k++){
+      let x = W * (0.16 + Math.random()*0.26), y = H * (0.16 + Math.random()*0.68);
+      clusters.push([x, y]);
+      const steps = 8 + (Math.random()*10|0), r0 = W * (0.03 + Math.random()*0.035);
+      for (let s = 0; s < steps; s++){
+        const r = r0 * (0.5 + Math.random()*0.95);
+        c.globalAlpha = 0.72 + Math.random()*0.28;
+        blobPath(c, x, y, r); c.fill();
+        blobPath(c, W - x, y, r); c.fill();
+        x += (Math.random() - 0.55) * W * 0.045;
+        y += (Math.random() - 0.5) * H * 0.05;
+        x = Math.min(Math.max(x, W*0.06), W*0.45);
+      }
+    }
+    /* salpicaduras espejadas */
+    c.globalAlpha = 0.9;
+    for (let i = 0; i < 30; i++){
+      const a = clusters[Math.random()*clusters.length|0];
+      const ang = Math.random()*Math.PI*2, d = W * (0.03 + Math.random()*0.15);
+      dot(c, a[0] + Math.cos(ang)*d, a[1] + Math.sin(ang)*d*0.8, W*(0.002 + Math.random()*0.006));
+    }
+    /* trazos fugaces */
+    c.lineWidth = Math.max(1, W*0.002); c.strokeStyle = '#231D14';
+    for (let i = 0; i < 9; i++){
+      const a = clusters[Math.random()*clusters.length|0];
+      const ang = Math.random()*Math.PI*2, len = 4 + Math.random()*9;
+      const x1 = a[0] + Math.cos(ang)*W*0.05, y1 = a[1] + Math.sin(ang)*W*0.05;
+      c.beginPath(); c.moveTo(x1, y1); c.lineTo(x1 + Math.cos(ang)*len, y1 + Math.sin(ang)*len); c.stroke();
+      c.beginPath(); c.moveTo(W - x1, y1); c.lineTo(W - x1 - Math.cos(ang)*len, y1 + Math.sin(ang)*len); c.stroke();
+    }
+    c.globalAlpha = 1;
+    return off;
+  }
+
+  function reveal(now){
+    const p = Math.min(1, (now - t0) / 620);
+    const e = 1 - Math.pow(1 - p, 3);
+    const s = 0.92 + 0.08 * e + Math.sin(e * Math.PI) * 0.02;
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(W/2, H/2); ctx.scale(s, s);
+    ctx.globalAlpha = Math.min(1, p * 1.5);
+    ctx.drawImage(blot, -W/2, -H/2, W, H);
+    ctx.restore();
+    if (p < 1) requestAnimationFrame(reveal);
+    else anim = 0;
+  }
+
+  function stamp(){
+    blot = makeBlot();
+    t0 = performance.now();
+    if (!anim){ anim = 1; requestAnimationFrame(reveal); }
+    plates++; savePlates(); syncTotal();
+    plateNo.textContent = 'Lámina n.º ' + String(plates).padStart(3, '0');
+    let i; do { i = Math.random()*READINGS.length|0; } while (i === lastI && READINGS.length > 1);
+    lastI = i; type(READINGS[i]);
+    plate.classList.add('flash');
+    setTimeout(() => plate.classList.remove('flash'), 350);
+  }
+
+  function size(){
+    const r = cv.getBoundingClientRect();
+    if (!r.width) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    if (blot) { ctx.globalAlpha = 1; ctx.drawImage(blot, 0, 0, W, H); }
+  }
+
+  cv.addEventListener('click', stamp);
+  /* parallax sutil de la lámina */
+  cv.addEventListener('mousemove', e => {
+    const r = cv.getBoundingClientRect();
+    const mx = (e.clientX - r.left)/r.width - .5, my = (e.clientY - r.top)/r.height - .5;
+    cv.style.transform = `translate(${mx*8}px, ${my*8}px)`;
+  });
+  cv.addEventListener('mouseleave', () => cv.style.transform = '');
+
+  new ResizeObserver(() => { size(); }).observe(cv.parentElement);
+  /* arranque: primera lámina + primera lectura */
+  const boot = () => { size(); stamp(); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot); else addEventListener('load', boot);
+})();
+
+/* ============ acordeón anatomía ============ */
+ $$('.a-head').forEach(btn => btn.addEventListener('click', () => {   const row = btn.closest('.a-row');   const open = row.classList.toggle('open');   btn.setAttribute('aria-expanded', open); }));  /* ============ LENTES ============ */ (function(){   const LENSES = {     neuro:{ no:'I', name:'Lente neurobiológica', lead:'La disociación tiene electrofisiología, no metáfora.',       find:['Hiperreactividad amigdalar con hipoactivación prefrontal ventromedial.',             'Conectividad alterada de la red por defecto: la integración del «yo» falla en red, no en un área.',             'Menor volumen hipocampal asociado a los huecos de memoria autobiográfica.'],       inst:'fMRI · cortisol salival · DES-II · escalas de sintomatología disociativa',       give:'Aporta el sustrato fisiológico que obliga al comité a tratar la disociación como un fenómeno biológico defendido — no como simulación ni figura retórica.' },     psico:{ no:'II', name:'Lente psicodinámica', lead:'Toda disociación protege algo; el diagnóstico debe averiguar contra qué.',       find:['La disociación como defensa estructural frente a un conflicto insostenible.',             'Apego desorganizado como terreno donde el self nunca llegó a integrarse.',             'Identidad organizada en partes con funciones separadas y grados de conciencia distintos.'],       inst:'SCID-D · entrevista psicodinámica estructurada · historia de apego',       give:'Aporta la pregunta por el sentido: qué función cumple el síntoma y qué relato — o silencio — lo sostiene en la vida del paciente.' },     cc:{ no:'III', name:'Lente cognitivo-conductual', lead:'La evitación alivia hoy y consolida el trastorno mañana.',       find:['Esquemas internalizados de peligro y desvalimiento que filtran la percepción.',             'Evitación experiencial que refuerza el ciclo síntoma–alivio–síntoma.',             'Procesamiento emocional incompleto del material traumático.'],       inst:'PCL-5 · CAPS-5 · registros de creencias · protocolos de exposición gradual',       give:'Aporta rutas de intervención medibles y un criterio de validación: un diagnóstico que no orienta el tratamiento, solo nombra.' }   };   const tabs = $$('.lens-tab'), reading =$('#lensReading'), stampEl = $('#stamp'), note = $('#convNote');
+  const visited = new Set();
+
+  function render(k){
+    const d = LENSES[k];
+    reading.innerHTML = `
+      <p class="lr-kicker">${d.no} · lectura del caso 07-C</p>
+      <h3 class="lr-title">${d.name}</h3>
+      <p class="lr-lead">“${d.lead}”</p>
+      <h4 class="lr-h">Hallazgos</h4>
+      <ul class="lr-list">${d.find.map(f => `<li>${f}</li>`).join('')}</ul>
+      <h4 class="lr-h">Instrumentos</h4>
+      <p class="lr-inst">${d.inst}</p>
+      <h4 class="lr-h">Aporta al consenso</h4>
+      <p class="lr-give">${d.give}</p>`;
+  }
+
+  function setLens(k){
+    tabs.forEach(t => {
+      const on = t.dataset.lens === k;
+      t.setAttribute('aria-selected', on);
+      if (on) t.classList.add('seen');
+    });
+    reading.classList.add('out');
+    setTimeout(() => { render(k); reading.classList.remove('out'); }, 200);
+    visited.add(k);
+    $$('[data-pip]').forEach(p => p.classList.toggle('on', visited.has(p.dataset.pip)));
+    if (visited.size === 3){
+      note.textContent = 'Consenso parcial alcanzado: las tres perspectivas han sido contrastadas.';
+      setTimeout(() => { stampEl.hidden = false; }, 350);
+    }
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => setLens(t.dataset.lens)));
+  stampEl.addEventListener('click', () => { /* re-estampar */
+    stampEl.style.animation = 'none'; void stampEl.offsetWidth;
+    stampEl.style.animation = '';
+  });
+  /* navegación con flechas en el tablist */
+  $('#lensTabs').addEventListener('keydown', e => {     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;     const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');     const n = (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;     tabs[n].focus(); setLens(tabs[n].dataset.lens); e.preventDefault();   });    render('neuro'); visited.add('neuro');   $$('[data-pip="neuro"]').forEach(p => p.classList.add('on'));
+  tabs[0].classList.add('seen');
+})();
+
+/* ============ VENN ============ */
+(function(){
+  const svg = $('#venn');
+  const C = { A:{el:$('#cA'), x:235, y:195, r:150}, B:{el:$('#cB'), x:325, y:195, r:150}, C:{el:$('#cC'), x:280, y:285, r:150} };
+  const ZONES = {
+    start:{ n:'Pasa el cursor por las tintas', t:'Cada círculo es un encuadre distinto sobre el mismo caso. Su superposición — literal, en tinta — es exactamente el problema que este comité vino a resolver.' },
+    A:{ n:'TEPT · DSM-5-TR', t:'Intrusión, evitación, hiperactivación y alterations de cognición y humor. Un encuadre sólido… cuando el evento fue acotado y la estructura de la persona quedó entera.' },
+    B:{ n:'TRP · ICD-11 6B69', t:'El trauma crónico e interpersonal deja algo más que miedo: desorganización del apego, disociación afectiva, disfunción somática y un self que nunca llegó a consolidarse.' },
+    C:{ n:'TLP', t:'Inestabilidad afectiva, identidad difusa, impulsividad. El diagnóstico con el que el trauma complejo más se confunde — y el que más estigma arrastra hacia el paciente.' },
+    AB:{ n:'TEPT ∩ TRP', t:'Todo TRP cumple con el TEPT, pero no al revés. La frontera no está en la intensidad del síntoma, sino en lo que el trauma le hizo a la estructura. ¿Dónde trazan la línea los manuales? El comité tampoco lo tiene claro.' },
+    AC:{ n:'TEPT ∩ TLP', t:'Comparten el motor límbico: alarma que no cesa, emociones que inundan. Sin la historia evolutiva delante, la confusión diagnóstica está casi garantizada.' },
+    BC:{ n:'TRP ∩ TLP', t:'El punto más álgido del debate contemporáneo: desregulación y apego desorganizado en ambos. Diferenciarlos cambia el tratamiento, el pronóstico y la forma en que se trata al paciente.' },
+    ABC:{ n:'El dilema del comité', t:'Tres constructos que reclaman a la misma persona. ¿Categorías distintas, un espectro único o un sistema diagnóstico que todavía no entiende el trauma? Eso es exactamente lo que la APA viene a decidir.' }
+  };
+  const name = $('#zoneName'), text = $('#zoneText');   const links = $$('.zone-links button');
+
+  function setZone(key){
+    const z = ZONES[key] || ZONES.start;
+    name.textContent = z.n; text.textContent = z.t;
+    const active = key === 'start' ? '' : key;
+    for (const k in C){
+      const on = active.includes(k);
+      C[k].el.style.fillOpacity = active ? (on ? .55 : .1) : '';
+    }
+    links.forEach(l => l.classList.toggle('on', l.dataset.zone === key));
+  }
+
+  function zoneFromPoint(x, y){
+    let key = '';
+    for (const k in C){
+      const c = C[k];
+      if ((x - c.x)**2 + (y - c.y)**2 <= c.r*c.r) key += k;
+    }
+    return key || 'start';
+  }
+
+  svg.addEventListener('pointermove', e => {
+    const r = svg.getBoundingClientRect();
+    const x = (e.clientX - r.left) * 560 / r.width;
+    const y = (e.clientY - r.top) * 520 / r.height;
+    setZone(zoneFromPoint(x, y));
+  });
+  svg.addEventListener('pointerleave', () => setZone('start'));
+  svg.addEventListener('pointerdown', e => {
+    const r = svg.getBoundingClientRect();
+    const x = (e.clientX - r.left) * 560 / r.width;
+    const y = (e.clientY - r.top) * 520 / r.height;
+    setZone(zoneFromPoint(x, y));
+  });
+  links.forEach(l => {
+    l.addEventListener('mouseenter', () => setZone(l.dataset.zone));
+    l.addEventListener('focus', () => setZone(l.dataset.zone));
+    l.addEventListener('click', () => setZone(l.dataset.zone));
+    l.addEventListener('mouseleave', () => setZone('start'));
+  });
+})();
+
+ $('#year').textContent = 'SVPMUN ' + new Date().getFullYear();
+</script>
+
+<!-- ====================================================================== -->
+<!-- COMPONENTE: MESAS DIRECTIVAS (APA) -->
+<!-- ====================================================================== -->
+
+<style>
+    /* ═══ CSS MESAS DIRECTIVAS Y TESTIMONIOS CIRCULARES ═══ */
+    .mesas-container { width: 100%; max-width: 56rem; padding: 2rem 1rem; margin: 0 auto; }
+    .mesas-grid { display: grid; gap: 3rem; }
+    .mesas-image-wrapper { position: relative; width: 100%; height: 24rem; perspective: 1000px; }
+    .mesas-image { position: absolute; width: 100%; height: 100%; object-fit: cover; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+    .mesas-content { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; }
+    .mesas-name { font-weight: bold; margin-bottom: 0.25rem; }
+    .mesas-designation { margin-bottom: 1.5rem; }
+    .mesas-quote-container { overflow-y: auto; padding-right: 1rem; max-height: 250px; margin-bottom: 1.5rem; scroll-behavior: smooth; }
+    .mesas-quote { line-height: 1.75; white-space: pre-line; }
+    .mesas-quote-container::-webkit-scrollbar { width: 4px; }
+    .mesas-quote-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    .mesas-arrow-buttons { display: flex; gap: 1.5rem; margin-top: auto; }
+    .mesas-arrow-button { width: 2.7rem; height: 2.7rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s; border: none; }
+    @media (max-width: 768px) { .mesas-grid { gap: 2rem; } .mesas-image-wrapper { height: 18rem; } .mesas-quote-container { max-height: 35vh; } }
+    @media (min-width: 768px) { .mesas-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .mesas-quote-container { max-height: 350px; } }
+</style>
+
+<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5"></section>
+
+<script type="text/babel">
+    const { useState, useEffect, useRef, useMemo, useCallback } = React;
+    const { createRoot } = ReactDOM;
+
+    const IconArrowRight = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
+    const IconArrowLeft = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>;
+
+    function calculateGap(width) {
+        const minWidth = 1024; const maxWidth = 1456; const minGap = 60; const maxGap = 86;
+        if (width <= minWidth) return minGap;
+        if (width >= maxWidth) return Math.max(minGap, maxGap + 0.06018 * (width - maxWidth));
+        return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
+    }
+
+    const ComponenteMesas = ({ directivos, autoplay = false, colors = {}, fontSizes = {} }) => {
+        const colorName = colors.name || "#000"; const colorDesignation = colors.designation || "#6b7280";
+        const colorTestimony = colors.testimony || "#4b5563"; const colorArrowBg = colors.arrowBackground || "#141414";
+        const colorArrowFg = colors.arrowForeground || "#f1f1f7"; const colorArrowHoverBg = colors.arrowHoverBackground || "#00a6fb";
+        const fontSizeName = fontSizes.name || "1.5rem"; const fontSizeDesignation = fontSizes.designation || "0.925rem"; const fontSizeQuote = fontSizes.quote || "1.125rem";
+
+        const [activeIndex, setActiveIndex] = useState(0); const [isFading, setIsFading] = useState(false);
+        const [hoverPrev, setHoverPrev] = useState(false); const [hoverNext, setHoverNext] = useState(false);
+        const [containerWidth, setContainerWidth] = useState(1200);
+
+        const imageContainerRef = useRef(null); const autoplayIntervalRef = useRef(null);
+        const directivosLength = useMemo(() => directivos.length, [directivos]);
+        const activeDirectivo = useMemo(() => directivos[activeIndex], [activeIndex, directivos]);
+
+        useEffect(() => {
+            function handleResize() { if (imageContainerRef.current) setContainerWidth(imageContainerRef.current.offsetWidth); }
+            handleResize(); window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        const handleNext = useCallback(() => {
+            setIsFading(true);
+            setTimeout(() => { setActiveIndex((prev) => (prev + 1) % directivosLength); setIsFading(false); }, 300);
+            if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+        }, [directivosLength]);
+        
+        const handlePrev = useCallback(() => {
+            setIsFading(true);
+            setTimeout(() => { setActiveIndex((prev) => (prev - 1 + directivosLength) % directivosLength); setIsFading(false); }, 300);
+            if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+        }, [directivosLength]);
+
+        useEffect(() => {
+            if (autoplay) { autoplayIntervalRef.current = setInterval(() => { handleNext(); }, 15000); }
+            return () => { if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current); };
+        }, [autoplay, handleNext]);
+
+        function getImageStyle(index) {
+            const gap = calculateGap(containerWidth); const maxStickUp = gap * 0.8;
+            const isActive = index === activeIndex; const isLeft = (activeIndex - 1 + directivosLength) % directivosLength === index; const isRight = (activeIndex + 1) % directivosLength === index;
+            if (isActive) return { zIndex: 3, opacity: 1, pointerEvents: "auto", transform: `translateX(0px) translateY(0px) scale(1) rotateY(0deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            if (isLeft) return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            if (isRight) return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            return { zIndex: 1, opacity: 0, pointerEvents: "none", transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+        }
+
+        return (
+            <div className="mesas-container">
+                <div className="mesas-grid">
+                    <div className="mesas-image-wrapper" ref={imageContainerRef}>
+                        {directivos.map((directivo, index) => (
+                            <img key={directivo.src + index} src={directivo.src} alt={directivo.name} className="mesas-image" style={getImageStyle(index)} />
+                        ))}
+                    </div>
+                    <div className="mesas-content">
+                        <div className={`transition-all duration-300 ease-in-out ${isFading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'} flex flex-col h-full`}>
+                            <h3 className="mesas-name font-space" style={{ color: colorName, fontSize: fontSizeName }}>{activeDirectivo.name}</h3>
+                            <p className="mesas-designation font-sans uppercase tracking-widest text-xs font-semibold" style={{ color: colorDesignation, fontSize: fontSizeDesignation }}>{activeDirectivo.designation}</p>
+                            <div className="mesas-quote-container font-sans font-light">
+                                <p className="mesas-quote" style={{ color: colorTestimony, fontSize: fontSizeQuote }}>{activeDirectivo.quote}</p>
+                            </div>
+                        </div>
+                        <div className="mesas-arrow-buttons">
+                            <button className="mesas-arrow-button" onClick={handlePrev} style={{ backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverPrev(true)} onMouseLeave={() => setHoverPrev(false)}><IconArrowLeft /></button>
+                            <button className="mesas-arrow-button" onClick={handleNext} style={{ backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverNext(true)} onMouseLeave={() => setHoverNext(false)}><IconArrowRight /></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const mesasData = [
+        { 
+            name: "Presidenta de Mesa", 
+            designation: "Presidente de APA", 
+            src: "/static/mesas/APA",
+            quote: `Participación en Modelos de Naciones Unidas desde 2023\n\nMejor Delegación Comisión Europea - SPMUN 2024 \n\nMejor Delegación Unidad de Análisis de Conducta del FBI - UFTMUN 2024\n\nMejor Delegación Comité de Prensa - SPMUN 2025\n\nMención Verbal Consejo de Seguridad - SAIMUN 2024, Maracaibo\n\nPresidencia de mesa en OMS - SVPMUN 2024\n\nVicepresidencia de mesa en Comité de Prensa - SPMUN 2026\n\nOficial de Conferencias en CEDAW - SVPMUN 2025\n\nCampeona nacional de Patinaje Artístico 2021 y 2023.\n\nParticipación en el Festival Panamericano de Patinaje Artístico 2023 - Antioquia, Colombia\n\nFinalista de la XXII Edición del Programa Nacional Universitario “Promoviendo Líderes Socialmente Responsables” 2026\n\n¡Hola delegados! En primer lugar, es un honor para mi formar parte de la Mesa Directiva de este comité tan interesante y enriquecedor. Sabiendo que vivimos en un mundo dónde la población padeciente de trastornos mentales va en aumento, resulta fundamental guiar nuestro foco atencional a la salud mental y el bienestar psicológico. Estamos emocionados como Mesa Directiva de guiarlos y aprender de ustedes en cada sesión de debate, ¡Gracias por querer participar! El mayor de los éxitos y que el mayor premio sea el conocimiento que adquieran durante todo este proceso. <3`
+        },
+        { 
+            name: "Sara Riera", 
+            designation: "Vicepresidente de APA", 
+            src: "/static/mesas/APA2",
+            quote: `Mejor Delegación | UFTMUN 2025\nMejor Delegación | SPMUN 2025\nMejor Delegación | CAMIMUN 2025\nMérito a la Mejor Redacción | RCMUN 2025\nPrimera Mención Honorífica | SPMUN 2024\nPrimera Mención Honorífica | UFTMUN 2024\nPrimera Mención Honorífica | CLFMUN 2026\nMejor Delegación | MASMUN 2024\nPrimera Mención Honorífica | CLFMUN 2026\nSegunda Mención Honorífica | MASMUN 2022\nMASMUN Primera Mención Honorífica. Mejor Mesa Directiva\nPrimera Mención Honorífica | SALTOMUN 2026\n\nSoy Sara Riera y para mí es un verdadero placer fungir como su Vicepresidente de Mesa en esta tan esperada IV edición de SVPMUN. \n\nConfío en que este espacio les permitirá expandir sus conocimientos y superar sus propios límites. Aunque el primer paso siempre representa el mayor desafío, es el más crucial en su crecimiento, y ustedes ya han comenzado ese camino. \n\n¡Muchos éxitos!`
+        }
+    ];
+
+    const SeccionMesasDirectivas = () => (
+        <div className="w-full relative">
+            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
+                <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block border-l-2 border-white/20 pl-3">Estructura de Autoridad</span>
+                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
+                    Mesas <span className="text-white/70 italic font-instrument-serif tracking-normal">Directivas</span>
+                </h2>
+            </div>
+            <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20">
+                <div className="items-center justify-center relative flex w-full" style={{ maxWidth: "1024px" }}>
+                    <ComponenteMesas directivos={mesasData} autoplay={false} colors={{ name: "#f7f7ff", designation: "#e1e1e1", testimony: "#f1f1f7", arrowBackground: "#141414", arrowForeground: "#f7f7ff", arrowHoverBackground: "#333" }} fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} />
+                </div>
+            </div>
+        </div>
+    );
+
+    const mesasRoot = createRoot(document.getElementById('mesas-directivas-section'));
+    mesasRoot.render(<SeccionMesasDirectivas />);
+</script>
+
+</body>
+</html>

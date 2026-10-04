@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMC · Crisis del Estrecho de Ormuz — Carta de Situación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:ital,wght@1,400;1,500;1,600&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="/static/navbar.js"></script>
+<style>
+/* ============================================================
+   CARTA NÁUTICA DE CRISIS — Estética puerto / cielo / mar
+   ============================================================ */
+:root{
+  --papel:#efe6d3;        /* papel de carta */
+  --papel-2:#e5d8bc;      /* papel sombreado */
+  --tinta:#16303f;        /* azul tinta de trazo */
+  --tinta-2:#3f5a68;      /* tinta suave */
+  --agua:#177e8c;         /* teal de mar */
+  --agua-2:#0c4f5c;
+  --rojo:#c03b2e;         /* bengala / sellos */
+  --amarillo:#e0a63c;     /* grúas / señales */
+  --crema:#f7f1e3;        /* texto claro */
+  --asfalto:#26241f;      /* patio de contenedores */
+  --noche:#0d2f38;        /* profundidad */
+  --display:'Barlow Condensed',sans-serif;
+  --texto:'Barlow',sans-serif;
+  --carta:'Fraunces',serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--papel);color:var(--tinta);
+  font-family:var(--texto);font-size:16px;line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--agua);color:var(--crema)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--papel-2)}
+::-webkit-scrollbar-thumb{background:var(--tinta);border:3px solid var(--papel-2);border-radius:8px}
+img,svg{display:block}
+a{color:inherit}
+button{font-family:inherit;color:inherit}
+.mono{font-family:var(--mono)}
+section{scroll-margin-top:90px}
+
+/* Grano de papel global */
+.grano{
+  position:fixed;inset:0;z-index:2000;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+
+/* ============ PRELOADER — sello que se estampa ============ */
+#carga{
+  position:fixed;inset:0;z-index:4000;background:var(--papel);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+  transition:opacity .7s ease,visibility .7s;
+}
+#carga.fuera{opacity:0;visibility:hidden}
+.sello-carga{width:190px;height:190px;filter:url(#rugo)}
+.sello-texto{transform-box:fill-box;transform-origin:center;animation:girar 16s linear infinite}
+.sello-texto text{font:600 11.5px var(--mono);letter-spacing:.32em;fill:var(--tinta)}
+.sello-omc{font:800 44px var(--display);letter-spacing:.06em;fill:var(--tinta)}
+#carga p{font:500 .72rem var(--mono);letter-spacing:.3em;color:var(--tinta-2);animation:latir 1.6s ease-in-out infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+@keyframes latir{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ============ BANDA DE BANDERINES ============ */
+.banda{
+  position:relative;z-index:950;height:52px;background:var(--tinta);
+  display:flex;align-items:center;gap:14px;padding:0 5vw;overflow:hidden;
+}
+.banda .cuerda{position:absolute;left:0;right:0;top:14px;height:2px;background:rgba(247,241,227,.35)}
+.banderin{position:relative;margin-top:10px;flex:none}
+.banderin svg{width:26px;height:30px;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35));animation:ondear 3.6s ease-in-out infinite}
+.banderin:nth-child(odd) svg{animation-duration:4.4s}
+.banderin::after{
+  content:attr(data-significado);position:absolute;left:50%;top:38px;transform:translateX(-50%) rotate(-1deg);
+  background:var(--crema);color:var(--tinta);font:500 .58rem/1.4 var(--mono);letter-spacing:.08em;
+  padding:5px 9px;white-space:nowrap;border:1px solid var(--tinta);
+  opacity:0;pointer-events:none;transition:.25s;z-index:5;
+}
+.banderin:hover::after{opacity:1}
+.banda-info{margin-left:auto;font:500 .6rem var(--mono);letter-spacing:.28em;color:rgba(247,241,227,.55)}
+@keyframes ondear{0%,100%{transform:rotate(4deg) skewX(3deg)}50%{transform:rotate(-4deg) skewX(-5deg)}}
+
+/* ============ CABECERA ============ */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;align-items:center;gap:2rem;padding:14px 5vw;
+  transition:background .35s,box-shadow .35s,backdrop-filter .35s;
+}
+header.solido{background:rgba(239,230,211,.82);backdrop-filter:blur(9px) saturate(1.2);box-shadow:0 2px 0 var(--tinta)}
+.marca{display:flex;align-items:center;gap:14px;text-decoration:none}
+.marca svg{width:46px;height:46px;animation:girar 26s linear infinite}
+.marca strong{display:block;font:800 1.5rem/1 var(--display);letter-spacing:.08em}
+.marca span{display:block;font:500 .56rem var(--mono);letter-spacing:.24em;color:var(--tinta-2)}
+nav{margin-left:auto;display:flex;gap:2rem}
+nav a{
+  position:relative;text-decoration:none;font:600 .82rem var(--mono);letter-spacing:.18em;
+  padding:4px 0;color:var(--tinta);
+}
+nav a::after{
+  content:"";position:absolute;left:0;right:100%;bottom:-2px;height:3px;
+  background:var(--rojo);transition:right .3s cubic-bezier(.7,0,.3,1);
+  clip-path:polygon(0 0,100% 0,100% 40%,0 40%,0 60%,100% 60%,100% 100%,0 100%);
+}
+nav a:hover::after{right:0}
+.estado{display:flex;align-items:center;gap:9px;font:500 .62rem var(--mono);letter-spacing:.2em;color:var(--tinta-2)}
+.led{width:8px;height:8px;border-radius:50%;background:var(--rojo);box-shadow:0 0 8px var(--rojo);animation:latir 1.3s infinite;flex:none}
+.led.verde{background:#4fae72;box-shadow:0 0 8px #4fae72}
+@media(max-width:760px){.banda-info{display:none}nav{display:none}}
+
+/* ============ SONDA DE PROFUNDIDAD (indicador de scroll) ============ */
+.sonda{
+  position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:800;
+  display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;
+}
+.sonda-titulo{font:700 .55rem var(--mono);letter-spacing:.3em;color:var(--tinta-2);writing-mode:vertical-rl}
+.sonda-cuerpo{position:relative;height:42vh;width:34px}
+.sonda-rail{position:absolute;left:16px;top:0;bottom:0;width:2px;background:currentColor;opacity:.35}
+.sonda-tick{position:absolute;left:10px;width:14px;height:1.5px;background:currentColor;opacity:.5}
+.sonda-tick span{position:absolute;left:20px;top:-6px;font:400 .52rem var(--mono);opacity:.7;white-space:nowrap}
+.sonda-puntero{
+  position:absolute;left:0;width:100%;display:flex;align-items:center;justify-content:center;
+  transition:top .1s linear;
+}
+.sonda-puntero i{
+  width:0;height:0;border:7px solid transparent;border-left:11px solid var(--rojo);
+  transform:translateX(-9px);
+}
+.sonda-puntero span{font:700 .6rem var(--mono);color:var(--rojo);margin-left:2px}
+.sonda-zona{font:500 .54rem var(--mono);letter-spacing:.24em;color:var(--tinta-2);writing-mode:vertical-rl}
+@media(max-width:1020px){.sonda{display:none}}
+
+/* ============ HERO — puerto al amanecer ============ */
+.hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
+.escena{position:absolute;inset:0}
+.capa{position:absolute;inset:0;will-change:transform}
+.capa.cielo{
+  background:linear-gradient(180deg,#a9c7cf 0%,#c9d6c9 34%,#ecdcbd 55%,#f2d9b4 66%);
+}
+.sol{
+  position:absolute;left:68%;bottom:34%;width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,#fdf3d7 0%,#f6dfae 55%,rgba(246,223,174,0) 72%);
+  filter:blur(1px);
+}
+.nube{
+  position:absolute;height:26px;border-radius:40px;background:rgba(250,246,235,.75);
+  filter:blur(3px);animation:deriva linear infinite;
+}
+.nube::before,.nube::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.nube::before{width:60%;height:180%;left:16%;top:-80%}
+.nube::after{width:44%;height:130%;right:12%;top:-50%}
+@keyframes deriva{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
+
+.gaviota{position:absolute;width:56px;animation:vuela linear infinite}
+.gaviota svg{overflow:visible}
+.alaL,.alaR{transform-box:fill-box;transform-origin:60% 90%}
+.alaL{animation:batL .5s ease-in-out infinite alternate}
+.alaR{animation:batR .5s ease-in-out infinite alternate}
+@keyframes batL{from{transform:rotate(16deg)}to{transform:rotate(-18deg)}}
+@keyframes batR{from{transform:rotate(-16deg)}to{transform:rotate(18deg)}}
+@keyframes vuela{
+  0%{transform:translate(-12vw,0)}
+  50%{transform:translate(50vw,-5vh)}
+  100%{transform:translate(112vw,2vh)}
+}
+
+.capa.mar{
+  background:linear-gradient(180deg,#8fbfc0 0%,#4c8b95 30%,#2a6b77 62%,#164652 100%);
+}
+.reflejo-sol{
+  position:absolute;left:66%;bottom:0;width:130px;height:100%;
+  background:repeating-linear-gradient(180deg,rgba(253,240,209,.34) 0 7px,transparent 7px 20px);
+  filter:blur(1.5px);mask:linear-gradient(90deg,transparent,#000 30% 70%,transparent);
+  animation:brillo 5s ease-in-out infinite alternate;
+}
+@keyframes brillo{from{opacity:.5}to{opacity:.95}}
+.ola-mar{
+  position:absolute;left:0;right:0;top:-2px;height:14px;
+  background:radial-gradient(60% 100% at 50% 100%,rgba(250,246,235,.5),transparent 70%);
+  mask:repeating-linear-gradient(90deg,#000 0 40px,transparent 40px 90px);
+  animation:marea 7s ease-in-out infinite alternate;
+}
+@keyframes marea{from{transform:translateX(-40px)}to{transform:translateX(40px)}}
+
+.capa.gruas svg{position:absolute;bottom:34%;left:0;width:100%;height:auto}
+.grua-cable{animation:pluma 9s ease-in-out infinite alternate}
+@keyframes pluma{from{transform:translateY(0)}to{transform:translateY(9px)}}
+.capa.skyline svg{position:absolute;bottom:34.2%;left:0;width:100%;height:auto;opacity:.16}
+
+.petrolero{position:absolute;bottom:35%;left:0;width:190px;animation:cruzar 68s linear infinite}
+.petrolero-bob{animation:barcoBob 5.5s ease-in-out infinite alternate}
+@keyframes cruzar{from{transform:translateX(108vw)}to{transform:translateX(-24vw)}}
+@keyframes barcoBob{from{transform:translateY(0) rotate(.6deg)}to{transform:translateY(-7px) rotate(-.8deg)}}
+.humo{animation:fumar 3.2s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes fumar{0%{transform:translateY(0);opacity:.5}100%{transform:translateY(-34px);opacity:0}}
+.estela{animation:estelaFade 3s linear infinite}
+@keyframes estelaFade{0%{opacity:.4}100%{opacity:0}}
+
+.muelle{
+  position:absolute;left:0;right:0;bottom:0;height:82px;background:#101f26;
+  border-top:7px solid #22404b;
+  box-shadow:inset 0 12px 24px rgba(0,0,0,.5);
+}
+.muelle::before{
+  content:"";position:absolute;inset:7px 0 0;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 86px,rgba(0,0,0,.35) 86px 90px);
+}
+.bita{position:absolute;bottom:48px}
+.cabo{transform-box:fill-box;transform-origin:top center;animation:mece 5s ease-in-out infinite alternate}
+@keyframes mece{from{transform:rotate(2.5deg)}to{transform:rotate(-2.5deg)}}
+
+.hero-cont{position:absolute;left:6vw;bottom:150px;max-width:760px;z-index:5}
+.kicker{
+  display:inline-flex;align-items:center;gap:12px;
+  font:500 .66rem var(--mono);letter-spacing:.3em;color:var(--tinta);
+  border:1.5px solid var(--tinta);padding:7px 16px;background:rgba(239,230,211,.55);
+  backdrop-filter:blur(3px);
+}
+.kicker .led{width:7px;height:7px}
+h1{
+  margin:1.6rem 0 1.2rem;
+  font:900 clamp(3.4rem,10.5vw,7.8rem)/0.94 var(--display);
+  text-transform:uppercase;letter-spacing:.01em;
+}
+.linea{display:block;overflow:hidden}
+.linea-in{display:block}
+.sello-zarpe{
+  display:inline-block;color:var(--rojo);border:6px double var(--rojo);
+  padding:.02em .22em .06em;transform:rotate(-2.5deg);
+  filter:url(#rugo);margin-top:.08em;
+}
+.hero-sub{max-width:520px;font-size:1.06rem;line-height:1.75;color:#2b4757}
+.hero-datos{
+  margin-top:2rem;display:flex;flex-wrap:wrap;align-items:center;gap:16px;
+  font:500 .66rem var(--mono);letter-spacing:.16em;color:var(--tinta);
+}
+.hero-datos .rombo{width:8px;height:8px;background:var(--rojo);transform:rotate(45deg);flex:none}
+
+.hero-firma{position:absolute;right:5vw;bottom:130px;width:150px;opacity:.8;z-index:4}
+.hero-firma .rosa-int{transform-box:fill-box;transform-origin:center;animation:girar 70s linear infinite}
+.bajar{
+  position:absolute;right:5vw;bottom:34px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  text-decoration:none;font:600 .58rem var(--mono);letter-spacing:.34em;color:var(--crema);
+  writing-mode:vertical-rl;z-index:6;
+}
+.bajar svg{animation:anclaBaja 1.8s ease-in-out infinite}
+@keyframes anclaBaja{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+@media(max-width:760px){
+  .hero-cont{bottom:120px;left:5vw;right:5vw}
+  .hero-firma{display:none}
+  .bajar{right:18px}
+}
+
+/* ============ CORTES DE OLA ENTRE SECCIONES ============ */
+.corte{position:relative;height:74px;overflow:hidden;background:var(--arriba)}
+.corte svg{position:absolute;bottom:0;left:0;width:200%;height:100%}
+.corte .ola-a{animation:olaX 8s linear infinite}
+.corte .ola-b{animation:olaX 13s linear infinite reverse;opacity:.35}
+.corte .espuma{animation:olaX 8s linear infinite}
+@keyframes olaX{to{transform:translateX(-50%)}}
+
+/* ============ SECCIONES COMUNES ============ */
+.seccion{padding:6.5rem 6vw;position:relative}
+.sec-cab{max-width:900px}
+.sec-kicker{
+  display:flex;align-items:center;gap:14px;
+  font:500 .64rem var(--mono);letter-spacing:.34em;color:var(--rojo);
+}
+.sec-kicker::before{content:"";width:44px;height:2px;background:var(--rojo)}
+h2.titulo{
+  margin-top:1.1rem;
+  font:800 clamp(2.7rem,5.6vw,4.4rem)/1.02 var(--display);
+  text-transform:uppercase;letter-spacing:.01em;
+}
+h2.titulo em{
+  font:500 .92em var(--carta);font-style:italic;text-transform:lowercase;
+  color:var(--agua);letter-spacing:0;
+}
+.sec-sub{margin-top:1.1rem;max-width:560px;color:var(--tinta-2);font-size:1.02rem}
+
+/* ============ 01 · CARTA DE SITUACIÓN ============ */
+#carta{background:var(--papel)}
+.carta-grid{
+  display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,.85fr);
+  gap:clamp(1.6rem,3vw,3.2rem);align-items:start;margin-top:3.4rem;
+}
+.carta-marco{position:relative;border:3px solid var(--tinta);outline:1.5px solid var(--tinta);outline-offset:5px;background:#dce8e3;box-shadow:12px 14px 0 rgba(22,48,63,.12)}
+.carta-wrap{position:relative;overflow:hidden;cursor:crosshair}
+.carta-wrap svg.cartamapa{width:100%;height:auto;display:block}
+.carta-marco figcaption{
+  padding:.7rem 1rem;border-top:2px solid var(--tinta);
+  font:500 .58rem var(--mono);letter-spacing:.2em;color:var(--tinta-2);
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+}
+.mapa-cross{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s}
+.carta-wrap:hover .mapa-cross{opacity:1}
+.mapa-cross i{position:absolute;background:rgba(192,59,46,.55)}
+.mapa-cross .v{top:0;bottom:0;width:1px}
+.mapa-cross .h{left:0;right:0;height:1px}
+.mapa-coords{
+  position:absolute;left:10px;bottom:10px;pointer-events:none;
+  background:var(--tinta);color:var(--crema);font:500 .6rem var(--mono);
+  letter-spacing:.14em;padding:5px 10px;opacity:0;transition:opacity .25s;
+}
+.carta-wrap:hover .mapa-coords{opacity:1}
+.peligro-ring{animation:anilloGira 9s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes anilloGira{to{transform:rotate(360deg)}}
+.pin-zumbido{animation:zumbido 1.6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes zumbido{from{transform:scale(1)}to{transform:scale(1.5)}}
+.ruta-nav{stroke-dasharray:7 7;animation:hormigas 1.4s linear infinite}
+@keyframes hormigas{to{stroke-dashoffset:-14}}
+.n-mar{font:italic 500 27px var(--carta);fill:var(--tinta);letter-spacing:.35em;opacity:.8}
+.n-mar-2{font:italic 500 20px var(--carta);fill:var(--tinta);letter-spacing:.3em;opacity:.7}
+.n-pais{font:700 21px var(--display);fill:var(--tinta);letter-spacing:.45em;opacity:.75}
+.n-ciudad{font:500 10px var(--mono);fill:var(--tinta);opacity:.7}
+.mono-map{font:500 10.5px var(--mono);fill:var(--tinta)}
+.cinta-txt{font:700 13px var(--display);fill:var(--crema);letter-spacing:.22em}
+.pin-est{cursor:pointer}
+.pin-est:hover circle{stroke:var(--rojo)}
+
+/* Radar inset */
+.radar{
+  position:absolute;right:16px;bottom:16px;width:178px;
+  background:#12242c;border:3px solid var(--tinta);padding:9px;
+  box-shadow:0 10px 22px rgba(6,20,26,.5);
+}
+.radar-pantalla{position:relative;aspect-ratio:1;background:#0b2b36;border-radius:50%;overflow:hidden;border:1.5px solid #2c5361}
+.radar-anillos{position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 21px,rgba(120,220,215,.28) 21px 22px)}
+.radar-cruz{position:absolute;inset:0;background:linear-gradient(transparent 49.6%,rgba(120,220,215,.4) 49.6% 50.4%,transparent 50.4%),linear-gradient(90deg,transparent 49.6%,rgba(120,220,215,.4) 49.6% 50.4%,transparent 50.4%)}
+.radar-barrido{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 72%,rgba(130,235,225,.42) 100%);animation:girar 4s linear infinite}
+.blip{
+  position:absolute;width:8px;height:8px;border-radius:50%;background:#ffd28a;
+  box-shadow:0 0 8px #ffd28a;cursor:pointer;
+  animation:blipPulso 4s linear infinite;
+}
+.blip.hostil{background:#ff6a4d;box-shadow:0 0 8px #ff6a4d}
+@keyframes blipPulso{0%,4%{opacity:0}8%,40%{opacity:1}90%,100%{opacity:0}}
+.radar-sub{position:absolute;left:18%;top:56%;width:44px;color:#9fe8df;animation:subNada 20s ease-in-out infinite alternate}
+@keyframes subNada{
+  0%{transform:translate(0,0) scaleX(1)}
+  30%{transform:translate(34px,-14px) scaleX(1)}
+  31%{transform:translate(34px,-14px) scaleX(-1)}
+  65%{transform:translate(-8px,10px) scaleX(-1)}
+  66%{transform:translate(-8px,10px) scaleX(1)}
+  100%{transform:translate(26px,-6px) scaleX(1)}
+}
+.radar-placa{
+  margin-top:8px;display:flex;justify-content:space-between;align-items:center;
+  font:500 .52rem var(--mono);letter-spacing:.14em;color:#8fb9b3;
+}
+.radar-placa b{color:#7fe3d5;font-weight:500}
+
+/* Notas de reporte */
+.reportes{display:flex;flex-direction:column;gap:2.2rem;padding-top:1rem}
+.nota{
+  position:relative;background:#f6eeda;border:2px solid var(--tinta);
+  padding:1.7rem 1.6rem 1.5rem;transform:rotate(var(--r,0deg));
+  box-shadow:8px 10px 0 rgba(22,48,63,.13);transition:transform .35s,box-shadow .35s;
+}
+.nota:hover{transform:rotate(0deg) translateY(-5px);box-shadow:10px 16px 0 rgba(22,48,63,.16)}
+.nota::before{
+  content:"";position:absolute;top:-11px;left:50%;width:20px;height:20px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#e9826f,var(--rojo) 60%,#7e241a);
+  box-shadow:0 4px 5px rgba(0,0,0,.35);transform:translateX(-50%);
+}
+.nota-cab{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding-bottom:.7rem;margin-bottom:.9rem;border-bottom:2px solid var(--tinta);
+  font:700 .62rem var(--mono);letter-spacing:.14em;
+}
+.nota-cab .sello-mini{
+  color:var(--rojo);border:1.5px solid var(--rojo);padding:2px 7px;
+  transform:rotate(-4deg);filter:url(#rugo);font-weight:500;
+}
+.nota h3{font:700 1.5rem/1.05 var(--display);text-transform:uppercase;letter-spacing:.03em;margin-bottom:.55rem}
+.nota p{font-size:.95rem;color:#2b4757}
+.nota .hora{margin-top:1rem;font:400 .6rem var(--mono);letter-spacing:.16em;color:var(--tinta-2)}
+
+/* ============ 02 · TERMINAL (carrusel de contenedores) ============ */
+.seccion-terminal{
+  background:var(--asfalto);color:var(--crema);overflow:hidden;
+}
+.seccion-terminal::before{
+  content:"T-07";position:absolute;right:-1%;bottom:-6%;
+  font:900 22rem/1 var(--display);color:rgba(247,241,227,.04);pointer-events:none;
+}
+.seccion-terminal::after{
+  content:"";position:absolute;left:0;right:0;bottom:56px;height:5px;
+  background:repeating-linear-gradient(90deg,rgba(224,166,60,.5) 0 64px,transparent 64px 128px);
+}
+.seccion-terminal .sec-sub{color:#b9b2a2}
+.seccion-terminal h2.titulo{color:var(--crema)}
+.seccion-terminal .sec-kicker{color:var(--amarillo)}
+.seccion-terminal .sec-kicker::before{background:var(--amarillo)}
+.terminal-cab{
+  display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;
+  margin:3rem 0 1.2rem;
+}
+.terminal-status{display:flex;align-items:center;gap:10px;font:500 .62rem var(--mono);letter-spacing:.2em;color:#cfc7b3}
+.carrusel-controles{display:flex;align-items:center;gap:16px}
+.btn-flecha{
+  width:52px;height:52px;border-radius:50%;border:2px solid var(--crema);background:transparent;
+  display:grid;place-items:center;cursor:pointer;transition:.25s;flex:none;
+}
+.btn-flecha svg{width:20px;height:20px;stroke:var(--crema);transition:.25s}
+.btn-flecha:hover{background:var(--amarillo);border-color:var(--amarillo)}
+.btn-flecha:hover svg{stroke:var(--tinta)}
+.riel{width:180px;height:4px;background:rgba(247,241,227,.16);overflow:hidden}
+.riel i{display:block;height:100%;background:var(--amarillo);width:22%}
+
+.carril{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;overflow:visible}
+.carril.agarrando{cursor:grabbing}
+.tren{display:flex;gap:3.2rem;padding:3.4rem 4vw 4.2rem;width:max-content;will-change:transform}
+
+.contenedor{width:clamp(290px,32vw,352px);flex:none;perspective:1300px;--ry:0deg;--s:1;--o:1}
+.cont-3d{
+  position:relative;height:430px;transform-style:preserve-3d;
+  transform:rotateX(7deg) rotateY(var(--ry)) scale(var(--s));
+  opacity:var(--o);will-change:transform;
+}
+.cont-frente,.cont-top,.cont-lado,.cont-ladoIzq{
+  background:var(--c);
+  background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 15px,rgba(0,0,0,.16) 15px 30px);
+}
+.cont-frente{position:absolute;inset:0;transform:translateZ(29px);box-shadow:inset 0 0 0 3px rgba(0,0,0,.22)}
+.cont-top{
+  position:absolute;left:0;right:0;top:0;height:58px;
+  transform-origin:center top;transform:translateZ(29px) rotateX(-90deg);
+  filter:brightness(.72);
+}
+.cont-lado{
+  position:absolute;top:0;bottom:0;right:0;width:58px;
+  transform-origin:right center;transform:translateZ(29px) rotateY(-90deg);
+  filter:brightness(.62);
+}
+.cont-ladoIzq{
+  position:absolute;top:0;bottom:0;left:0;width:58px;
+  transform-origin:left center;transform:translateZ(29px) rotateY(90deg);
+  filter:brightness(.62);
+}
+.contenedor::after{
+  content:"";position:absolute;left:4%;right:4%;bottom:-30px;height:52px;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.55),transparent 70%);
+  filter:blur(5px);z-index:-1;
+}
+.puertas{
+  position:absolute;inset:16px 18px;border:3px solid rgba(0,0,0,.28);
+  display:flex;flex-direction:column;padding:1.2rem 1.15rem;color:var(--crema);
+}
+.puertas::after{
+  content:"";position:absolute;left:50%;top:8px;bottom:8px;width:4px;
+  transform:translateX(-50%);background:rgba(0,0,0,.28);
+}
+.cont-codigo{font:500 .58rem var(--mono);letter-spacing:.18em;opacity:.75}
+.cont-stat{margin-top:auto}
+.cont-num{
+  display:block;font:800 4.4rem/1 var(--display);letter-spacing:.01em;
+  text-shadow:0 3px 0 rgba(0,0,0,.3);
+}
+.cont-tit{font:700 1.35rem/1.1 var(--display);letter-spacing:.06em;margin-top:.35rem}
+.cont-txt{font-size:.88rem;line-height:1.55;opacity:.92;margin-top:.7rem}
+.cont-sello{
+  margin-top:1.1rem;align-self:flex-start;border:1.5px solid var(--crema);
+  padding:3px 9px;font:500 .55rem var(--mono);letter-spacing:.22em;opacity:.8;
+}
+.contenedor.peligro .cont-frente::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:15px;
+  background:repeating-linear-gradient(-45deg,var(--amarillo) 0 13px,#1d1c18 13px 26px);
+}
+.arrastrar-hint{
+  display:flex;align-items:center;gap:14px;justify-content:center;
+  font:500 .6rem var(--mono);letter-spacing:.3em;color:#8f8878;
+}
+.arrastrar-hint svg{width:15px;height:15px;stroke:#8f8878;animation:hintX 2s ease-in-out infinite alternate}
+.arrastrar-hint svg.der{animation-name:hintX2}
+@keyframes hintX{from{transform:translateX(-6px)}to{transform:translateX(2px)}}
+@keyframes hintX2{from{transform:translateX(6px)}to{transform:translateX(-2px)}}
+
+/* ============ 03 · ARCHIVO JURÍDICO (acordeón) ============ */
+#archivo{background:var(--papel)}
+.archivador{
+  position:relative;margin-top:4.5rem;border:3px solid var(--tinta);background:#e2d2ab;
+  padding:3.6rem 2rem 2rem;box-shadow:12px 14px 0 rgba(22,48,63,.12);
+}
+.archivador::before{
+  content:"";position:absolute;inset:6px;pointer-events:none;
+  background:repeating-linear-gradient(180deg,transparent 0 58px,rgba(22,48,63,.06) 58px 60px);
+}
+.gaveta{
+  position:absolute;top:-16px;left:22px;background:var(--papel);border:2px solid var(--tinta);
+  padding:4px 14px;font:500 .58rem var(--mono);letter-spacing:.24em;color:var(--tinta);
+}
+.expediente{
+  position:relative;background:#f0e4c4;border:2px solid rgba(22,48,63,.55);
+  margin:0 0 2.6rem;transition:transform .3s;
+}
+.expediente::before{
+  content:attr(data-pestana);position:absolute;top:-27px;left:12px;
+  background:#f0e4c4;border:2px solid rgba(22,48,63,.55);border-bottom:none;
+  padding:3px 16px 1px;font:500 .58rem var(--mono);letter-spacing:.22em;color:var(--tinta-2);
+}
+.expediente:hover{transform:translateY(-4px)}
+.exp-tab{
+  display:flex;align-items:center;gap:1.3rem;width:100%;text-align:left;
+  background:none;border:none;padding:1.25rem 1.4rem;cursor:pointer;
+}
+.exp-roman{
+  width:54px;height:54px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 34% 30%,#d9695a,var(--rojo) 62%,#7e241a);
+  color:var(--crema);display:grid;place-items:center;
+  font:800 1.4rem var(--display);box-shadow:inset 0 -3px 0 rgba(0,0,0,.28),0 3px 6px rgba(0,0,0,.25);
+}
+.exp-titu h3{font:800 1.6rem/1.05 var(--display);text-transform:uppercase;letter-spacing:.03em;color:var(--tinta)}
+.exp-titu span{font:italic 500 .95rem var(--carta);color:var(--agua)}
+.exp-tab .clasificado{
+  margin-left:auto;flex:none;color:var(--rojo);border:2px solid var(--rojo);
+  padding:3px 9px;font:500 .56rem var(--mono);letter-spacing:.2em;
+  transform:rotate(-5deg);filter:url(#rugo);
+}
+.mas{flex:none;width:22px;height:22px;stroke:var(--tinta);transition:transform .4s}
+.expediente.abierto .mas{transform:rotate(45deg)}
+.exp-cuerpo{height:0;overflow:hidden}
+.expediente:first-of-type .exp-cuerpo{height:auto}
+.exp-inner{padding:.2rem 1.4rem 1.6rem 6.4rem;border-top:1.5px dashed rgba(22,48,63,.35);padding-top:1.3rem}
+.exp-inner p{max-width:640px;color:#2b4757;font-size:1rem}
+.letalidad{
+  margin-top:1.4rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  font:500 .6rem var(--mono);letter-spacing:.2em;color:var(--tinta-2);
+}
+.letalidad .anclas{display:flex;gap:5px}
+.letalidad .anclas svg{width:17px;height:17px;color:var(--rojo)}
+.letalidad .anclas svg.off{opacity:.18}
+.letalidad b{color:var(--rojo);font-weight:700}
+@media(max-width:640px){.exp-inner{padding-left:1.4rem}.exp-tab .clasificado{display:none}}
+
+/* ============ INTERLUDIO · CAMPO DE MINAS (CONTACTO Nº 07) ============ */
+.seccion-minas{
+  background:linear-gradient(180deg,#08202a 0%,#04141c 55%,#02090e 100%);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;overflow:hidden;padding:5rem 6vw 4rem;
+}
+.seccion-minas::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:130px;
+  background:linear-gradient(180deg,transparent,rgba(1,6,10,.9));pointer-events:none;
+}
+.minas-tag{
+  position:relative;z-index:3;display:inline-flex;align-items:center;gap:10px;
+  font:500 .62rem var(--mono);letter-spacing:.3em;color:#ffb08e;
+  border:1.5px solid rgba(255,176,142,.45);padding:8px 18px;
+  background:rgba(255,120,80,.05);margin-bottom:.8rem;
+}
+.mina-escenario{
+  width:min(88vw,540px);position:relative;z-index:2;
+  cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+}
+.mina-escenario.agarrando{cursor:grabbing}
+#mina-svg{width:100%;height:auto;overflow:visible}
+.mina-hint{position:relative;z-index:3;margin-top:.4rem;font:500 .6rem var(--mono);letter-spacing:.26em;color:#5f8794}
+.mina-hint strong{color:#ff8a66}
+.ping-anillo{transform-box:fill-box;transform-origin:center;animation:pingM 3.4s ease-out infinite}
+@keyframes pingM{0%{transform:scale(.4);opacity:.9}70%,100%{transform:scale(3.4);opacity:0}}
+.burb-marin{
+  position:absolute;bottom:16%;width:5px;height:5px;z-index:1;pointer-events:none;
+  border:1.5px solid rgba(190,235,230,.4);border-radius:50%;background:rgba(190,235,230,.07);
+  animation:subirBurb linear infinite;
+}
+@keyframes subirBurb{
+  0%{transform:translate(0,0);opacity:0}
+  10%{opacity:.7}
+  85%{opacity:.45}
+  100%{transform:translate(26px,-74vh);opacity:0}
+}
+#posboom{transition:opacity .3s}
+.burb-svg{animation:subirSvg 3.8s ease-out forwards}
+@keyframes subirSvg{from{transform:translateY(0);opacity:.85}to{transform:translateY(-300px);opacity:0}}
+.mina-stamp{
+  position:absolute;left:50%;top:44%;z-index:5;pointer-events:none;
+  transform:translate(-50%,-50%) rotate(-9deg) scale(1.7);opacity:0;
+  color:var(--rojo);border:5px double var(--rojo);padding:14px 32px;text-align:center;
+  font:800 1.9rem/1.2 var(--display);letter-spacing:.14em;filter:url(#rugo);
+  background:rgba(4,10,14,.25);
+  transition:opacity .45s ease,transform .45s cubic-bezier(.2,1.6,.3,1);
+}
+.mina-stamp small{display:block;font:500 .58rem var(--mono);letter-spacing:.3em;margin-top:6px}
+.mina-stamp.ver{opacity:.94;transform:translate(-50%,-50%) rotate(-9deg) scale(1)}
+
+/* ============ 04 · FONDEADERO (CTA bajo el agua) ============ */
+.seccion-fondo{
+  background:linear-gradient(180deg,var(--noche) 0%,#081b21 100%);
+  color:var(--crema);min-height:92vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;overflow:hidden;
+}
+.rayo{
+  position:absolute;top:-12%;width:170px;height:130%;
+  background:linear-gradient(180deg,rgba(240,235,215,.14),transparent 72%);
+  filter:blur(9px);transform:rotate(16deg);animation:rayoLuz 9s ease-in-out infinite alternate;
+}
+.rayo.r2{left:20%;animation-duration:13s}
+.rayo.r1{left:8%}
+.rayo.r3{left:70%;animation-duration:11s}
+@keyframes rayoLuz{from{opacity:.35;transform:rotate(16deg) translateX(0)}to{opacity:.9;transform:rotate(16deg) translateX(26px)}}
+.plancton{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(240,235,215,.4);animation:planctonSube linear infinite}
+@keyframes planctonSube{from{transform:translateY(20vh);opacity:0}20%{opacity:.7}to{transform:translateY(-110vh);opacity:0}}
+.boya-wrap{position:relative;width:210px;margin-bottom:1.6rem;animation:boyaBob 6s ease-in-out infinite alternate;z-index:2}
+@keyframes boyaBob{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-16px) rotate(3deg)}}
+.boya-wrap svg{width:100%}
+.onda-boya{transform-box:fill-box;transform-origin:center;animation:ondaB 3.6s ease-out infinite}
+.onda-boya.o2{animation-delay:1.8s}
+@keyframes ondaB{from{transform:scale(.5);opacity:.55}to{transform:scale(1.65);opacity:0}}
+.boya-cuerda{transform-box:fill-box;transform-origin:center;animation:girar 24s linear infinite}
+.seccion-fondo .sec-kicker{color:#8fd6cd;justify-content:center}
+.seccion-fondo .sec-kicker::before{background:#8fd6cd}
+.seccion-fondo h2{color:var(--crema)}
+.seccion-fondo h2 em{color:#8fd6cd}
+.fondo-sub{max-width:520px;margin:1.2rem auto 2.6rem;color:#b8cdd1;font-size:1.05rem}
+.btn-debate{
+  display:inline-flex;align-items:center;gap:14px;text-decoration:none;
+  background:var(--amarillo);color:var(--tinta);
+  font:700 1.05rem var(--display);letter-spacing:.18em;padding:1.1rem 2.7rem;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
+  transition:transform .18s,background .18s;
+}
+.btn-debate:hover{transform:translateY(4px);background:#ecb850}
+.btn-debate svg{width:20px;height:20px;stroke:var(--tinta)}
+.prof-tag{margin-top:2.8rem;font:500 .6rem var(--mono);letter-spacing:.3em;color:#6f95a0}
+
+/* ============ PIE ============ */
+footer{
+  background:#050f14;color:#93a9b0;padding:2.2rem 6vw;
+  display:flex;align-items:center;gap:2rem;flex-wrap:wrap;
+  font:400 .68rem var(--mono);letter-spacing:.12em;
+}
+footer .marca-pie{display:flex;align-items:center;gap:12px;color:var(--crema)}
+footer .marca-pie svg{width:34px;height:34px;animation:girar 30s linear infinite}
+footer .sep-pie{width:1px;height:26px;background:#28404a}
+@media(max-width:700px){footer .sep-pie{display:none}}
+
+/* ============ EXPLOSIÓN · BRECHA · CHORROS · INUNDACIÓN ============ */
+#flash{position:fixed;inset:0;z-index:5000;background:#fff8e5;opacity:0;pointer-events:none;transition:opacity .1s}
+#flash.on{opacity:.92}
+
+.onda-choque{
+  position:fixed;z-index:955;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;
+  border:3px solid rgba(205,246,246,.85);
+  box-shadow:0 0 26px rgba(150,230,235,.55),inset 0 0 26px rgba(150,230,235,.4);
+  pointer-events:none;animation:choque .95s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes choque{from{transform:scale(.12);opacity:1}to{transform:scale(14);opacity:0}}
+
+#pagina.temblor{animation:temblorA .85s cubic-bezier(.36,.07,.19,.97)}
+@keyframes temblorA{
+  0%,100%{transform:translate(0,0) rotate(0)}
+  8%{transform:translate(-17px,10px) rotate(-.45deg)}
+  18%{transform:translate(14px,-8px) rotate(.45deg)}
+  30%{transform:translate(-11px,7px) rotate(-.25deg)}
+  44%{transform:translate(8px,-5px) rotate(.2deg)}
+  58%{transform:translate(-6px,4px)}
+  72%{transform:translate(4px,-2px)}
+  86%{transform:translate(-2px,1px)}
+}
+#pagina.temblor2{animation:temblorB 1.5s ease-out}
+@keyframes temblorB{0%,100%{transform:translate(0,0)}22%{transform:translate(-4px,3px)}45%{transform:translate(4px,-2px)}68%{transform:translate(-3px,2px)}88%{transform:translate(2px,-1px)}}
+
+#brecha-layer{position:fixed;z-index:925;width:0;height:0;pointer-events:none}
+#brecha-svg{
+  position:absolute;left:-340px;top:-340px;width:680px;height:680px;overflow:visible;
+  transform:scale(.12) rotate(-12deg);opacity:0;
+  transition:transform .6s cubic-bezier(.2,1.5,.35,1),opacity .3s ease;
+}
+#brecha-svg.abierto{transform:scale(1) rotate(0deg);opacity:1}
+.grietas2 path{fill:none;stroke:rgba(185,225,232,.5);stroke-width:2.4;filter:drop-shadow(0 0 3px rgba(120,220,225,.35))}
+.brasa{animation:brasaApagon 4.5s ease-out forwards}
+@keyframes brasaApagon{from{opacity:.95}to{opacity:.08}}
+.vac-brillo{transform-box:fill-box;transform-origin:center;animation:vacBrillo 5s ease-in-out infinite alternate}
+@keyframes vacBrillo{from{opacity:.22;transform:scaleY(.8)}to{opacity:.5;transform:scaleY(1.15)}}
+.flapa{transition:transform .55s cubic-bezier(.2,1.4,.4,1)}
+.soldadura{transform-box:fill-box;transform-origin:center;animation:soldar 1.2s ease-out forwards}
+@keyframes soldar{0%{transform:scale(.5);opacity:0}25%{opacity:.95}100%{transform:scale(1.25);opacity:0}}
+#jet-canvas{position:fixed;inset:0;z-index:946;pointer-events:none}
+
+#inundacion{position:fixed;left:0;right:0;bottom:0;height:0;z-index:930;pointer-events:none}
+.agua-cuerpo{
+  position:absolute;top:0;bottom:0;left:-16px;right:-16px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(23,116,130,.5),rgba(7,40,50,.82));
+  animation:slosh 7s ease-in-out infinite alternate;
+}
+@keyframes slosh{from{transform:translateX(-8px)}to{transform:translateX(8px)}}
+.superficie{position:absolute;left:0;right:0;top:-26px;height:30px}
+.superficie svg{position:absolute;top:0;left:0;width:200%;height:30px}
+.superficie .o1{animation:olaX 6s linear infinite}
+.superficie .o2{animation:olaX 10s linear infinite reverse;opacity:.5}
+.superficie .espuma{animation:olaX 4.6s linear infinite;filter:blur(.4px)}
+.refraccion{
+  position:absolute;left:0;right:0;top:0;height:22px;
+  backdrop-filter:blur(2.5px) saturate(1.35);background:rgba(120,220,215,.1);
+}
+.burbuja{
+  position:absolute;bottom:-12px;border:1.5px solid rgba(220,245,240,.65);
+  border-radius:50%;background:rgba(220,245,240,.12);
+  animation:burbujaSube ease-in forwards;
+}
+@keyframes burbujaSube{
+  0%{bottom:0;opacity:0}12%{opacity:.85}
+  70%{transform:translateX(14px)}
+  100%{bottom:calc(100% - 10px);transform:translateX(-10px);opacity:0}
+}
+.pez{position:absolute;width:46px;opacity:0;transition:opacity .9s;will-change:transform}
+.pez.naranja{color:#e8a05c}
+.pez.clara{color:#cfe8e2}
+
+#panel-achique{
+  position:fixed;left:50%;top:46%;z-index:970;transform:translate(-50%,-50%) scale(0);
+  width:min(420px,88vw);background:#1b2b31;border:3px solid #3c5763;color:var(--crema);
+  padding:2rem 2rem 1.8rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.55);
+}
+#panel-achique .pa-tit{font:500 .6rem var(--mono);letter-spacing:.3em;color:#ffb08e;display:flex;align-items:center;justify-content:center;gap:10px}
+#panel-achique h3{font:800 2.1rem var(--display);letter-spacing:.05em;margin:.5rem 0 .6rem}
+#panel-achique .pa-txt{color:#a9c2c4;font-size:.95rem}
+#bombas{
+  margin-top:1.5rem;background:var(--amarillo);color:var(--tinta);border:none;cursor:pointer;
+  font:700 .95rem var(--display);letter-spacing:.16em;padding:.95rem 2rem;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+  transition:transform .15s,background .15s;
+}
+#bombas:hover{transform:translateY(3px);background:#ecb850}
+.tornillo{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7b98a3,#31474f);box-shadow:inset 0 -1px 2px rgba(0,0,0,.6)}
+.tornillo.t1{top:9px;left:9px}.tornillo.t2{top:9px;right:9px}
+.tornillo.t3{bottom:9px;left:9px}.tornillo.t4{bottom:9px;right:9px}
+
+#remolino{
+  position:fixed;left:50%;bottom:6%;z-index:935;width:360px;height:110px;
+  transform:translateX(-50%) scaleY(.32);border-radius:50%;
+  background:conic-gradient(rgba(140,235,225,.0),rgba(140,235,225,.5),rgba(140,235,225,0) 40%);
+  filter:blur(7px);opacity:0;transition:opacity .5s;pointer-events:none;
+}
+#remolino.ver{opacity:.5;animation:girar 1s linear infinite}
+
+/* ============ TOAST / TIP / RIPPLE ============ */
+#toast{
+  position:fixed;left:50%;bottom:26px;z-index:980;
+  transform:translate(-50%,180%);transition:transform .5s cubic-bezier(.2,1.2,.3,1);
+  display:flex;align-items:center;gap:14px;background:#f6eeda;color:var(--tinta);
+  border:2px solid var(--tinta);padding:.9rem 1.3rem;box-shadow:7px 9px 0 rgba(22,48,63,.18);
+  max-width:min(560px,90vw);
+}
+#toast.ver{transform:translate(-50%,0)}
+#toast svg{width:26px;height:26px;flex:none;color:var(--rojo)}
+#toast strong{font:800 1.05rem var(--display);letter-spacing:.06em;display:block}
+#toast span{font:400 .8rem var(--texto);color:#2b4757}
+#tip-flot{
+  position:fixed;z-index:990;pointer-events:none;opacity:0;transition:opacity .2s;
+  background:var(--tinta);color:var(--crema);font:500 .62rem var(--mono);
+  letter-spacing:.1em;padding:6px 10px;max-width:240px;
+}
+#tip-flot.ver{opacity:1}
+.ondita{
+  position:fixed;z-index:965;pointer-events:none;border-radius:50%;
+  border:2px solid rgba(23,126,140,.55);width:12px;height:12px;
+  transform:translate(-50%,-50%);
+  animation:onditaA .7s ease-out forwards;
+}
+@keyframes onditaA{to{transform:translate(-50%,-50%) scale(9);opacity:0}}
+
+/* fragmentos de explosión */
+.frag{position:fixed;width:7px;height:7px;pointer-events:none}
+.frag.chispa{box-shadow:0 0 9px #ffb066}
+.frag.cristal{clip-path:polygon(50% 0,100% 100%,0 100%);box-shadow:0 0 6px rgba(200,240,250,.55)}
+
+/* reveals sin JS-dependencia: los estados iniciales los fija GSAP */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+}
+</style>
+</head>
+<body>
+
+<!-- Filtros SVG globales (sello rugoso) e iconos reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rugo">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5"/>
+    </filter>
+    <symbol id="i-ancla" viewBox="0 0 24 24">
+      <circle cx="12" cy="4.5" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="12" y1="6.7" x2="12" y2="19" stroke="currentColor" stroke-width="2"/>
+      <line x1="7.5" y1="10" x2="16.5" y2="10" stroke="currentColor" stroke-width="2"/>
+      <path d="M5,14.5 C5,19.6 8.5,21.6 12,21.6 C15.5,21.6 19,19.6 19,14.5" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-flecha-der" viewBox="0 0 24 24">
+      <path d="M3 12h16M13 5l7 7-7 7" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-flecha-izq" viewBox="0 0 24 24">
+      <path d="M21 12H5M11 5l-7 7 7 7" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-flecha-arr" viewBox="0 0 24 24">
+      <path d="M12 21V4M5 11l7-7 7 7" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-mas" viewBox="0 0 24 24">
+      <path d="M12 4v16M4 12h16" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-pez" viewBox="0 0 64 32">
+      <path d="M4,16 Q20,3 40,8 Q51,11 55,16 Q51,21 40,24 Q20,29 4,16 Z" fill="currentColor"/>
+      <path d="M54,16 L63,8 L60,16 L63,24 Z" fill="currentColor"/>
+      <circle cx="13" cy="14" r="2" fill="#12262e"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="grano" aria-hidden="true"></div>
+
+<!-- ==================== PRELOADER ==================== -->
+<div id="carga">
+  <svg class="sello-carga" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="93" fill="none" stroke="#16303f" stroke-width="5" stroke-dasharray="6 4"/>
+    <circle cx="100" cy="100" r="77" fill="none" stroke="#16303f" stroke-width="1.6"/>
+    <g class="sello-texto">
+      <path id="arco-txt" d="M100,100 m-63,0 a63,63 0 1,1 126,0 a63,63 0 1,1 -126,0" fill="none"/>
+      <text><textPath href="#arco-txt">OFICINA DE MONITOREO DEL COMERCIO · OPERACIÓN ORMUZ ·</textPath></text>
+    </g>
+    <text x="100" y="114" text-anchor="middle" class="sello-omc">OMC</text>
+  </svg>
+  <p>CALIBRANDO INSTRUMENTOS DE NAVEGACIÓN · CARTA Nº 04-ORMUZ</p>
+</div>
+
+<!-- ==================== BANDA DE BANDERINES ==================== -->
+<div class="banda" aria-hidden="true">
+  <div class="cuerda"></div>
+  <div class="banderin" data-significado="OSCAR · «Hombre al agua»"><svg viewBox="0 0 26 30"><path d="M0,0 H26 L0,30 Z" fill="#e6b93f"/><path d="M26,0 L0,30 H26 Z" fill="#c03b2e"/></svg></div>
+  <div class="banderin" data-significado="ROMEO · «Me preparo para zarpar»"><svg viewBox="0 0 26 30"><rect width="26" height="30" fill="#c03b2e"/><path d="M11,4 h4 v9 h9 v4 h-9 v9 h-4 v-9 h-9 v-4 h9 Z" fill="#f2e9d6"/></svg></div>
+  <div class="banderin" data-significado="MIKE · «Buque parado; médico a bordo»"><svg viewBox="0 0 26 30"><rect width="26" height="30" fill="#1f4e5f"/><path d="M4,4 L22,26 M22,4 L4,26" stroke="#f2e9d6" stroke-width="4"/></svg></div>
+  <div class="banderin" data-significado="UNIFORM · «Señor: va usted derecho hacia un peligro»"><svg viewBox="0 0 26 30"><rect width="13" height="15" fill="#c03b2e"/><rect x="13" width="13" height="15" fill="#f2e9d6"/><rect y="15" width="13" height="15" fill="#f2e9d6"/><rect x="13" y="15" width="13" height="15" fill="#c03b2e"/></svg></div>
+  <div class="banderin" data-significado="ZULU · «Requiero un remolcador»"><svg viewBox="0 0 26 30"><path d="M0,0 L26,0 L0,30 Z" fill="#e6b93f"/><path d="M0,0 L26,30 L26,0 Z" fill="#1f4e5f"/></svg></div>
+  <span class="banda-info">CÓDIGO INTERNACIONAL DE BANDERAS · MENSAJE: «ORMUZ»</span>
+</div>
+
+<!-- ==================== CABECERA ==================== -->
+<header id="cabina">
+  <a class="marca" href="#inicio">
+    <svg viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="94" fill="none" stroke="#16303f" stroke-width="6" stroke-dasharray="5 4"/>
+      <g class="sello-texto">
+        <path id="arco-cab" d="M100,100 m-62,0 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0" fill="none"/>
+        <text style="font:600 15px var(--mono);letter-spacing:.28em" fill="#16303f"><textPath href="#arco-cab">OMC · MONITOREO MARÍTIMO ·</textPath></text>
+      </g>
+      <text x="100" y="112" text-anchor="middle" style="font:800 38px var(--display)" fill="#16303f">OMC</text>
+    </svg>
+    <div><strong>OMC</strong><span>OFICINA DE MONITOREO<br>DEL COMERCIO</span></div>
+  </a>
+  <nav>
+    <a href="#carta">CARTA</a>
+    <a href="#terminal">TERMINAL</a>
+    <a href="#archivo">ARSENAL</a>
+    <a href="#fondeadero">FONDEADERO</a>
+  </nav>
+  <div class="estado"><span class="led"></span> MARSEC · NIVEL 3</div>
+</header>
+
+<!-- ==================== SONDA DE PROFUNDIDAD ==================== -->
+<aside class="sonda" aria-hidden="true">
+  <span class="sonda-titulo">SONDA</span>
+  <div class="sonda-cuerpo" id="sonda-cuerpo">
+    <div class="sonda-rail"></div>
+    <div class="sonda-puntero" id="sonda-puntero"><i></i><span id="sonda-m">0 m</span></div>
+  </div>
+  <span class="sonda-zona" id="sonda-zona">SUPERFICIE</span>
+</aside>
+
+<div id="pagina">
+<main id="inicio">
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero" id="hero">
+    <div class="escena" id="escena" aria-hidden="true">
+      <div class="capa cielo" data-p="4"></div>
+      <div class="capa" data-p="7"><div class="sol"></div></div>
+      <div class="capa" data-p="10">
+        <div class="nube" style="top:12%;left:10%;width:150px;animation-duration:120s"></div>
+        <div class="nube" style="top:26%;left:55%;width:220px;opacity:.7;animation-duration:160s;animation-delay:-40s"></div>
+        <div class="nube" style="top:7%;left:70%;width:120px;opacity:.55;animation-duration:95s;animation-delay:-70s"></div>
+      </div>
+      <div class="capa" data-p="14">
+        <div class="gaviota" style="top:18%;animation-duration:34s"><svg viewBox="0 0 64 28"><g class="alaL" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M31,14 Q16,-2 2,10"/></g><g class="alaR" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M33,14 Q48,-2 62,10"/></g></svg></div>
+        <div class="gaviota" style="top:29%;animation-duration:46s;animation-delay:-18s;transform:scale(.65)"><svg viewBox="0 0 64 28"><g class="alaL" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M31,14 Q16,-2 2,10"/></g><g class="alaR" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M33,14 Q48,-2 62,10"/></g></svg></div>
+        <div class="gaviota" style="top:9%;animation-duration:58s;animation-delay:-33s;transform:scale(.8)"><svg viewBox="0 0 64 28"><g class="alaL" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M31,14 Q16,-2 2,10"/></g><g class="alaR" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M33,14 Q48,-2 62,10"/></g></svg></div>
+      </div>
+      <div class="capa skyline" data-p="12">
+        <svg viewBox="0 0 1600 120" preserveAspectRatio="xMidYMax slice">
+          <g fill="#16303f">
+            <rect x="40" y="60" width="90" height="60"/><rect x="150" y="30" width="60" height="90"/>
+            <rect x="230" y="76" width="120" height="44"/><rect x="1290" y="50" width="80" height="70"/>
+            <rect x="1390" y="24" width="70" height="96"/><rect x="1180" y="72" width="90" height="48"/>
+          </g>
+        </svg>
+      </div>
+      <div class="capa gruas" data-p="18">
+        <svg viewBox="0 0 1600 300" preserveAspectRatio="xMidYMax slice">
+          <g stroke="#16303f" stroke-width="7" fill="none" opacity=".95">
+            <path d="M120,300 L158,140 M218,300 L180,140 M158,140 H330 M158,140 V96 M158,96 L330,140 M158,96 L100,140"/>
+            <g class="grua-cable" stroke-width="3"><line x1="300" y1="140" x2="300" y2="196"/><rect x="284" y="196" width="34" height="12" fill="#16303f" stroke="none"/></g>
+            <path d="M520,300 L558,140 M618,300 L580,140 M558,140 H730 M558,140 V96 M558,96 L730,140 M558,96 L500,140"/>
+            <path d="M940,300 L978,140 M1038,300 L1000,140 M978,140 H1050 M978,140 V96 M978,96 L1140,140 M978,96 L920,140"/>
+            <g class="grua-cable" stroke-width="3" style="animation-delay:-4s"><line x1="1100" y1="140" x2="1100" y2="188"/><rect x="1084" y="188" width="34" height="12" fill="#16303f" stroke="none"/></g>
+          </g>
+          <g fill="#16303f">
+            <rect x="380" y="252" width="46" height="20"/><rect x="426" y="252" width="46" height="20" opacity=".8"/><rect x="380" y="230" width="46" height="20" opacity=".9"/><rect x="470" y="252" width="46" height="20" opacity=".7"/>
+            <rect x="810" y="252" width="46" height="20" fill="#8a4436"/><rect x="856" y="252" width="46" height="20"/><rect x="810" y="230" width="46" height="20" opacity=".85"/><rect x="900" y="252" width="46" height="20" opacity=".75"/>
+          </g>
+        </svg>
+      </div>
+      <div class="capa mar" data-p="8">
+        <div class="ola-mar"></div>
+        <div class="reflejo-sol"></div>
+        <div class="petrolero">
+          <div class="petrolero-bob">
+            <svg viewBox="0 0 190 74" width="190">
+              <ellipse class="estela" cx="24" cy="66" rx="26" ry="4" fill="#eaf4f0"/>
+              <ellipse class="estela" cx="-14" cy="66" rx="18" ry="3" fill="#eaf4f0" style="animation-delay:1.4s"/>
+              <path d="M6,50 H184 L168,66 H24 Z" fill="#16303f"/>
+              <path d="M6,50 H184 L180,55 H8 Z" fill="#8a4436"/>
+              <rect x="120" y="26" width="44" height="24" fill="#efe6d3" stroke="#16303f" stroke-width="2"/>
+              <rect x="132" y="32" width="8" height="8" fill="#16303f"/>
+              <rect x="98" y="34" width="10" height="16" fill="#16303f"/>
+              <line x1="70" y1="50" x2="70" y2="24" stroke="#16303f" stroke-width="2.5"/>
+              <circle class="humo" cx="102" cy="28" r="4" fill="#d9d2c2"/>
+              <circle class="humo" cx="104" cy="26" r="3" fill="#d9d2c2" style="animation-delay:1.1s"/>
+              <circle class="humo" cx="100" cy="26" r="2.5" fill="#d9d2c2" style="animation-delay:2.2s"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="capa" data-p="26">
+        <div class="muelle">
+          <div class="bita" style="left:7%">
+            <svg viewBox="0 0 44 62" width="46"><path class="cabo" d="M22,12 C10,30 26,40 14,60" stroke="#5a4632" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="15" y="8" width="14" height="50" fill="#0b171d"/><rect x="4" y="2" width="36" height="9" rx="2" fill="#132530"/><rect x="8" y="56" width="28" height="6" fill="#0b171d"/></svg>
+          </div>
+          <div class="bita" style="right:9%">
+            <svg viewBox="0 0 44 62" width="42"><rect x="15" y="8" width="14" height="50" fill="#0b171d"/><rect x="4" y="2" width="36" height="9" rx="2" fill="#132530"/><rect x="8" y="56" width="28" height="6" fill="#0b171d"/><path d="M30,4 Q36,-2 42,4 L42,8 L30,8 Z" fill="#20343e"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-cont">
+      <span class="kicker"><span class="led"></span>DESPACHO OMC · SISTEMA DE MONITOREO MARÍTIMO · EN DIRECTO</span>
+      <h1>
+        <span class="linea"><span class="linea-in">EL ESTRECHO</span></span>
+        <span class="linea"><span class="linea-in">ESTÁ <span class="sello-zarpe">CERRADO</span></span></span>
+      </h1>
+      <p class="hero-sub">La arteria energética más importante del planeta ha sido clausurada militarmente. Las aseguradoras marítimas abandonan las flotas, los mercados se asfixian y Estados Unidos e Irán llevan el comercio internacional al límite.</p>
+      <div class="hero-datos">
+        <span>ESTRECHO DE ORMUZ · 26°34′N — 056°15′E</span>
+        <span class="rombo" aria-hidden="true"></span>
+        <span>ÓRGANO DE SOLUCIÓN DE DIFERENCIAS · CONVOCADO</span>
+      </div>
+    </div>
+
+    <div class="hero-firma" aria-hidden="true">
+      <svg viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="72" fill="none" stroke="#16303f" stroke-width="2.5"/>
+        <circle cx="80" cy="80" r="56" fill="none" stroke="#16303f" stroke-width="1" opacity=".5"/>
+        <g class="rosa-int" fill="#16303f">
+          <path d="M80,24 L86,80 L80,136 L74,80 Z"/><path d="M24,80 L80,74 L136,80 L80,86 Z"/>
+          <path d="M80,24 L86,80 L80,136 L74,80 Z" transform="rotate(45 80 80)" opacity=".45"/>
+          <path d="M24,80 L80,74 L136,80 L80,86 Z" transform="rotate(45 80 80)" opacity=".45"/>
+          <circle cx="80" cy="80" r="7" fill="#efe6d3" stroke="#16303f" stroke-width="2"/>
+        </g>
+        <text x="80" y="14" text-anchor="middle" style="font:700 14px var(--mono)" fill="#16303f">N</text>
+      </svg>
+    </div>
+
+    <a class="bajar" href="#carta">
+      <svg width="18" height="18" viewBox="0 0 24 24"><use href="#i-ancla" style="color:#f7f1e3"/></svg>
+      DESCIENDE
+    </a>
+  </section>
+
+  <div class="corte" style="--arriba:#164652" aria-hidden="true">
+    <svg class="ola-b" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#c8bda0" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+    <svg class="ola-a" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#efe6d3" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+  </div>
+
+  <!-- ==================== 01 · CARTA ==================== -->
+  <section class="seccion" id="carta">
+    <header class="sec-cab">
+     
+    </header>
+
+    <div class="carta-grid">
+      <figure class="carta-marco reveal">
+        <div class="carta-wrap" id="carta-wrap">
+          <svg class="cartamapa" viewBox="0 0 1000 660" role="img" aria-label="Carta náutica del Golfo Pérsico y el Estrecho de Ormuz">
+            <rect width="1000" height="660" fill="#dce8e3"/>
+            <g stroke="#16303f" stroke-width=".7" opacity=".14">
+              <path d="M100,10 V650 M300,10 V650 M500,10 V650 M700,10 V650 M900,10 V650 M10,110 H990 M10,220 H990 M10,330 H990 M10,440 H990 M10,550 H990"/>
+            </g>
+            <g class="mono-map" opacity=".55">
+              <text x="100" y="30" text-anchor="middle">52°E</text><text x="300" y="30" text-anchor="middle">54°E</text>
+              <text x="500" y="30" text-anchor="middle">56°E</text><text x="700" y="30" text-anchor="middle">58°E</text>
+              <text x="900" y="30" text-anchor="middle">60°E</text>
+              <text x="20" y="114">30°N</text><text x="20" y="224">28°N</text><text x="20" y="334">26°N</text>
+              <text x="20" y="444">24°N</text><text x="20" y="554">22°N</text>
+            </g>
+
+            <g>
+              <path fill="#e7dcbb" stroke="#16303f" stroke-width="2.4"
+                d="M0,96 C120,120 260,150 380,180 C480,204 558,240 606,282 C620,294 630,304 638,308
+                   L652,300 C660,276 668,252 682,232 C704,196 762,168 832,150 C882,137 942,124 1000,116 L1000,0 L0,0 Z"/>
+              <path fill="#e7dcbb" stroke="#16303f" stroke-width="2.4"
+                d="M0,470 C140,462 300,440 430,420 C520,406 578,392 620,382
+                   L636,376 L644,352 L656,332 L668,352 L676,380
+                   C700,392 742,412 792,432 C852,456 922,470 1000,482 L1000,660 L0,660 Z"/>
+              <path fill="none" stroke="#16303f" stroke-width="7" stroke-dasharray="1.5 7" opacity=".5"
+                d="M0,96 C120,120 260,150 380,180 C480,204 558,240 606,282 C620,294 630,304 638,308 L652,300 C660,276 668,252 682,232 C704,196 762,168 832,150 C882,137 942,124 1000,116"/>
+              <path fill="none" stroke="#16303f" stroke-width="7" stroke-dasharray="1.5 7" opacity=".5"
+                d="M0,470 C140,462 300,440 430,420 C520,406 578,392 620,382 L636,376 L644,352 L656,332 L668,352 L676,380 C700,392 742,412 792,432 C852,456 922,470 1000,482"/>
+            </g>
+
+            <g fill="none" stroke="#16303f" stroke-width="1.2" stroke-dasharray="2 6" opacity=".4">
+              <path d="M95,235 C260,268 420,300 560,330"/>
+              <path d="M130,190 C300,225 460,258 590,300"/>
+              <path d="M740,410 C800,430 870,448 950,458"/>
+            </g>
+            <g class="mono-map" opacity=".45" font-size="9">
+              <text x="305" y="262">20 m</text><text x="345" y="216">80 m</text><text x="860" y="428">200 m</text>
+            </g>
+
+            <text class="n-pais" x="250" y="70">IRÁN</text>
+            <text class="n-pais" x="130" y="580" opacity=".4">PENÍNSULA ARÁBIGA</text>
+            <text class="n-pais" x="800" y="540">OMÁN</text>
+            <path id="curva-golfo" d="M150,378 Q360,440 560,392" fill="none"/>
+            <text class="n-mar"><textPath href="#curva-golfo" startOffset="14%">GOLFO PÉRSICO</textPath></text>
+            <path id="curva-oman" d="M720,452 Q840,490 960,470" fill="none"/>
+            <text class="n-mar-2"><textPath href="#curva-oman" startOffset="18%">GOLFO DE OMÁN</textPath></text>
+            <text class="n-mar-2" x="770" y="600" opacity=".45" font-size="16">MAR ARÁBIGO</text>
+            <text class="n-ciudad" x="270" y="505">EMIRATOS ÁRABES UNIDOS</text>
+            <g class="mono-map">
+              <circle cx="600" cy="292" r="3.5" fill="#16303f"/><text x="610" y="288">BANDAR ABBAS</text>
+              <circle cx="330" cy="446" r="3.5" fill="#16303f"/><text x="340" y="442">DUBÁI</text>
+              <circle cx="838" cy="470" r="3.5" fill="#16303f"/><text x="848" y="466">MASCATE</text>
+            </g>
+
+            <path id="ruta-nav" class="ruta-nav" fill="none" stroke="#16303f" stroke-width="2" opacity=".75"
+              d="M120,330 C220,352 320,344 420,352 C500,358 556,352 600,338 C628,330 644,326 662,334 C704,352 782,384 880,398"/>
+            <g>
+              <g fill="#16303f">
+                <path d="M-13,0 L-9,6 L10,6 L13,0 Z"/><rect x="-4" y="-9" width="7" height="9"/>
+                <line x1="6" y1="0" x2="6" y2="-8" stroke="#16303f" stroke-width="1.6"/>
+              </g>
+              <animateMotion dur="34s" repeatCount="indefinite" rotate="auto"><mpath href="#ruta-nav"/></animateMotion>
+            </g>
+            <g>
+              <g fill="#16303f" opacity=".85" transform="scale(.75)">
+                <path d="M-13,0 L-9,6 L10,6 L13,0 Z"/><rect x="-4" y="-9" width="7" height="9"/>
+              </g>
+              <animateMotion dur="46s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#ruta-nav"/></animateMotion>
+            </g>
+
+            <g class="pin-est" id="pin-est">
+              <circle class="peligro-ring" cx="650" cy="330" r="46" fill="none" stroke="#c03b2e" stroke-width="2" stroke-dasharray="5 6"/>
+              <circle class="pin-zumbido" cx="650" cy="330" r="5" fill="#c03b2e"/>
+            </g>
+            <line x1="650" y1="282" x2="706" y2="240" stroke="#c03b2e" stroke-width="1.4"/>
+            <text class="mono-map" x="712" y="236" fill="#c03b2e" font-weight="700">ESTRECHO DE ORMUZ · 26°34′N 056°15′E</text>
+            <g filter="url(#rugo)" transform="rotate(-34 650 330)">
+              <rect x="588" y="321" width="124" height="19" fill="#c03b2e"/>
+              <text x="650" y="335" text-anchor="middle" class="cinta-txt">CLAUSURADO</text>
+            </g>
+
+            <g transform="translate(168,242)" stroke="#16303f" fill="#16303f">
+              <circle r="34" fill="none" stroke-width="1.6"/>
+              <circle r="27" fill="none" stroke-width=".8" opacity=".5"/>
+              <path d="M0,-30 L4.5,0 L0,30 L-4.5,0 Z"/><path d="M-30,0 L0,-4.5 L30,0 L0,4.5 Z"/>
+              <path d="M0,-30 L4.5,0 L0,30 L-4.5,0 Z" transform="rotate(45)" opacity=".4"/>
+              <path d="M-30,0 L0,-4.5 L30,0 L0,4.5 Z" transform="rotate(45)" opacity=".4"/>
+              <circle r="3.5" fill="#dce8e3" stroke-width="1.6"/>
+              <text y="-42" text-anchor="middle" style="font:700 12px var(--mono)" stroke="none">N</text>
+            </g>
+
+            <g transform="translate(40,622)">
+              <rect width="30" height="7" fill="#16303f"/><rect x="30" width="30" height="7" fill="none" stroke="#16303f" stroke-width="1.4"/>
+              <rect x="60" width="30" height="7" fill="#16303f"/><rect x="90" width="30" height="7" fill="none" stroke="#16303f" stroke-width="1.4"/>
+              <text class="mono-map" y="20" font-size="9">0</text><text class="mono-map" x="52" y="20" font-size="9">50</text><text class="mono-map" x="102" y="20" font-size="9">100 mn</text>
+            </g>
+
+            <rect x="5" y="5" width="990" height="650" fill="none" stroke="#16303f" stroke-width="2.4"/>
+            <rect x="11" y="11" width="978" height="638" fill="none" stroke="#16303f" stroke-width=".8"/>
+          </svg>
+
+          <div class="radar" aria-label="Sonar activo con cuatro contactos">
+            <div class="radar-pantalla">
+              <div class="radar-anillos"></div>
+              <div class="radar-cruz"></div>
+              <div class="radar-barrido"></div>
+              <div class="blip" style="left:63%;top:26%" data-tip="CNT-01 · TANQUERO SUEZMAX — EN ESPERA"></div>
+              <div class="blip" style="left:30%;top:58%;animation-delay:.8s" data-tip="CNT-02 · CARGUERO SIN BANDERA"></div>
+              <div class="blip hostil" style="left:68%;top:60%;animation-delay:1.7s" data-tip="CNT-03 · PATRULLERA IRANÍ"></div>
+              <div class="blip" style="left:22%;top:30%;animation-delay:2.6s" data-tip="CNT-04 · FRAGATA DE COALICIÓN"></div>
+              <svg class="radar-sub" viewBox="0 0 64 32">
+                <rect x="4" y="11" width="44" height="13" rx="6.5" fill="currentColor"/>
+                <path d="M18,11 v-5 h9 v5" fill="currentColor"/>
+                <path d="M24,6 v-3 h6" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path d="M48,12 l6,-4 v18 l-6,-4 Z" fill="currentColor" opacity=".7"/>
+                <circle cx="13" cy="17" r="1.6" fill="#0b2b36"/>
+              </svg>
+            </div>
+            <div class="radar-placa"><span>SONAR ACTIVO</span><b>4 CONTACTOS</b></div>
+          </div>
+
+          <div class="mapa-cross" id="mapa-cross"><i class="v"></i><i class="h"></i></div>
+          <div class="mapa-coords" id="mapa-coords">26.50° N · 056.20° E</div>
+        </div>
+        <figcaption><span>CARTA Nº 04-ORMUZ · PROYECCIÓN MERCATOR</span><span>ESCALA 1:3.500.000 · NO APTA PARA NAVEGACIÓN REAL</span></figcaption>
+      </figure>
+
+      <div class="reportes">
+        <article class="nota reveal" style="--r:1.6deg">
+          <div class="nota-cab"><span>REPORTE 001_A</span><span class="sello-mini">CONFIDENCIAL</span></div>
+          <h3>Anomalía mercante</h3>
+          <p>Múltiples cargueros detenidos sin justificación sanitaria ni penal. Retención del <strong>35% del petróleo transportable en el mundo</strong> y disrupciones drásticas al Principio de Nación Más Favorecida (NMF) dentro del recinto de la OMC.</p>
+          <p class="hora">REGISTRADO · 03:42 ZULU · CANAL OFICIAL OMC</p>
+        </article>
+        <article class="nota reveal" style="--r:-2.2deg;margin-top:1rem">
+          <div class="nota-cab"><span>BOLETÍN 02 · CENTCOM</span><span class="sello-mini">URGENTE</span></div>
+          <h3>Vigilancia asimétrica</h3>
+          <p>Las flotas navales de Irán y las fuerzas de coalición bajo la tutela del Comando Central estadounidense mantienen el estrecho bajo vigilancia asimétrica y tensión total.</p>
+          <p class="hora">ACTUALIZADO · 03:47 ZULU · FUENTE: COALICIÓN</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="corte" style="--arriba:#efe6d3" aria-hidden="true">
+    <svg class="ola-b" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#3a382f" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+    <svg class="ola-a" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#26241f" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+  </div>
+
+  <!-- ==================== 02 · TERMINAL ==================== -->
+  <section class="seccion seccion-terminal" id="terminal">
+    <header class="sec-cab">
+      
+    </header>
+
+    <div class="terminal-cab reveal">
+      <div class="terminal-status"><span class="led verde"></span>GRÚA PÓRTICO 07 · EN SERVICIO</div>
+      <div class="carrusel-controles">
+        <button class="btn-flecha" id="btn-prev" aria-label="Contenedor anterior"><svg viewBox="0 0 24 24"><use href="#i-flecha-izq"/></svg></button>
+        <div class="riel" aria-hidden="true"><i id="riel-knob"></i></div>
+        <button class="btn-flecha" id="btn-next" aria-label="Contenedor siguiente"><svg viewBox="0 0 24 24"><use href="#i-flecha-der"/></svg></button>
+      </div>
+    </div>
+
+    <div class="carril" id="carril">
+      <div class="tren" id="tren">
+
+        <article class="contenedor" style="--c:#b5402f">
+          <div class="cont-3d">
+            <div class="cont-top"></div><div class="cont-lado"></div><div class="cont-ladoIzq"></div>
+            <div class="cont-frente">
+              <div class="puertas">
+                <span class="cont-codigo">OMCU 343 001 · MAX GROSS 30 480 KG</span>
+                <div class="cont-stat">
+                  <span class="cont-num" data-cont="34" data-pre="+" data-suf="%">+0%</span>
+                  <h3 class="cont-tit">PETRÓLEO CRUDO · BRENT</h3>
+                </div>
+                <p class="cont-txt">Escalada abrupta del barril por temor a una escasez masiva inminente en los flujos hacia Asia y Europa.</p>
+                <span class="cont-sello">CONSECUENCIA INMEDIATA</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="contenedor peligro" style="--c:#c99232">
+          <div class="cont-3d">
+            <div class="cont-top"></div><div class="cont-lado"></div><div class="cont-ladoIzq"></div>
+            <div class="cont-frente">
+              <div class="puertas">
+                <span class="cont-codigo">OMCU 612 004 · MINADO REPORTADO</span>
+                <div class="cont-stat">
+                  <span class="cont-num" data-cont="62" data-pre="−" data-suf="%">−0%</span>
+                  <h3 class="cont-tit">TRÁNSITO EN EL ESTRECHO</h3>
+                </div>
+                <p class="cont-txt">Cancelación sistemática de zarpes debido a advertencias directas de minado y ataques navales.</p>
+                <span class="cont-sello">CARGA PELIGROSA</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="contenedor" style="--c:#1f4e5f">
+          <div class="cont-3d">
+            <div class="cont-top"></div><div class="cont-lado"></div><div class="cont-ladoIzq"></div>
+            <div class="cont-frente">
+              <div class="puertas">
+                <span class="cont-codigo">OMCU 700 007 · PÓLIZA LLOYD'S</span>
+                <div class="cont-stat">
+                  <span class="cont-num" data-cont="7" data-pre="×" data-suf="">×0</span>
+                  <h3 class="cont-tit">PRIMA DE SEGURO DE GUERRA</h3>
+                </div>
+                <p class="cont-txt">Las aseguradoras de Londres declaran el Golfo zona inviable: las pólizas aumentaron un 700% de la noche a la mañana.</p>
+                <span class="cont-sello">ZONA INVARIABLE</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="contenedor" style="--c:#3d6b4f">
+          <div class="cont-3d">
+            <div class="cont-top"></div><div class="cont-lado"></div><div class="cont-ladoIzq"></div>
+            <div class="cont-frente">
+              <div class="puertas">
+                <span class="cont-codigo">OMCU 350 002 · CRUDO DETENIDO</span>
+                <div class="cont-stat">
+                  <span class="cont-num" data-cont="35" data-pre="" data-suf="%">0%</span>
+                  <h3 class="cont-tit">DEL PETRÓLEO MUNDIAL</h3>
+                </div>
+                <p class="cont-txt">Fracción del crudo transportable del planeta que queda retenida tras la clausura militar del paso.</p>
+                <span class="cont-sello">RETENIDO EN ORIGEN</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="contenedor" style="--c:#7a4a2c">
+          <div class="cont-3d">
+            <div class="cont-top"></div><div class="cont-lado"></div><div class="cont-ladoIzq"></div>
+            <div class="cont-frente">
+              <div class="puertas">
+                <span class="cont-codigo">OMCU 072 003 · RELOJ EN MARCHA</span>
+                <div class="cont-stat">
+                  <span class="cont-num" data-cont="72" data-pre="" data-suf="H">0H</span>
+                  <h3 class="cont-tit">DE PARÁLISIS OPERATIVA</h3>
+                </div>
+                <p class="cont-txt">Horas de bloqueo continuo durante las que se calculan estas métricas de mercado. El reloj sigue corriendo.</p>
+                <span class="cont-sello">MEDICIÓN EN CURSO</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+    <p class="arrastrar-hint">
+      <svg viewBox="0 0 24 24" class="izq"><use href="#i-flecha-izq"/></svg>
+      ARRASTRA EL TREN · CARGA SUELTA EN PATIO
+      <svg viewBox="0 0 24 24" class="der"><use href="#i-flecha-der"/></svg>
+    </p>
+  </section>
+
+  <div class="corte" style="--arriba:#26241f" aria-hidden="true">
+    <svg class="ola-b" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#cfc2a0" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+    <svg class="ola-a" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#efe6d3" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+  </div>
+
+  <!-- ==================== 03 · ARCHIVO ==================== -->
+  <section class="seccion" id="archivo">
+    <header class="sec-cab">
+     
+    </header>
+
+    <div class="archivador reveal">
+      <span class="gaveta">GAVETA J-03 · CASO DS/26°N</span>
+
+      <article class="expediente" data-pestana="EXP · ART-21">
+        <button class="exp-tab" aria-expanded="true">
+          <span class="exp-roman">I</span>
+          <div class="exp-titu"><h3>Artículo XXI · GATT</h3><span>La excepción de seguridad</span></div>
+          <span class="clasificado">CLASIFICADO</span>
+          <svg class="mas" viewBox="0 0 24 24"><use href="#i-mas"/></svg>
+        </button>
+        <div class="exp-cuerpo"><div class="exp-inner">
+          <p>Estados Unidos argumenta que sus sanciones unilaterales, que bloquean el crudo persa, no violaban norma alguna: son medidas necesarias para proteger intereses esenciales de seguridad. Si el panel lo acepta, se abre la Caja de Pandora: cualquier miembro podrá blindar su proteccionismo tras la palabra «seguridad».</p>
+          <div class="letalidad"><span>ÍNDICE DE LETALIDAD JURÍDICA</span>
+            <span class="anclas"><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg></span><b>5 / 5</b>
+          </div>
+        </div></div>
+      </article>
+
+      <article class="expediente" data-pestana="EXP · NMF">
+        <button class="exp-tab" aria-expanded="false">
+          <span class="exp-roman">II</span>
+          <div class="exp-titu"><h3>Principio N.M.F.</h3><span>Nación más favorecida</span></div>
+          <span class="clasificado">CLASIFICADO</span>
+          <svg class="mas" viewBox="0 0 24 24"><use href="#i-mas"/></svg>
+        </button>
+        <div class="exp-cuerpo"><div class="exp-inner">
+          <p>Irán denuncia que sancionar los puertos que lo abastecen mientras se premia a los Emiratos viola el trato no discriminatorio e igualitario: el pilar sobre el que se levanta todo el edificio de la OMC. Lo que exigen es simple: arbitraje imparcial, hoy.</p>
+          <div class="letalidad"><span>ÍNDICE DE LETALIDAD JURÍDICA</span>
+            <span class="anclas"><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg class="off"><use href="#i-ancla"/></svg></span><b>4 / 5</b>
+          </div>
+        </div></div>
+      </article>
+
+      <article class="expediente" data-pestana="EXP · OSD">
+        <button class="exp-tab" aria-expanded="false">
+          <span class="exp-roman">III</span>
+          <div class="exp-titu"><h3>Órgano de Solución de Diferencias</h3><span>Corte / OSD</span></div>
+          <span class="clasificado">CLASIFICADO</span>
+          <svg class="mas" viewBox="0 0 24 24"><use href="#i-mas"/></svg>
+        </button>
+        <div class="exp-cuerpo"><div class="exp-inner">
+          <p>El OSD permite armar paneles judiciales con rapidez quirúrgica: dictámenes que habilitan represalias legales contra potencias. El mecanismo definitivo para cruzar derechos y lastimar comercialmente a escala internacional.</p>
+          <div class="letalidad"><span>ÍNDICE DE LETALIDAD JURÍDICA</span>
+            <span class="anclas"><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg><use href="#i-ancla"/></svg><svg class="off"><use href="#i-ancla"/></svg></span><b>4 / 5</b>
+          </div>
+        </div></div>
+      </article>
+    </div>
+  </section>
+
+  <div class="corte" style="--arriba:#efe6d3" aria-hidden="true">
+    <svg class="ola-b" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#0d323c" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+    <svg class="ola-a" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#08202a" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
+  </div>
+
+  <!-- ==================== INTERLUDIO · CAMPO DE MINAS (solo la mina) ==================== -->
+  <section class="seccion seccion-minas" id="campo-minas">
+    <div class="rayo" style="left:12%"></div>
+    <div class="rayo r2" style="left:58%"></div>
+    <div class="rayo r3" style="left:82%"></div>
+
+    <p class="minas-tag reveal"><span class="led"></span>ZONA DE PELIGRO · CONTACTO Nº 07 · PROFUNDIDAD −180 M</p>
+
+    <div class="mina-escenario reveal" id="mina-escenario" role="img" aria-label="Mina de contacto amarrada al fondo. Arrastra para rotarla en 3D. No la toques.">
+      <svg id="mina-svg" viewBox="-280 -180 560 660">
+        <defs>
+          <radialGradient id="gCuerpo" cx=".5" cy=".5" r=".62">
+            <stop offset="0" stop-color="#45545f"/>
+            <stop offset=".22" stop-color="#2f3c47"/>
+            <stop offset=".55" stop-color="#1a242d"/>
+            <stop offset=".82" stop-color="#0e161d"/>
+            <stop offset="1" stop-color="#05090d"/>
+          </radialGradient>
+          <radialGradient id="gSombraAgua">
+            <stop offset="0" stop-color="rgba(1,7,11,.5)"/>
+            <stop offset="1" stop-color="rgba(1,7,11,0)"/>
+          </radialGradient>
+          <radialGradient id="gBrilloMov">
+            <stop offset="0" stop-color="rgba(215,235,240,.5)"/>
+            <stop offset="1" stop-color="rgba(215,235,240,0)"/>
+          </radialGradient>
+          <linearGradient id="gCuerno" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3a444e"/>
+            <stop offset=".5" stop-color="#1c242c"/>
+            <stop offset="1" stop-color="#0a0f14"/>
+          </linearGradient>
+          <radialGradient id="gLampara">
+            <stop offset="0" stop-color="rgba(255,90,56,.9)"/>
+            <stop offset="1" stop-color="rgba(255,90,56,0)"/>
+          </radialGradient>
+          <pattern id="pMugre" width="34" height="34" patternUnits="userSpaceOnUse">
+            <circle cx="6" cy="8" r="1.1" fill="#9fb4bd" opacity=".14"/>
+            <circle cx="24" cy="4" r=".8" fill="#8ea6ad" opacity=".1"/>
+            <circle cx="18" cy="22" r="1.4" fill="#6b563c" opacity=".16"/>
+            <circle cx="30" cy="30" r=".9" fill="#9fb4bd" opacity=".12"/>
+            <circle cx="3" cy="27" r="1" fill="#7d6a4a" opacity=".13"/>
+          </pattern>
+          <filter id="fTurbio" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="16"/></filter>
+        </defs>
+
+        <g id="cadena"></g>
+
+        <g id="mina-ancla" transform="translate(0,388)">
+          <path d="M-64,-36 L64,-36 L52,42 L-52,42 Z" fill="#222b32" stroke="#0a1116" stroke-width="2"/>
+          <rect x="-68" y="-44" width="136" height="12" rx="3" fill="#333d45" stroke="#0a1116" stroke-width="1.5"/>
+          <path d="M-34,-28 L-29,34" stroke="#6e4326" stroke-width="5" opacity=".45" fill="none"/>
+          <path d="M26,-26 L31,30" stroke="#7c4a28" stroke-width="4" opacity=".4" fill="none"/>
+          <path d="M-8,-24 L-4,38" stroke="#5d3a20" stroke-width="6" opacity=".35" fill="none"/>
+          <ellipse cx="0" cy="46" rx="128" ry="26" fill="#03141b"/>
+          <ellipse cx="0" cy="42" rx="96" ry="18" fill="#052029"/>
+          <circle cx="0" cy="-52" r="7.5" fill="none" stroke="#57452f" stroke-width="5"/>
+          <circle cx="46" cy="20" r="2.4" fill="#b7ad9a" opacity=".5"/>
+          <circle cx="-40" cy="26" r="2" fill="#b7ad9a" opacity=".4"/>
+          <circle cx="12" cy="32" r="1.6" fill="#b7ad9a" opacity=".45"/>
+        </g>
+
+        <g id="mina-bob">
+          <circle cx="12" cy="16" r="172" fill="url(#gSombraAgua)"/>
+          <g id="cuernos-atras"></g>
+          <circle id="mina-cuerpo" r="150" fill="url(#gCuerpo)"/>
+          <circle r="150" fill="url(#pMugre)" opacity=".5"/>
+          <ellipse id="brillo-mov" rx="52" ry="36" fill="url(#gBrilloMov)" opacity="0"/>
+          <path id="cost1B" fill="none" stroke="#0b1015" stroke-width="10" opacity=".45"/>
+          <path id="cost2B" fill="none" stroke="#0b1015" stroke-width="7" opacity=".35"/>
+          <path id="cost1F" fill="none" stroke="#0d141a" stroke-width="11" stroke-linecap="round"/>
+          <path id="torni1" fill="none" stroke="#4c5e6c" stroke-width="2.6" stroke-dasharray="3 9" opacity=".55"/>
+          <path id="cost2F" fill="none" stroke="#0c1218" stroke-width="7" stroke-linecap="round"/>
+          <g id="detalles"></g>
+          <g id="cuernos-frente"></g>
+          <g id="polo-sup">
+            <path d="M-15,4 L15,4 L10,-10 L-10,-10 Z" fill="#212b34" stroke="#0b1015" stroke-width="1.5"/>
+            <rect x="-3" y="-23" width="6" height="13" fill="#2b3742"/>
+            <circle id="lamp-glow" cx="0" cy="-29" r="14" fill="url(#gLampara)"/>
+            <circle id="lampara" cx="0" cy="-29" r="4.6" fill="#ff5a38"/>
+            <circle class="ping-anillo" cx="0" cy="-29" r="9" fill="none" stroke="rgba(255,110,70,.55)" stroke-width="1.6"/>
+          </g>
+          <g id="polo-inf">
+            <path d="M-9,-4 L-9,8 Q-9,18 0,18 Q9,18 9,8 L9,-4" fill="none" stroke="#57452f" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="0" cy="0" r="3.4" fill="#3a2e20"/>
+          </g>
+        </g>
+
+        <g id="posboom" opacity="0">
+          <circle cx="-30" cy="0" r="70" fill="#3f4d46" opacity=".55" filter="url(#fTurbio)"/>
+          <circle cx="50" cy="30" r="55" fill="#4a4536" opacity=".5" filter="url(#fTurbio)"/>
+          <circle cx="10" cy="-40" r="45" fill="#35464b" opacity=".5" filter="url(#fTurbio)"/>
+        </g>
+      </svg>
+    </div>
+    <p class="mina-hint reveal">ARRASTRA PARA INSPECCIONAR EL CONTACTO · <strong>BAJO NINGÚN CONCEPTO, NO LA TOQUES</strong></p>
+
+    <div class="mina-stamp" id="mina-stamp">CONTACTO Nº 07<small>NEUTRALIZADO · EXPLOSIÓN REGISTRADA</small></div>
+  </section>
+
+  <!-- ==================== 04 · FONDEADERO (CTA) ==================== -->
+  <section class="seccion seccion-fondo" id="fondeadero">
+    <div class="rayo r1"></div><div class="rayo r2"></div><div class="rayo r3"></div>
+
+    <div class="boya-wrap" aria-hidden="true">
+      <svg viewBox="0 0 220 220">
+        <circle class="onda-boya" cx="110" cy="110" r="86" fill="none" stroke="rgba(180,225,220,.5)" stroke-width="2"/>
+        <circle class="onda-boya o2" cx="110" cy="110" r="86" fill="none" stroke="rgba(180,225,220,.35)" stroke-width="2"/>
+        <circle class="boya-cuerda" cx="110" cy="110" r="99" fill="none" stroke="rgba(242,234,216,.3)" stroke-width="4" stroke-dasharray="4 9"/>
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#f2ead8" stroke-width="36"/>
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#d96b2f" stroke-width="36" pathLength="100" stroke-dasharray="12.5 12.5" stroke-dashoffset="6.25"/>
+        <circle cx="110" cy="110" r="58" fill="none" stroke="rgba(242,234,216,.16)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <p class="sec-kicker">04 · FONDEADERO · PROFUNDIDAD −320 M</p>
+    <h2 class="titulo">EL DEBATE ESPERA<br>EN <em>superficie</em></h2>
+    <p class="fondo-sub">El Órgano de Solución de Diferencias ha sido convocado. Tu flota necesita una voz en la mesa antes de que la marea suba por encima de las sentinas.</p>
+    <a class="btn-debate" href="/i">INICIAR DEBATE <svg viewBox="0 0 24 24"><use href="#i-flecha-arr"/></svg></a>
+    <p class="prof-tag">ASCENSO ESTIMADO A SUPERFICIE · 04:12 ZULU</p>
+  </section>
+</main>
+
+<footer>
+  <span class="marca-pie">
+    <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="94" fill="none" stroke="#f7f1e3" stroke-width="6" stroke-dasharray="5 4"/><text x="100" y="112" text-anchor="middle" style="font:800 38px var(--display)" fill="#f7f1e3">OMC</text></svg>
+    OFICINA DE MONITOREO DEL COMERCIO · SESIÓN DE CRISIS DS/26°N
+  </span>
+  <span class="sep-pie"></span>
+  <span>CARTA Nº 04-ORMUZ · TRAZADA CON INSTRUMENTAL DE PRECISIÓN DUDOSA</span>
+  <span class="sep-pie"></span>
+  <span>NO APTA PARA NAVEGACIÓN REAL · 26°34′N — 056°15′E</span>
+</footer>
+</div><!-- /pagina -->
+
+<!-- ==================== CAPAS DE EFECTOS ==================== -->
+<div id="flash" aria-hidden="true"></div>
+<div id="brecha-layer" aria-hidden="true"></div>
+<div id="remolino" aria-hidden="true"></div>
+
+<div id="inundacion" aria-hidden="true">
+  <div class="superficie">
+    <svg class="o2" viewBox="0 0 1440 30" preserveAspectRatio="none"><path fill="#2a95a4" d="M0,14 Q90,2 180,14 T360,14 T540,14 T720,14 T900,14 T1080,14 T1260,14 T1440,14 L1440,30 L0,30 Z"/></svg>
+    <svg class="espuma" viewBox="0 0 1440 30" preserveAspectRatio="none"><path fill="#eef8f5" opacity=".85" d="M0,13 Q30,7 60,12 T120,10 T180,14 T240,9 T300,13 T360,8 T420,13 T480,10 T540,14 T600,9 T660,13 T720,8 T780,13 T840,10 T900,14 T960,9 T1020,13 T1080,8 T1140,13 T1200,10 T1260,14 T1320,9 T1380,13 T1440,10 L1440,30 L0,30 Z"/></svg>
+    <svg class="o1" viewBox="0 0 1440 30" preserveAspectRatio="none"><path fill="#1a7484" d="M0,14 Q90,2 180,14 T360,14 T540,14 T720,14 T900,14 T1080,14 T1260,14 T1440,14 L1440,30 L0,30 Z"/></svg>
+  </div>
+  <div class="refraccion"></div>
+  <div class="agua-cuerpo" id="agua-cuerpo">
+    <svg class="pez clara" viewBox="0 0 64 32"><use href="#i-pez"/></svg>
+    <svg class="pez naranja" viewBox="0 0 64 32"><use href="#i-pez"/></svg>
+    <svg class="pez" viewBox="0 0 64 32" style="color:#8fc9b8"><use href="#i-pez"/></svg>
+  </div>
+</div>
+
+<div id="panel-achique" role="alert">
+  <span class="tornillo t1"></span><span class="tornillo t2"></span><span class="tornillo t3"></span><span class="tornillo t4"></span>
+  <p class="pa-tit"><span class="led"></span>ALARMA DE SENTINA · NIVEL CRÍTICO</p>
+  <h3>LA SALA SE INUNDA</h3>
+  <p class="pa-txt">El agua entró a borbotones por la brecha del casco. Sin las bombas de achique, la sesión se hunde con todo y tripulación.</p>
+  <button id="bombas">ACTIVAR BOMBAS DE ACHIQUE</button>
+</div>
+
+<div id="toast" aria-live="polite"></div>
+<div id="tip-flot"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clampN=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerpN=(a,b,t)=>a+(b-a)*t;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const G=window.gsap||null;
+if(G && window.ScrollTrigger) G.registerPlugin(ScrollTrigger);
+
+/* ============ PRELOADER ============ */
+const carga=$('#carga');
+if(G && !reduce){
+  G.fromTo('.sello-carga',{scale:1.7,opacity:0,rotation:-14},{scale:1,opacity:1,rotation:0,duration:.55,ease:'power3.in',delay:.15});
+  G.to('.sello-carga',{scale:1.04,duration:.09,yoyo:true,repeat:1,ease:'power1.inOut',delay:.75});
+}
+setTimeout(()=>carga.classList.add('fuera'),2100);
+
+/* ============ CABECERA sólida ============ */
+const cabina=$('#cabina');
+addEventListener('scroll',()=>cabina.classList.toggle('solido',scrollY>40),{passive:true});
+
+/* ============ ENTRADA DEL HERO ============ */
+if(G && !reduce){
+  G.timeline({delay:2.15})
+    .fromTo('.hero .kicker',{y:24,opacity:0},{y:0,opacity:1,duration:.7,ease:'power3.out'})
+    .fromTo('.hero h1 .linea-in',{yPercent:114},{yPercent:0,duration:1,stagger:.13,ease:'power4.out'},'-=.4')
+    .fromTo('.hero-sub',{y:26,opacity:0},{y:0,opacity:1,duration:.8,ease:'power3.out'},'-=.6')
+    .fromTo('.hero-datos',{y:18,opacity:0},{y:0,opacity:1,duration:.7},'-=.55')
+    .fromTo('.hero-firma,.bajar',{opacity:0},{opacity:1,duration:.9},'-=.4');
+}
+
+/* ============ PARALLAX DEL PUERTO (ratón) ============ */
+const capas=$$('#escena .capa');
+let mx=0,my=0,smx=0,smy=0;
+if(matchMedia('(pointer:fine)').matches && !reduce){
+  addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;});
+}
+function pasoParallax(dt){
+  if(!capas.length) return;
+  smx+=(mx-smx)*Math.min(1,dt*4); smy+=(my-smy)*Math.min(1,dt*4);
+  capas.forEach(c=>{const p=+c.dataset.p||0;c.style.transform=`translate(${(smx*p).toFixed(1)}px,${(smy*p*.6).toFixed(1)}px)`;});
+}
+
+/* ============ REVEALS + CONTADORES ============ */
+if(G && window.ScrollTrigger && !reduce){
+  $$('.reveal').forEach(el=>{
+    G.fromTo(el,{y:48,opacity:0},{y:0,opacity:1,duration:1,ease:'power3.out',
+      scrollTrigger:{trigger:el,start:'top 86%'}});
+  });
+  $$('.titulo').forEach(el=>{
+    G.fromTo(el,{scale:1.28,opacity:0,rotation:-2},{scale:1,opacity:1,rotation:0,duration:.7,ease:'back.out(1.8)',
+      scrollTrigger:{trigger:el,start:'top 88%'}});
+  });
+  $$('.expediente').forEach((el,i)=>{
+    G.fromTo(el,{x:-40,opacity:0},{x:0,opacity:1,duration:.8,delay:i*.12,ease:'power3.out',
+      scrollTrigger:{trigger:el,start:'top 90%'}});
+  });
+  $$('[data-cont]').forEach(el=>{
+    const fin=+el.dataset.cont, pre=el.dataset.pre||'', suf=el.dataset.suf||'', o={v:0};
+    G.to(o,{v:fin,duration:1.7,ease:'power2.out',
+      scrollTrigger:{trigger:el,start:'top 92%',once:true},
+      onUpdate:()=>{el.textContent=pre+Math.round(o.v)+suf;}});
+  });
+}else{
+  $$('[data-cont]').forEach(el=>{el.textContent=(el.dataset.pre||'')+el.dataset.cont+(el.dataset.suf||'');});
+}
+
+/* ============ MAPA: coordenadas en vivo ============ */
+const cartaWrap=$('#carta-wrap'),coords=$('#mapa-coords'),cross=$('#mapa-cross');
+if(cartaWrap){
+  cartaWrap.addEventListener('pointermove',e=>{
+    const r=cartaWrap.getBoundingClientRect();
+    const fx=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
+    const fy=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));
+    const lat=(30.2-fy*8.2), lon=(51.5+fx*7.5);
+    coords.textContent=lat.toFixed(2)+'° N · '+lon.toFixed(2)+'° E';
+    cross.querySelector('.v').style.left=(e.clientX-r.left)+'px';
+    cross.querySelector('.h').style.top=(e.clientY-r.top)+'px';
+  });
+}
+
+/* ============ TOOLTIP FLOTANTE genérico ============ */
+const tip=$('#tip-flot');
+function bindTip(el,txt){
+  el.addEventListener('pointerenter',()=>{tip.textContent=txt;tip.classList.add('ver');});
+  el.addEventListener('pointermove',e=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY+12)+'px';});
+  el.addEventListener('pointerleave',()=>tip.classList.remove('ver'));
+}
+const pin=$('#pin-est');
+if(pin) bindTip(pin,'PUNTO DE ESTRANGULAMIENTO · 21 MILLAS DE ANCHO · 35% DEL CRUDO MUNDIAL');
+ $$('.blip').forEach(b=>bindTip(b,b.dataset.tip));
+const subRadar=$('.radar-sub');
+if(subRadar) bindTip(subRadar,'CNT-05 · CONTACTO SUMERGIDO · PROFUNDIDAD 80 M · NACIONALIDAD DESCONOCIDA');
+/* seguridad: nunca dejar un tip pegado siguiendo al cursor */
+document.addEventListener('pointermove',e=>{
+  if(!e.target.closest('.blip,.radar-sub,#pin-est'))tip.classList.remove('ver');
+});
+
+/* ============ CARRUSEL DE CONTENEDORES ============ */
+const carril=$('#carril'),tren=$('#tren'),slides=$$('.contenedor'),rielKnob=$('#riel-knob');
+let x=0,vx=0,arrastrando=false,px=0,pt=0,snapTween=null;
+const centro=i=>{const s=slides[i];return carril.clientWidth/2-(s.offsetLeft+s.offsetWidth/2);};
+const lims=()=>[Math.min(centro(0),centro(slides.length-1)),Math.max(centro(0),centro(slides.length-1))];
+function setX(v){x=v;tren.style.transform=`translate3d(${v}px,0,0)`;}
+function indiceCercano(){let b=0,bd=1e9;slides.forEach((s,i)=>{const d=Math.abs(x-centro(i));if(d<bd){bd=d;b=i;}});return b;}
+function irA(i){
+  i=Math.max(0,Math.min(slides.length-1,i));
+  if(snapTween)snapTween.kill();
+  if(!G){setX(centro(i));vx=0;return;}
+  const o={v:x};
+  snapTween=G.to(o,{v:centro(i),duration:.75,ease:'power3.out',
+    onUpdate:()=>setX(o.v),onComplete:()=>{vx=0;snapTween=null;}});
+}
+if(carril){
+  carril.addEventListener('pointerdown',e=>{
+    arrastrando=true;vx=0;px=e.clientX;pt=performance.now();
+    if(snapTween){snapTween.kill();snapTween=null;}
+    carril.classList.add('agarrando');
+    try{carril.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  carril.addEventListener('pointermove',e=>{
+    if(!arrastrando)return;
+    const t=performance.now(),dx=e.clientX-px,dm=Math.max(1,t-pt);
+    let nx=x+dx;const[mn,mxL]=lims();
+    if(nx>mxL)nx=mxL+(nx-mxL)*.32;
+    if(nx<mn)nx=mn+(nx-mn)*.32;
+    vx=.72*vx+.28*(dx/dm*1000);
+    setX(nx);px=e.clientX;pt=t;
+  });
+  const soltar=()=>{
+    if(!arrastrando)return;
+    arrastrando=false;carril.classList.remove('agarrando');
+    const[mn,mxL]=lims();
+    if(x>mxL+.5||x<mn-.5){irA(indiceCercano());return;}
+    if(Math.abs(vx)<50)irA(indiceCercano());
+  };
+  carril.addEventListener('pointerup',soltar);
+  carril.addEventListener('pointercancel',soltar);
+  $('#btn-prev').addEventListener('click',()=>irA(indiceCercano()-1));
+  $('#btn-next').addEventListener('click',()=>irA(indiceCercano()+1));
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowLeft')irA(indiceCercano()-1);
+    if(e.key==='ArrowRight')irA(indiceCercano()+1);
+  });
+  setX(centro(0));
+}
+function pasoCarrusel(dt){
+  if(!slides.length)return;
+  if(!arrastrando&&!snapTween&&Math.abs(vx)>50){
+    let nx=x+vx*dt;const[mn,mxL]=lims();
+    if(nx>mxL||nx<mn){setX(Math.max(mn,Math.min(mxL,nx)));vx=0;irA(indiceCercano());}
+    else{setX(nx);vx*=Math.exp(-2.6*dt);}
+  }
+  const w=innerWidth;
+  slides.forEach(s=>{
+    const r=s.getBoundingClientRect();
+    const t=Math.max(-1,Math.min(1,((r.left+r.width/2)-w/2)/(w*.7)));
+    s.style.setProperty('--ry',(-t*24).toFixed(2)+'deg');
+    s.style.setProperty('--s',(1-Math.abs(t)*.13).toFixed(3));
+    s.style.setProperty('--o',(1-Math.abs(t)*.38).toFixed(3));
+  });
+  if(rielKnob){const[mn,mxL]=lims();const p=Math.max(0,Math.min(1,(x-mn)/Math.max(1,mxL-mn)));rielKnob.style.width=(14+p*74)+'%';}
+}
+
+/* ============ ACORDEÓN DE EXPEDIENTES ============ */
+ $$('.expediente').forEach(exp=>{
+  exp.querySelector('.exp-tab').addEventListener('click',()=>{
+    const abierto=exp.classList.contains('abierto');
+    $$('.expediente.abierto').forEach(o=>{
+      o.classList.remove('abierto');
+      o.querySelector('.exp-tab').setAttribute('aria-expanded','false');
+      const c=o.querySelector('.exp-cuerpo');
+      if(G)G.to(c,{height:0,duration:.5,ease:'power3.inOut'});else c.style.height='0';
+    });
+    if(!abierto){
+      exp.classList.add('abierto');
+      exp.querySelector('.exp-tab').setAttribute('aria-expanded','true');
+      const c=exp.querySelector('.exp-cuerpo');
+      if(G)G.to(c,{height:'auto',duration:.6,ease:'power3.inOut'});else c.style.height='auto';
+    }
+  });
+});
+
+/* ============ SONDA DE PROFUNDIDAD ============ */
+const sondaCuerpo=$('#sonda-cuerpo'),sondaPuntero=$('#sonda-puntero'),sondaM=$('#sonda-m');
+if(sondaCuerpo){
+  for(let i=0;i<=8;i++){
+    const t=document.createElement('div');t.className='sonda-tick';t.style.top=(i/8*100)+'%';
+    if(i%2===0)t.innerHTML=`<span>−${i/8*320} m</span>`;
+    sondaCuerpo.appendChild(t);
+  }
+  addEventListener('scroll',()=>{
+    const p=Math.min(1,scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight));
+    sondaPuntero.style.top=(p*100)+'%';
+    sondaM.textContent='−'+Math.round(p*320)+' m';
+  },{passive:true});
+}
+const zonas=[['#hero','SUPERFICIE'],['#carta','BAÑO DE CARTAS'],['#terminal','PATIO'],['#archivo','GAVETA J-03'],['#campo-minas','CAMPO MINADO'],['#fondeadero','FONDEADERO']];
+zonas.forEach(([sel,nombre])=>{
+  const el=$(sel);if(!el||!G||!window.ScrollTrigger)return;
+  ScrollTrigger.create({trigger:el,start:'top 50%',end:'bottom 50%',
+    onToggle:st=>{if(st.isActive)$('#sonda-zona').textContent=nombre;}});
+});
+
+/* ============ AUDIO (WebAudio, sintetizado en local) ============ */
+let actx=null;
+function AC(){if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(_){}}return actx;}
+function bloop(){
+  const a=AC();if(!a)return;const t=a.currentTime;
+  const o=a.createOscillator(),g=a.createGain();
+  o.type='sine';const f0=240+Math.random()*380;
+  o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f0*2.3,t+.09);
+  g.gain.setValueAtTime(.055,t);g.gain.exponentialRampToValueAtTime(.001,t+.13);
+  o.connect(g).connect(a.destination);o.start(t);o.stop(t+.15);
+}
+function audioDobleBoom(){
+  const a=AC();if(!a)return;const t=a.currentTime;
+  const tono=(f0,f1,dur,g0,delay)=>{
+    const o=a.createOscillator(),g=a.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(f0,t+delay);
+    o.frequency.exponentialRampToValueAtTime(f1,t+delay+dur);
+    g.gain.setValueAtTime(g0,t+delay);
+    g.gain.exponentialRampToValueAtTime(.001,t+delay+dur);
+    o.connect(g).connect(a.destination);o.start(t+delay);o.stop(t+delay+dur+.05);
+  };
+  tono(115,26,1.1,.55,0);tono(62,19,1.6,.42,.13);
+  const ruido=(dur,fq,tipo,g0,delay,dec)=>{
+    const buf=a.createBuffer(1,a.sampleRate*dur,a.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,dec);
+    const s=a.createBufferSource();s.buffer=buf;
+    const fl=a.createBiquadFilter();fl.type=tipo;fl.frequency.value=fq;
+    const g=a.createGain();g.gain.setValueAtTime(g0,t+delay);
+    g.gain.exponentialRampToValueAtTime(.001,t+delay+dur);
+    s.connect(fl).connect(g).connect(a.destination);s.start(t+delay);
+  };
+  ruido(.09,1900,'highpass',.5,0,1);   /* chasquido metálico */
+  ruido(1.5,320,'lowpass',.5,.05,2);   /* retumbo profundo */
+}
+let nodosAgua=null;
+function iniciarAguaSonido(){
+  const a=AC();if(!a||nodosAgua)return;
+  const buf=a.createBuffer(1,a.sampleRate*2,a.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  const src=a.createBufferSource();src.buffer=buf;src.loop=true;
+  const lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=640;
+  const g=a.createGain();g.gain.value=0;
+  src.connect(lp).connect(g).connect(a.destination);src.start();
+  nodosAgua={src,g};
+}
+function gainAgua(f){try{if(nodosAgua)nodosAgua.g.gain.value=.015+.13*f;}catch(_){}}
+function pararAguaSonido(){
+  if(!nodosAgua)return;
+  const a=AC();
+  try{nodosAgua.g.gain.setTargetAtTime(0,a.currentTime,.25);nodosAgua.src.stop(a.currentTime+1);}catch(_){}
+  nodosAgua=null;
+}
+
+/* ============ SISTEMA DE PARTÍCULAS ============ */
+const fxLayer=document.createElement('div');fxLayer.id='fx-layer';document.body.appendChild(fxLayer);
+const particulas=[];
+function addFrag(x,y,color,opts={}){
+  const el=document.createElement('div');
+  el.className='frag'+(opts.chispa?' chispa':'')+(opts.cristal?' cristal':'');
+  el.style.background=color;
+  if(!opts.cristal)el.style.borderRadius=Math.random()<.5?'50%':'1px';
+  const s=opts.chispa?3+Math.random()*3:4+Math.random()*6;
+  el.style.width=s+'px';el.style.height=s+'px';
+  fxLayer.appendChild(el);
+  const a=Math.random()*Math.PI*2;
+  const v=opts.chispa?420+Math.random()*520:260+Math.random()*430;
+  particulas.push({el,x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-330,
+    rot:Math.random()*360,vr:(Math.random()-.5)*900,
+    vida:opts.chispa?.3+Math.random()*.3:.9+Math.random()*.6,
+    tipo:opts.chispa?'chispa':'frag'});
+}
+function pasoParticulas(dt){
+  for(let i=particulas.length-1;i>=0;i--){
+    const p=particulas[i];
+    p.vy+=(p.tipo==='chispa'?950:1500)*dt;
+    p.x+=p.vx*dt;p.y+=p.vy*dt;p.vida-=dt;
+    p.rot+=p.vr*dt;
+    p.el.style.transform=`translate(${p.x}px,${p.y}px) rotate(${p.rot}deg)`;
+    p.el.style.opacity=Math.max(0,Math.min(1,p.vida));
+    if(p.vida<=0||p.y>innerHeight+40){p.el.remove();particulas.splice(i,1);}
+  }
+}
+function humo(x,y){
+  for(let i=0;i<8;i++){
+    const el=document.createElement('div');el.className='frag';
+    const s=26+Math.random()*34;el.style.width=s+'px';el.style.height=s+'px';
+    el.style.borderRadius='50%';el.style.background='rgba(160,168,168,.4)';
+    el.style.filter='blur(7px)';
+    el.style.transform=`translate(${x+(Math.random()-.5)*40}px,${y+(Math.random()-.5)*30}px)`;
+    fxLayer.appendChild(el);
+    if(G)G.to(el,{y:'-=110',scale:2.3,opacity:0,duration:1.1+Math.random()*.6,delay:i*.05,ease:'power1.out',onComplete:()=>el.remove()});
+    else setTimeout(()=>el.remove(),1300);
+  }
+}
+
+/* ============================================================
+   CONTACTO Nº 07 · MINA 3D (esfera proyectada, rotable)
+   ============================================================ */
+const escenario=$('#mina-escenario'),minaSvg=$('#mina-svg');
+const svgNS='http://www.w3.org/2000/svg';
+let minaViva=true,minaVisible=true,minaT=0,mry=-.65,mrx=.16,mrxT=.16;
+let arrastrandoMina=false,mpx=0,mpy=0,mdownX=0,mdownT=0,movioMina=false;
+let colaT=0,colaX0=0,colaY0=0,ultAx=0,ultAy=0;
+const bobAct={x:0,y:0};
+const R=150,ANCLA={x:0,y:334};
+const LUZ=(()=>{const v=[-.55,-.6,.58],m=Math.hypot(v[0],v[1],v[2]);return[v[0]/m,v[1]/m,v[2]/m];})();
+const sph=(g,p)=>{const a=g*Math.PI/180,b=p*Math.PI/180;
+  return[Math.sin(b)*Math.sin(a),-Math.cos(b),Math.sin(b)*Math.cos(a)];};
+function rotar(p){
+  const cy=Math.cos(mry),sy=Math.sin(mry),cx=Math.cos(mrx),sx=Math.sin(mrx);
+  const x1=p[0]*cy+p[2]*sy,z1=-p[0]*sy+p[2]*cy;
+  return[x1,p[1]*cx-z1*sx,p[1]*sx+z1*cx];
+}
+
+const cuernos=[],detalles=[],eslabones=[];
+const gCuernosB=$('#cuernos-atras'),gCuernosF=$('#cuernos-frente');
+const gradCuerpo=document.getElementById('gCuerpo');
+const cost1F=$('#cost1F'),cost1B=$('#cost1B'),cost2F=$('#cost2F'),cost2B=$('#cost2B'),torni1=$('#torni1');
+const poloSup=$('#polo-sup'),poloInf=$('#polo-inf');
+const lamparaEl=$('#lampara'),lampGlowEl=$('#lamp-glow'),brilloEl=$('#brillo-mov');
+const gBob=$('#mina-bob');
+
+if(minaSvg){
+  const mk=(tag,at)=>{const e=document.createElementNS(svgNS,tag);for(const k in at)e.setAttribute(k,at[k]);return e;};
+
+  /* 14 cuernos Hertz en tres anillos */
+  [{phi:50,off:0,n:5,len:80,ws:1},{phi:90,off:36,n:5,len:84,ws:1.06},{phi:128,off:18,n:4,len:62,ws:.9}]
+  .forEach(an=>{for(let i=0;i<an.n;i++){
+    const g=mk('g',{});
+    g.innerHTML='<path d="M0,-.23 L.66,-.13 Q1,-.07 1,0 Q1,.07 .66,.13 L0,.23 Z" fill="url(#gCuerno)"/>'
+      +'<rect x="-.07" y="-.29" width=".22" height=".58" rx=".07" fill="#161f27"/>'
+      +'<circle cx=".9" cy="0" r=".085" fill="#93805a"/>'
+      +'<line x1=".1" y1="-.13" x2=".56" y2="-.06" stroke="rgba(190,215,225,.3)" stroke-width=".06"/>';
+    gCuernosB.appendChild(g);
+    cuernos.push({el:g,dir:sph(an.off+i*360/an.n,an.phi),len:an.len,ws:an.ws});
+  }});
+
+  /* mugre en 3D: balanos, óxido, arañazos, motas */
+  const contD=$('#detalles');
+  const dBaba='M0,-1 C.65,-.95 .95,-.4 .9,0 C.85,.6 .5,1 0,1 C-.5,1 -.9,.55 -.9,0 C-.9,-.4 -.6,-.95 0,-1 Z';
+  const dRust='M0,-1 L.55,-.7 .9,-.25 .65,.2 .95,.65 .3,.95 -.35,.8 -.85,.4 -.7,-.15 -.3,-.8 Z';
+  const dRaya='M-5,0 Q0,2.4 5,0';
+  for(let i=0;i<12;i++){const el=mk('path',{d:dBaba,fill:'#b7ad9a'});
+    contD.appendChild(el);detalles.push({el,p:sph(Math.random()*360,12+Math.random()*140),s:3.5+Math.random()*4.5,op:.3+Math.random()*.3});}
+  for(let i=0;i<9;i++){const el=mk('path',{d:dRust,fill:i%2?'#7c4322':'#8a4a28'});
+    contD.appendChild(el);detalles.push({el,p:sph(Math.random()*360,20+Math.random()*130),s:5+Math.random()*7,op:.3+Math.random()*.25});}
+  for(let i=0;i<4;i++){const el=mk('path',{d:dRaya,fill:'none',stroke:'#0a0f13','stroke-width':1.6});
+    contD.appendChild(el);detalles.push({el,p:sph(Math.random()*360,25+Math.random()*120),s:2.2+Math.random()*2.4,op:.5});}
+  for(let i=0;i<20;i++){const el=mk('circle',{r:(0.8+Math.random()).toFixed(1),fill:'#9fb4bd'});
+    contD.appendChild(el);detalles.push({el,p:sph(Math.random()*360,8+Math.random()*150),s:1,op:.12+Math.random()*.12});}
+
+  /* cadena */
+  const gCad=$('#cadena');
+  for(let i=0;i<15;i++){
+    const e=mk('ellipse',{rx:4.6,ry:9.5,fill:'none',stroke:'#57452f','stroke-width':3.2});
+    gCad.appendChild(e);eslabones.push(e);
+  }
+
+  /* arrastrar para rotar en 3D · clic = detonar */
+  escenario.addEventListener('pointerdown',e=>{
+    if(!minaViva)return;
+    arrastrandoMina=true;movioMina=false;
+    mpx=e.clientX;mpy=e.clientY;mdownX=e.clientX;mdownT=performance.now();
+    escenario.classList.add('agarrando');
+    try{escenario.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  escenario.addEventListener('pointermove',e=>{
+    if(!arrastrandoMina)return;
+    const dx=e.clientX-mpx,dy=e.clientY-mpy;
+    if(Math.abs(e.clientX-mdownX)+Math.abs(dy)>7)movioMina=true;
+    mry+=dx*.0085;
+    mrxT=clampN(mrxT+dy*.006,-.55,.6);
+    mpx=e.clientX;mpy=e.clientY;
+  });
+  const soltarMina=()=>{
+    if(!arrastrandoMina)return;
+    arrastrandoMina=false;escenario.classList.remove('agarrando');
+    if(!movioMina&&performance.now()-mdownT<450)explotarMina();
+  };
+  escenario.addEventListener('pointerup',soltarMina);
+  escenario.addEventListener('pointercancel',()=>{arrastrandoMina=false;escenario.classList.remove('agarrando');});
+
+  /* pausar el render cuando la mina no está en pantalla */
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(en=>{minaVisible=en[0].isIntersecting;},{threshold:.05}).observe(escenario);
+  }
+
+  /* burbujas ambientales de la sección */
+  const campo=$('#campo-minas');
+  for(let i=0;i<9;i++){
+    const b=document.createElement('span');b.className='burb-marin';
+    b.style.left=(8+Math.random()*84)+'%';
+    b.style.animationDuration=(7+Math.random()*8)+'s';
+    b.style.animationDelay=(-Math.random()*12)+'s';
+    const s=3+Math.random()*4;b.style.width=s+'px';b.style.height=s+'px';
+    campo.appendChild(b);
+  }
+}
+
+function arcoBanda(phi){
+  const N=72;let dF='',dB='',lf=false,lb=false;
+  for(let i=0;i<N;i++){
+    const u=rotar(sph(i*360/N,phi));
+    const px=(u[0]*R).toFixed(1),py=(u[1]*R).toFixed(1),z=u[2]*R;
+    if(z>-6){dF+=(lf?'L':'M')+px+' '+py+' ';lf=true;}else lf=false;
+    if(z<6){dB+=(lb?'L':'M')+px+' '+py+' ';lb=true;}else lb=false;
+  }
+  return[dF,dB];
+}
+function pasoCuernos(){
+  for(const c of cuernos){
+    const b=rotar(c.dir);
+    if(b[2]<-.3){c.el.style.display='none';continue;}
+    c.el.style.display='';
+    const f=1+c.len/R;
+    const t=rotar([c.dir[0]*f,c.dir[1]*f,c.dir[2]*f]);
+    const ang=Math.atan2(t[1]-b[1],t[0]-b[0])*180/Math.PI;
+    const L=Math.hypot(t[0]-b[0],t[1]-b[1]);
+    const per=1+b[2]*.12;
+    c.el.setAttribute('transform',
+      `translate(${(b[0]*R).toFixed(1)},${(b[1]*R).toFixed(1)}) rotate(${ang.toFixed(1)}) scale(${Math.max(.02,L*per).toFixed(1)},${(34*c.ws*per).toFixed(1)})`);
+    c.el.style.opacity=b[2]<0?.85:1;
+    const cont=b[2]>.02?gCuernosF:gCuernosB;
+    if(c.el.parentNode!==cont)cont.appendChild(c.el);
+  }
+}
+function pasoDetalles(){
+  for(const d of detalles){
+    const v=rotar(d.p),z=v[2];
+    if(z<.12){d.el.style.display='none';continue;}
+    d.el.style.display='';
+    d.el.setAttribute('transform',`translate(${(v[0]*R).toFixed(1)},${(v[1]*R).toFixed(1)}) scale(${(d.s*(0.8+0.35*z)).toFixed(2)})`);
+    d.el.style.opacity=(d.op*Math.min(1,(z-.12)/.55)).toFixed(2);
+  }
+}
+function pasoPolos(){
+  const tp=rotar([0,-1,0]),bp=rotar([0,1,0]);
+  poloSup.setAttribute('transform',`translate(${(tp[0]*R).toFixed(1)},${(tp[1]*R).toFixed(1)})`);
+  poloInf.setAttribute('transform',`translate(${(bp[0]*R).toFixed(1)},${(bp[1]*R).toFixed(1)})`);
+}
+function pasoCadena(dt){
+  let ax,ay;
+  if(minaViva){
+    const bp=rotar([0,1,0]);
+    ax=bp[0]*R+bobAct.x;ay=bp[1]*R+bobAct.y+14;
+  }else{
+    colaT+=dt;
+    const k=clampN(colaT/1.6,0,1),e=1-Math.pow(1-k,3);
+    const sway=Math.sin(colaT*3.2)*Math.exp(-colaT*1.1)*120*(1-e*.5);
+    ax=lerpN(colaX0,118,e)+sway;
+    ay=lerpN(colaY0,402,e);
+  }
+  ultAx=ax;ultAy=ay;
+  const mxp=(ANCLA.x+ax)/2+16+Math.sin(minaT*.6)*5,myp=(ANCLA.y+ay)/2+8;
+  for(let i=0;i<eslabones.length;i++){
+    const t=(i+.5)/eslabones.length,u=1-t;
+    const ix=u*u*ANCLA.x+2*u*t*mxp+t*t*ax;
+    const iy=u*u*ANCLA.y+2*u*t*myp+t*t*ay;
+    const dx=2*u*(mxp-ANCLA.x)+2*t*(ax-mxp),dy=2*u*(myp-ANCLA.y)+2*t*(ay-myp);
+    const ang=Math.atan2(dy,dx)*180/Math.PI+(i%2?90:0);
+    eslabones[i].setAttribute('transform',`translate(${ix.toFixed(1)},${iy.toFixed(1)}) rotate(${ang.toFixed(1)})`);
+  }
+}
+function pasoMina(dt){
+  if(!minaSvg)return;
+  minaT+=dt;
+  if(!minaVisible)return;
+  if(minaViva){
+    if(!arrastrandoMina)mry+=dt*.22;      /* rotación ociosa: se ve el 3D */
+    mrx+=(mrxT-mrx)*Math.min(1,dt*6);
+    const L=rotar(LUZ);
+    gradCuerpo.setAttribute('fx',clampN(.5+L[0]*.45,.08,.92).toFixed(3));
+    gradCuerpo.setAttribute('fy',clampN(.5+L[1]*.45,.08,.92).toFixed(3));
+    brilloEl.setAttribute('transform',`translate(${(L[0]*R*.62).toFixed(1)},${(L[1]*R*.62).toFixed(1)})`);
+    brilloEl.style.opacity=(.5*Math.max(0,L[2])).toFixed(2);
+    const b1=arcoBanda(90),b2=arcoBanda(116);
+    cost1F.setAttribute('d',b1[0]);cost1B.setAttribute('d',b1[1]);torni1.setAttribute('d',b1[0]);
+    cost2F.setAttribute('d',b2[0]);cost2B.setAttribute('d',b2[1]);
+    pasoCuernos();pasoDetalles();pasoPolos();
+    bobAct.x=Math.sin(minaT*.5)*4;bobAct.y=Math.sin(minaT*.8)*7;
+    gBob.setAttribute('transform',`translate(${bobAct.x.toFixed(1)},${bobAct.y.toFixed(1)})`);
+    const enc=(minaT%1.25)<.13;
+    lamparaEl.style.opacity=enc?1:.15;
+    lampGlowEl.style.opacity=enc?.9:.08;
+  }
+  pasoCadena(dt);
+}
+
+/* ============================================================
+   BRECHA (hueco realista) + CHORROS DE AGUA (canvas)
+   ============================================================ */
+const flash=$('#flash'),inundacion=$('#inundacion'),aguaCuerpo=$('#agua-cuerpo'),
+      panel=$('#panel-achique'),remolino=$('#remolino'),brechaLayer=$('#brecha-layer');
+let estadoAgua='seco';     /* seco | subiendo | inundado | drenando | fin */
+let nivelAgua=0,brechaX=0,brechaY=0,brechaAbierta=false,brechaDatos=null;
+
+function ondaChoque(x,y){
+  const o=document.createElement('div');o.className='onda-choque';
+  o.style.left=x+'px';o.style.top=y+'px';
+  document.body.appendChild(o);
+  o.addEventListener('animationend',()=>o.remove());
+}
+
+function abrirBrecha(cx,cy){
+  if(brechaAbierta)return;brechaAbierta=true;
+  brechaLayer.style.display='block';
+  brechaLayer.style.left=cx+'px';brechaLayer.style.top=cy+'px';
+
+  const NS=14,rim=[];
+  for(let i=0;i<NS;i++){
+    const a=i/NS*Math.PI*2+(Math.random()-.5)*.2;
+    const r=56+Math.random()*46;
+    rim.push([Math.cos(a)*r,Math.sin(a)*r]);
+  }
+  const vacio=rim.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')+' Z';
+
+  /* placas metálicas dobladas hacia afuera */
+  let flaps='';
+  rim.forEach((p,i)=>{
+    const q=rim[(i+1)%NS],mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;
+    const m=Math.hypot(mx,my)||1,ext=26+Math.random()*42;
+    const tx=mx+mx/m*ext,ty=my+my/m*ext;
+    const d=`M${p[0].toFixed(1)} ${p[1].toFixed(1)} L${q[0].toFixed(1)} ${q[1].toFixed(1)} L${tx.toFixed(1)} ${ty.toFixed(1)} Z`;
+    flaps+=`<g class="flapa" style="transform-origin:${mx.toFixed(1)}px ${my.toFixed(1)}px" data-giro="${(Math.random()<.5?-1:1)*(14+Math.random()*34).toFixed(0)}">`
+      +`<path d="${d}" fill="url(#gFlapa)" stroke="#04070a" stroke-width="1.5"/>`
+      +`<path d="${d}" fill="none" stroke="rgba(150,175,190,.3)" stroke-width="1"/></g>`;
+  });
+
+  /* aro chamuscado */
+  let chapa='M';
+  for(let i=0;i<22;i++){
+    const a=i/22*Math.PI*2,r=98+Math.random()*40;
+    chapa+=(i?'L':'')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r).toFixed(1)+' ';
+  }
+  chapa+='Z';
+
+  /* fisuras radiantes */
+  let grietas='',puntas=[];
+  for(let c=0;c<7;c++){
+    const a=c/7*Math.PI*2+(Math.random()-.5)*.6;
+    let px=Math.cos(a)*62,py=Math.sin(a)*62,d=`M${px.toFixed(1)} ${py.toFixed(1)}`;
+    const seg=3+(Math.random()*2|0);
+    for(let s=0;s<seg;s++){
+      const st=36+Math.random()*46,ja=a+(Math.random()-.5)*.8;
+      px+=Math.cos(ja)*st;py+=Math.sin(ja)*st;
+      d+=` L${px.toFixed(1)} ${py.toFixed(1)}`;
+    }
+    grietas+=`<path d="${d}"/>`;
+    if(puntas.length<2)puntas.push([px,py]);
+  }
+
+  brechaLayer.innerHTML=
+   `<svg id="brecha-svg" viewBox="-340 -340 680 680">
+     <defs>
+       <radialGradient id="gVacio"><stop offset="0" stop-color="#0a2833"/><stop offset=".55" stop-color="#040e14"/><stop offset="1" stop-color="#010507"/></radialGradient>
+       <linearGradient id="gFlapa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a565f"/><stop offset=".55" stop-color="#222b33"/><stop offset="1" stop-color="#0e141a"/></linearGradient>
+       <radialGradient id="gBrasa"><stop offset="0" stop-color="rgba(255,130,45,.95)"/><stop offset=".55" stop-color="rgba(205,75,20,.4)"/><stop offset="1" stop-color="rgba(120,40,10,0)"/></radialGradient>
+       <filter id="fBrasa" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="8"/></filter>
+       <filter id="fVac" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"/></filter>
+     </defs>
+     <g id="brecha-fx">
+       <g class="grietas2">${grietas}</g>
+       <path d="${chapa}" fill="#04060a" opacity=".95"/>
+       <circle class="brasa" r="150" fill="url(#gBrasa)" filter="url(#fBrasa)"/>
+       <path d="${vacio}" fill="url(#gVacio)" stroke="#5d6f7c" stroke-width="1.6"/>
+       <ellipse class="vac-brillo" rx="30" ry="58" fill="rgba(70,170,185,.35)" filter="url(#fVac)"/>
+       <g class="flapas">${flaps}</g>
+     </g>
+   </svg>`;
+  brechaDatos={puntas};
+
+  const svg=$('#brecha-svg');
+  requestAnimationFrame(()=>{
+    svg.classList.add('abierto');
+    svg.querySelectorAll('.grietas2 path').forEach((p,i)=>{
+      const L=p.getTotalLength();
+      p.style.strokeDasharray=L;p.style.strokeDashoffset=L;
+      p.getBoundingClientRect();
+      p.style.transition=`stroke-dashoffset .45s ease ${120+i*70}ms`;
+      p.style.strokeDashoffset='0';
+    });
+    setTimeout(()=>{
+      svg.querySelectorAll('.flapa').forEach(f=>{f.style.transform=`rotate(${f.dataset.giro}deg)`;});
+    },120);
+  });
+}
+
+/* ---- chorros de agua en canvas ---- */
+const jetCv=document.createElement('canvas');
+jetCv.id='jet-canvas';document.body.appendChild(jetCv);
+const jctx=jetCv.getContext('2d');
+function medirJet(){
+  const d=Math.min(1.5,devicePixelRatio||1);
+  jetCv.width=innerWidth*d;jetCv.height=innerHeight*d;
+  jetCv.style.width=innerWidth+'px';jetCv.style.height=innerHeight+'px';
+  jctx.setTransform(d,0,0,d,0,0);
+}
+medirJet();addEventListener('resize',medirJet);
+const spr=document.createElement('canvas');spr.width=spr.height=64;
+(()=>{const c=spr.getContext('2d'),g=c.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=g;c.fillRect(0,0,64,64);})();
+function spriteBlanca(x,y,s,a){jctx.globalAlpha=a;jctx.drawImage(spr,x-s/2,y-s/2,s,s);jctx.globalAlpha=1;}
+
+const jet={on:false,f:0,t:0,x:0,y:0,sec:[],gotas:[],anillos:[],niebla:[],rocio:0};
+function iniciarJet(){
+  jet.on=true;jet.t=0;jet.f=0;
+  jet.x=brechaX;jet.y=brechaY+34;
+  jet.sec=(brechaDatos?brechaDatos.puntas:[]).map(p=>({x:brechaX+p[0],y:brechaY+p[1],k:(Math.random()-.5)}));
+}
+function dibujarColumna(x0,y0,y1,w0,w1,k,f){
+  const pasos=Math.max(6,Math.min(26,(y1-y0)/18|0)),L=y1-y0,amp=4+L*.05;
+  const xl=[],xr=[];
+  for(let i=0;i<=pasos;i++){
+    const u=i/pasos,y=y0+L*u,w=(w0+(w1-w0)*u)/2;
+    const s=Math.sin(y*.05+jet.t*9)*amp*u+k*u*u*70;
+    xl.push(x0-w+s);xr.push(x0+w+s);
+  }
+  jctx.beginPath();jctx.moveTo(xl[0],y0);
+  for(let i=1;i<=pasos;i++)jctx.lineTo(xl[i],y0+L*i/pasos);
+  for(let i=pasos;i>=0;i--)jctx.lineTo(xr[i],y0+L*i/pasos);
+  jctx.closePath();
+  const g=jctx.createLinearGradient(0,y0,0,y1);
+  g.addColorStop(0,`rgba(195,240,246,${.85*f})`);
+  g.addColorStop(.35,`rgba(120,205,220,${.6*f})`);
+  g.addColorStop(1,`rgba(70,150,170,${.3*f})`);
+  jctx.fillStyle=g;jctx.fill();
+  jctx.lineWidth=2.2;jctx.strokeStyle=`rgba(238,250,250,${.5*f})`;
+  jctx.beginPath();xl.forEach((vx,i)=>i?jctx.lineTo(vx,y0+L*i/pasos):jctx.moveTo(vx,y0));jctx.stroke();
+  jctx.beginPath();xr.forEach((vx,i)=>i?jctx.lineTo(vx,y0+L*i/pasos):jctx.moveTo(vx,y0));jctx.stroke();
+  jctx.lineWidth=1.4;
+  for(let s=0;s<3;s++){
+    jctx.strokeStyle=`rgba(255,255,255,${.2*f})`;
+    jctx.beginPath();
+    for(let i=0;i<=pasos;i++){
+      const xm=(xl[i]+xr[i])/2+Math.sin(i*1.6+s*2.1+jet.t*7)*(xr[i]-xl[i])*.3;
+      i?jctx.lineTo(xm,y0+L*i/pasos):jctx.moveTo(xm,y0);
+    }
+    jctx.stroke();
+  }
+}
+function chapoteo(x,y){
+  jet.anillos.push({x,y,r:3,v:70+Math.random()*90,a:.5});
+  if(Math.random()<.55)jet.gotas.push({x,y,vx:(Math.random()-.5)*280,vy:-110-Math.random()*230,r:1+Math.random()*1.5,vida:.5});
+}
+function pasoJet(dt){
+  jctx.clearRect(0,0,innerWidth,innerHeight);
+  if(jet.on){
+    jet.t+=dt;
+    const H=innerHeight,supY=H-nivelAgua;
+    /* física: el chorro se apaga cuando el agua tapa la brecha */
+    const cub=clampN((nivelAgua-(H-(jet.y+44)))/85,0,1);
+    let obj=1-cub;
+    if(jet.t<1)obj*=1.35+Math.sin(jet.t*16)*.45*Math.exp(-jet.t*1.6);
+    obj*=.9+Math.sin(jet.t*3.7)*.08;
+    jet.f+=(obj-jet.f)*Math.min(1,dt*3);
+    const f=jet.f;
+    if(cub>=1&&f<.04){jet.on=false;pararAguaSonido();}
+    else{
+      gainAgua(f);
+      if(f>.03&&jet.y<supY-4)dibujarColumna(jet.x,jet.y,supY,26*f,88*f,0,f);
+      for(const s of jet.sec)if(f>.06&&s.y<supY-4)dibujarColumna(s.x,s.y,supY,6*f,24*f,s.k,.65*f);
+      if(f>.05){
+        spriteBlanca(jet.x,jet.y,110*f+30,.75*f);
+        jet.rocio+=dt*130*f;
+        while(jet.rocio>1){
+          jet.rocio--;
+          const a=Math.PI/2+(Math.random()-.5)*1.5,v=(220+Math.random()*460)*(.5+f*.7);
+          jet.gotas.push({x:jet.x+(Math.random()-.5)*34,y:jet.y+8,vx:Math.cos(a)*v,vy:Math.sin(a)*v*.92,r:1+Math.random()*2.4,vida:.8+Math.random()*.6});
+        }
+        if(Math.random()<dt*8)jet.niebla.push({x:jet.x+(Math.random()-.5)*140,y:jet.y+Math.random()*Math.max(40,(supY-jet.y)*.7),s:30+Math.random()*50,a:.09+Math.random()*.06,vy:-14-Math.random()*16});
+        spriteBlanca(jet.x,supY,150*f,.5*f);
+        jctx.fillStyle=`rgba(245,252,251,${.65*f})`;
+        for(let d=0;d<7;d++){
+          const pxx=jet.x+(Math.random()-.5)*130*f,pyy=supY-Math.random()*7;
+          jctx.beginPath();jctx.arc(pxx,pyy,1+Math.random()*2.2,0,7);jctx.fill();
+        }
+      }
+    }
+  }
+  const H=innerHeight,supY=H-nivelAgua;
+  for(let i=jet.gotas.length-1;i>=0;i--){
+    const g=jet.gotas[i];
+    g.vy+=1500*dt;g.x+=g.vx*dt;g.y+=g.vy*dt;g.vida-=dt;
+    if(g.y>=supY-2||g.vida<=0){
+      if(g.y>=supY-2)chapoteo(g.x,supY);
+      jet.gotas.splice(i,1);continue;
+    }
+    const sp=Math.hypot(g.vx,g.vy),est=Math.min(2.6,sp/380);
+    jctx.save();jctx.translate(g.x,g.y);jctx.rotate(Math.atan2(g.vy,g.vx));
+    jctx.fillStyle=`rgba(216,242,244,${Math.min(.9,g.vida)})`;
+    jctx.beginPath();jctx.ellipse(0,0,g.r*est,g.r,0,0,7);jctx.fill();jctx.restore();
+  }
+  for(let i=jet.anillos.length-1;i>=0;i--){
+    const a=jet.anillos[i];
+    a.r+=a.v*dt;a.a-=dt*1.15;
+    if(a.a<=0){jet.anillos.splice(i,1);continue;}
+    jctx.strokeStyle=`rgba(240,250,250,${a.a})`;jctx.lineWidth=1.6;
+    jctx.beginPath();jctx.ellipse(a.x,a.y,a.r,a.r*.32,0,0,7);jctx.stroke();
+  }
+  for(let i=jet.niebla.length-1;i>=0;i--){
+    const n=jet.niebla[i];
+    n.y+=n.vy*dt;n.s+=18*dt;n.a-=dt*.06;
+    if(n.a<=0){jet.niebla.splice(i,1);continue;}
+    spriteBlanca(n.x,n.y,n.s,n.a);
+  }
+}
+
+/* ============================================================
+   DETONACIÓN DEL CONTACTO Nº 07
+   ============================================================ */
+function explotarMina(){
+  if(!minaViva||!minaSvg)return;minaViva=false;
+  const r=$('#mina-cuerpo').getBoundingClientRect();
+  brechaX=r.left+r.width/2;brechaY=r.top+r.height/2;
+  colaX0=ultAx;colaY0=ultAy;colaT=0;
+
+  audioDobleBoom();
+
+  flash.classList.add('on');setTimeout(()=>flash.classList.remove('on'),100);
+  setTimeout(()=>{flash.classList.add('on');setTimeout(()=>flash.classList.remove('on'),230);},140);
+
+  const pag=$('#pagina');
+  pag.classList.remove('temblor','temblor2');void pag.offsetWidth;
+  pag.classList.add('temblor');
+  setTimeout(()=>{pag.classList.remove('temblor');pag.classList.add('temblor2');
+    setTimeout(()=>pag.classList.remove('temblor2'),1600);},880);
+
+  ondaChoque(brechaX,brechaY);
+  setTimeout(()=>ondaChoque(brechaX,brechaY),170);
+
+  const cols=['#1a232c','#0e161c','#2c3a44','#e0a63c','#ff7a3c','#c03b2e','#5ac1c9'];
+  for(let i=0;i<46;i++)addFrag(brechaX,brechaY,cols[i%cols.length],{chispa:i%3===0});
+  humo(brechaX,brechaY);
+  setTimeout(()=>{
+    for(let i=0;i<14;i++)addFrag(brechaX,brechaY,'rgba(180,220,230,.55)',{cristal:true});
+    humo(brechaX,brechaY+30);
+  },300);
+
+  /* la mina desaparece; queda la cadena rota meciéndose y sedimento */
+  gBob.style.display='none';
+  const pb=$('#posboom');
+  if(pb){
+    pb.style.opacity='.9';
+    setTimeout(()=>{pb.style.transition='opacity 9s ease';pb.style.opacity='0';},700);
+  }
+  for(let i=0;i<14;i++){
+    const c=document.createElementNS(svgNS,'circle');
+    c.setAttribute('cx',(-90+Math.random()*180).toFixed(0));
+    c.setAttribute('cy',(-30+Math.random()*80).toFixed(0));
+    c.setAttribute('r',(2+Math.random()*3.4).toFixed(1));
+    c.setAttribute('fill','none');c.setAttribute('stroke','rgba(200,240,235,.6)');
+    c.setAttribute('stroke-width','1.4');c.setAttribute('class','burb-svg');
+    c.style.animationDelay=(Math.random()*.9)+'s';
+    minaSvg.appendChild(c);setTimeout(()=>c.remove(),5200);
+  }
+  setTimeout(()=>{const s=$('#mina-stamp');if(s)s.classList.add('ver');},1300);
+
+  setTimeout(()=>abrirBrecha(brechaX,brechaY),240);
+  setTimeout(()=>{iniciarJet();iniciarAguaSonido();},520);
+  setTimeout(()=>{estadoAgua='subiendo';},1050);
+}
+
+/* ============ INUNDACIÓN ============ */
+function spawnBurbuja(){
+  if(nivelAgua<30)return;
+  const b=document.createElement('div');b.className='burbuja';
+  const s=4+Math.random()*8;
+  b.style.width=s+'px';b.style.height=s+'px';
+  b.style.left=(Math.random()*100)+'%';
+  b.style.animationDuration=(2+Math.random()*3)+'s';
+  aguaCuerpo.appendChild(b);
+  b.addEventListener('animationend',()=>b.remove());
+  setTimeout(()=>b.remove(),6000);
+}
+const peces=$$('.pez').map((el,i)=>({el,x:Math.random()*innerWidth,y:innerHeight-100,
+  tx:Math.random()*innerWidth,ty:innerHeight-100,v:70+i*25,t:Math.random()*10}));
+function pasoPeces(dt){
+  const activo=nivelAgua>240&&estadoAgua!=='fin';
+  peces.forEach(p=>{
+    p.el.style.opacity=activo?.95:0;
+    if(!activo)return;
+    p.t+=dt;
+    const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.hypot(dx,dy);
+    if(d<30){p.tx=30+Math.random()*(innerWidth-60);p.ty=innerHeight-nivelAgua+40+Math.random()*Math.max(40,nivelAgua-90);}
+    else{p.x+=dx/d*p.v*dt;p.y+=dy/d*p.v*dt;}
+    const ang=Math.atan2(dy,dx)*180/Math.PI;
+    const dir=dx>=0?1:-1;
+    p.el.style.transform=`translate(${p.x-23}px,${p.y-16}px) rotate(${(dir>0?ang:180-ang)+Math.sin(p.t*7)*8}deg) scaleX(${dir})`;
+  });
+}
+function pasoAgua(dt){
+  if(estadoAgua==='subiendo'){
+    nivelAgua=Math.min(nivelAgua+innerHeight*.16*dt,innerHeight*1.02);
+    if(nivelAgua>=innerHeight*.985){
+      estadoAgua='inundado';
+      panel.style.pointerEvents='auto';
+      if(G)G.to(panel,{scale:1,duration:.6,ease:'back.out(1.7)'});
+      else panel.style.transform='translate(-50%,-50%) scale(1)';
+    }
+  }else if(estadoAgua==='drenando'){
+    nivelAgua=Math.max(0,nivelAgua-innerHeight*.4*dt);
+    if(nivelAgua<=0){estadoAgua='fin';finDrenaje();}
+  }
+  inundacion.style.height=nivelAgua+'px';
+  if((estadoAgua!=='seco'&&estadoAgua!=='fin')&&Math.random()<dt*7)spawnBurbuja();
+  if(estadoAgua==='drenando'&&Math.random()<dt*14){spawnBurbuja();if(Math.random()<.3)bloop();}
+}
+ $('#bombas').addEventListener('click',()=>{
+  if(estadoAgua!=='inundado')return;
+  estadoAgua='drenando';
+  jet.on=false;pararAguaSonido();
+  remolino.classList.add('ver');
+  panel.style.pointerEvents='none';
+  if(G)G.to(panel,{scale:0,duration:.4,ease:'back.in(1.6)'});else panel.style.transform='translate(-50%,-50%) scale(0)';
+  bloop();
+});
+function finDrenaje(){
+  remolino.classList.remove('ver');
+  sellarBrecha();
+  flash.classList.add('on');setTimeout(()=>flash.classList.remove('on'),120);
+  toast('<strong>AMENAZA NEUTRALIZADA</strong><span>Casco sellado. La sesión del OSD prosigue… esta vez en superficie.</span>');
+}
+function sellarBrecha(){
+  const svg=$('#brecha-svg');
+  if(svg){
+    svg.querySelectorAll('.flapa').forEach((f,i)=>{
+      f.style.transitionDelay=(i*28)+'ms';
+      f.style.transform='rotate(0deg)';
+    });
+    const w=document.createElementNS(svgNS,'circle');
+    w.setAttribute('r','95');w.setAttribute('fill','none');
+    w.setAttribute('stroke','#ffd9a0');w.setAttribute('stroke-width','5');
+    w.setAttribute('class','soldadura');
+    svg.appendChild(w);
+    const fx=svg.querySelector('#brecha-fx');
+    setTimeout(()=>{
+      if(fx){
+        fx.style.transition='transform 1.1s cubic-bezier(.5,0,.3,1),opacity 1.2s ease .45s';
+        fx.style.transform='scale(.5)';fx.style.opacity='0';
+      }
+    },450);
+  }
+  setTimeout(()=>{brechaLayer.style.display='none';},2100);
+}
+function toast(html){
+  const t=$('#toast');
+  t.innerHTML=`<svg viewBox="0 0 24 24"><use href="#i-ancla"/></svg><div>${html}</div>`;
+  t.classList.add('ver');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('ver'),5200);
+}
+
+/* ============ ONDITA AL HACER CLIC ============ */
+addEventListener('pointerdown',e=>{
+  if(e.target.closest('button,a,.contenedor,.expediente,.mina-escenario,.blip,.radar-sub'))return;
+  const o=document.createElement('div');o.className='ondita';
+  o.style.left=e.clientX+'px';o.style.top=e.clientY+'px';
+  document.body.appendChild(o);
+  o.addEventListener('animationend',()=>o.remove());
+});
+
+/* ============ PLANCTON DEL FONDEADERO ============ */
+const fondo=$('#fondeadero');
+for(let i=0;i<14;i++){
+  const p=document.createElement('span');p.className='plancton';
+  p.style.left=Math.random()*100+'%';
+  p.style.top=(20+Math.random()*90)+'%';
+  p.style.animationDuration=(9+Math.random()*14)+'s';
+  p.style.animationDelay=(-Math.random()*14)+'s';
+  fondo.appendChild(p);
+}
+
+/* ============ BUCLE PRINCIPAL ============ */
+let tPrev=performance.now();
+function loop(t){
+  const dt=Math.min(.05,(t-tPrev)/1000);tPrev=t;
+  pasoParallax(dt);
+  pasoCarrusel(dt);
+  pasoMina(dt);
+  pasoAgua(dt);
+  pasoJet(dt);
+  pasoParticulas(dt);
+  pasoPeces(dt);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

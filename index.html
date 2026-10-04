@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVPMUN - Inicio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');</style>
+    
+    <!-- Dependencias Core UMD Seguras -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;700&family=Space+Grotesk:wght@400;600;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'instrument-serif': ['"Instrument Serif"', 'Georgia', 'serif'],
+                        'sans': ['"Inter"', 'system-ui', 'sans-serif'],
+                        'space': ['"Space Grotesk"', 'sans-serif'], 
+                    },
+                    colors: {
+                        background: '#09090b',
+                        foreground: '#fafafa',
+                    },
+                    animation: {
+                        'fade-slide-in-1': 'fadeSlideIn 0.8s ease-out forwards 0.1s',
+                        'fade-slide-in-2': 'fadeSlideIn 0.8s ease-out forwards 0.2s',
+                        'fade-slide-in-3': 'fadeSlideIn 0.8s ease-out forwards 0.3s',
+                        'fade-slide-in-4': 'fadeSlideIn 0.8s ease-out forwards 0.4s',
+                        'pan-planet': 'panPlanet 40s linear infinite alternate',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards 0.3s',
+                    },
+                    keyframes: {
+                        fadeSlideIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        panPlanet: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '100%': { backgroundPosition: '100% 50%' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="/static/navbar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@11/dist/framer-motion.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #09090b; overflow-x: hidden; }
+        
+        .animate-fade-slide-in-1, .animate-fade-slide-in-2, 
+        .animate-fade-slide-in-3, .animate-fade-slide-in-4, .animate-fade-in {
+            opacity: 0;
+        }
+
+        /* ═══ CSS DEL LOADER ═══ */
+        .loader { position: fixed; display: flex; flex-direction: column; align-items: center; justify-content: center; top: 0; left: 0; height: 100vh; width: 100vw; overflow: hidden; z-index: 9999; background: #0d0d0d; gap: 2rem; }
+        .loader__words { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.4rem; position: relative; z-index: 2; }
+        .loader__text { font-size: 1.6rem; font-family: 'Poppins', sans-serif; color: #888888; overflow: hidden; padding: 0.2rem 0; }
+        .loader__text span { display: inline-block; opacity: 0; visibility: hidden; }
+        .loader__hi { display: flex; align-items: center; justify-content: center; gap: 1rem; position: relative; z-index: 2; }
+        .loader__hi-text { font-size: 5rem; font-family: 'Poppins', sans-serif; font-weight: 700; color: #acb7ff; overflow: hidden; padding: 0.2rem 0; }
+        .loader__hi-text span { display: inline-block; opacity: 0; visibility: hidden; }
+        .loader__slice { position: absolute; top: 0; left: 0; width: calc(33.33vw + 0.1rem); height: 100vh; background-color: #0d0d0d; z-index: 1; }
+        .loader__slice:nth-of-type(2) { left: 33.33vw; }
+        .loader__slice:nth-of-type(3) { left: 66.66vw; }
+        
+        /* Ocultar react root inicialmente para GSAP */
+        #root { opacity: 0; visibility: hidden; }
+
+        @media (max-width: 640px) {
+          .loader__hi-text { font-size: 3rem; }
+          .loader__text { font-size: 1.1rem; }
+          .loader__hi { gap: 0.6rem; }
+          .loader__words { padding: 0 16px; }
+        }
+        @media (max-width: 400px) {
+          .loader__hi-text { font-size: 2.4rem; }
+          .loader__slice { width: calc(33.34vw + 1px); }
+        }
+
+        /* Orientación Vertical */
+        .writing-vertical {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        /* ═══ CSS TESTIMONIOS CIRCULARES ═══ */
+        .testimonial-container {
+            width: 100%;
+            max-width: 56rem;
+            padding: 2rem;
+            margin: 0 auto;
+        }
+        .testimonial-grid {
+            display: grid;
+            gap: 5rem;
+        }
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 24rem;
+            perspective: 1000px;
+        }
+        .testimonial-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .testimonial-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        .designation {
+            margin-bottom: 2rem;
+        }
+        .quote {
+            line-height: 1.75;
+        }
+        .arrow-buttons {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 3rem;
+        }
+        .arrow-button {
+            width: 2.7rem;
+            height: 2.7rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+        @media (min-width: 768px) {
+            .testimonial-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .arrow-buttons {
+                padding-top: 0;
+            }
+        }
+
+        .cursor-grabbing, .cursor-grab { user-select: none; -webkit-user-select: none; }
+        
+        /* SOLUCIÓN AL BUG 3D DEL NAVEGADOR */
+        .force-high-res {
+            image-rendering: high-quality;
+            image-rendering: -webkit-optimize-contrast;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden; 
+            -webkit-backface-visibility: hidden; 
+            transform: translateZ(0); 
+            -webkit-transform: translate3d(0, 0, 0); 
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- ═══ LOADER INICIAL ═══ -->
+    <section class="loader">
+      <div class="loader__words">
+        <span class="loader__text"><span>Liderazgo,</span></span>
+        <span class="loader__text"><span>Inmersión</span></span>
+        <span class="loader__text"><span>& Debate.</span></span>
+      </div>
+      <div class="loader__hi">
+        <span class="loader__hi-text"><span>SVPMUN</span></span>
+      </div>
+      <div class="loader__slice"></div>
+      <div class="loader__slice"></div>
+      <div class="loader__slice"></div>
+    </section>
+
+    <!-- REACT ROOT -->
+    <div id="root"></div>
+
+    <!-- Script de React (Puro, sin módulos) -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        const { createRoot } = ReactDOM;
+
+        // ═══ ICONOS SVG NATIVOS (Reemplazo de lucide-react y react-icons) ═══
+        const IconArrowRight = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
+        const IconArrowLeft = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>;
+        const IconPlay = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>;
+        const IconGlobe = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>;
+        const IconMic = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>;
+        const IconFileText = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>;
+        const IconHandshake = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-7.3 7.3a1 1 0 0 0 0 1.42l.33.33a1 1 0 0 0 1.42 0L11 17"/><path d="m11 17-1.42-1.42a1 1 0 0 0-1.42 0l-.33.33a1 1 0 0 0 0 1.42l1.42 1.42"/><path d="m11 17 2-2"/><path d="m14 14-2-2"/><path d="m17 11-2-2"/></svg>;
+        const IconPlus = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>;
+
+        // ═══ COMPONENTE 0: HERO ORIGINAL ═══
+        const ResponsiveHeroBanner = () => {
+            const backgroundImageUrl = "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=3840&auto=format&fit=crop"; 
+            const navLinks = [
+                { label: "Inicio", href: "#", isActive: true },
+                { label: "Comités", href: "#" },
+                { label: "Cronograma", href: "#" },
+                { label: "Reglamento", href: "#" },
+                { label: "Delegaciones", href: "#" }
+            ];
+
+            return (
+                <section className="w-full isolate min-h-screen overflow-hidden relative flex flex-col z-0 bg-[#09090b]">
+                    <div className="absolute inset-0 z-0 animate-pan-planet" style={{ backgroundImage: `url(${backgroundImageUrl})`, backgroundRepeat: 'no-repeat', backgroundSize: '130% 130%' }} />
+                    <div className="pointer-events-none absolute inset-0 z-0 ring-1 ring-black/30 bg-black/40" />
+
+                    <header className="z-10 xl:top-4 relative w-full">
+                        <div className="mx-6">
+                            <div className="flex items-center justify-end pt-4">
+                                <nav className="hidden md:flex items-center gap-2">
+                                    <div className="flex items-center gap-1 rounded-full bg-white/5 px-1 py-1 ring-1 ring-white/10 backdrop-blur">
+                                        {navLinks.map((link, index) => (
+                                            <a key={index} href={link.href} className={`px-3 py-2 text-sm font-medium hover:text-white font-sans transition-colors ${link.isActive ? 'text-white/90' : 'text-white/80'}`}>
+                                                {link.label}
+                                            </a>
+                                        ))}
+                                        <a href="#" className="ml-1 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-sm font-medium text-neutral-900 hover:bg-white/90 font-sans transition-colors">
+                                            Registro <IconGlobe className="h-4 w-4" />
+                                        </a>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="z-10 relative flex-grow flex items-center justify-center pb-20 pt-10 lg:pt-12">
+                        <div className="w-full max-w-7xl mx-auto px-6">
+                            <div className="mx-auto max-w-5xl text-center">
+                                <div className="mb-8 inline-flex items-center gap-3 rounded-full bg-white/10 px-3 py-2.5 md:px-4 md:py-3 ring-1 ring-white/15 backdrop-blur animate-fade-slide-in-1 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                                    <span className="inline-flex items-center text-sm font-bold text-neutral-900 bg-white/90 rounded-full py-1 px-3 md:px-4 font-sans uppercase tracking-wider">Nuevo</span>
+                                    <span className="text-base md:text-lg font-medium text-white/90 font-sans pr-2">Inscripciones Abiertas 2026</span>
+                                </div>
+                                <h1 className="text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-none text-white tracking-tight font-instrument-serif font-normal animate-fade-slide-in-2 drop-shadow-2xl">
+                                    SVPMUN
+                                </h1>
+                                {/* Oculto en móviles el texto largo para mayor limpieza visual */}
+                                <p className="hidden md:block text-lg sm:text-xl md:text-2xl lg:text-3xl animate-fade-slide-in-3 text-white/80 max-w-4xl mt-8 mx-auto leading-relaxed drop-shadow-md">
+                                    Únete a la simulación de las Naciones Unidas más inmersiva. Debate, negocia y resuelve las problemáticas globales de hoy para convertirte en el líder del mañana.
+                                </p>
+                                <div className="flex flex-col sm:flex-row sm:gap-6 mt-12 gap-4 items-center justify-center animate-fade-slide-in-4">
+                                    <a href="#" className="inline-flex items-center gap-3 hover:bg-white/15 text-lg md:text-xl font-medium text-white bg-white/10 ring-white/15 ring-1 rounded-full py-4 px-8 md:py-5 md:px-10 font-sans transition-colors backdrop-blur-sm">
+                                        Inscríbete Ahora <IconArrowRight className="h-5 w-5 md:h-6 md:w-6" />
+                                    </a>
+                                    <a href="#" className="hidden sm:inline-flex items-center gap-3 rounded-full bg-transparent px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-medium text-white/90 hover:text-white font-sans transition-colors group">
+                                        Ver Ediciones <IconPlay className="h-5 w-5 md:h-6 md:w-6 fill-current opacity-70 group-hover:opacity-100 transition-opacity" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ═══ COMPONENTE 1: EL MANIFIESTO ═══
+        const TheManifesto = () => {
+            return (
+                <section className="bg-transparent relative py-20 md:py-32 px-6 flex flex-col items-center justify-center border-t border-b border-white/5 overflow-hidden">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[45vw] md:h-[45vw] bg-white/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+                    <div className="max-w-4xl mx-auto text-center relative z-10">
+                        {/* Se oculta en mobile para diseño más limpio */}
+                        <span className="hidden sm:block font-space uppercase tracking-[0.3em] text-white/50 text-xs sm:text-sm font-semibold mb-8 block">
+                            MEMORÁNDUM CLASIFICADO // SVPMUN 2026
+                        </span>
+                        
+                        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-instrument-serif text-white leading-[1.1] mb-12 md:mb-16 drop-shadow-xl">
+                            "El mundo se fractura. La diplomacia es nuestra <span className="italic text-white/70">última línea de defensa</span> antes del colapso global."
+                        </h2>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-4 w-full border-t border-white/10 pt-10 mt-8">
+                            {[
+                                { num: '3', label: 'DÍAS TÁCTICOS' },
+                                { num: '9', label: 'COMITÉS GLOBALES' },
+                                { num: '50+', label: 'DELEGADOS' },
+                                { num: '1', label: 'PROPÓSITO GLOBAL' },
+                            ].map((stat, idx) => (
+                                <div key={idx} className="flex flex-col items-center">
+                                    <span className="font-space text-4xl md:text-5xl font-bold text-white mb-2 tracking-tighter">{stat.num}</span>
+                                    <span className="font-space text-[0.65rem] md:text-xs tracking-widest text-white/50 uppercase block font-semibold">{stat.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ═══ COMPONENTE C: COMITÉS EN ZIG ZAG ═══
+        const CommitteesAccordion = () => {
+            const [activeId, setActiveId] = useState(0);
+
+            // ACTUALIZACIÓN DE DIRECTORIOS: Se añade el atributo link a cada comité.
+            const committeesData = [
+                { title: "CORTE", link: "/CORTE", desc: "Resuelve los litigios y disputas jurídicas internacionales con imparcialidad. Siente la tensión real del Tribunal donde cada estatuto define soberanías completas.", img: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2000&auto=format&fit=crop" },
+                { title: "SENADO DE ESPAÑA", link: "/Senado", desc: "Adéntrate en el Senado de la Nación y define pactos territoriales mientras administras poderes vitales con oratoria en alta cámara legislativa.", img: "/static/Senado.jpeg" },
+                { title: "MI6 (INTELIGENCIA)", link: "/MI6", desc: "Comité Clandestino (Crisis-Style): Interceptación global de datos, espionaje directo y detención preventiva frente a frentes anti-terroristas globales silenciosos.", img: "/static/Hezbollah.jpeg" },
+                { title: "A P A", link: "/APA", desc: "Foro enfocado en los perfiles psicosociales, marcos de evaluación internacionales y la reestructuración clínica mundial requerida durante los estragos civiles recientes.", img: "/static/APA.jpeg" },
+                { title: "OMC", link: "/OMC", desc: "Dicta el control macroeconómico. Modera transacciones multimillonarias mundiales con el propósito de generar rutas tarifarias a gran escala eficientes y resolutivas.", img: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2000&auto=format&fit=crop" },
+                { title: "ASAMBLEA GENERAL", link: "/AG", desc: "Máximo plenario multilateral internacional; donde todos tienen voz. Debatirás soluciones contra reloj centradas directamente sobre la crisis global macro a la orden.", img: "/static/Asamblea.jpeg" },
+                { title: "CRISIS BICAMERAL", link: "/CRISIS", desc: "Sobrevive decisiones simultáneas asincrónicas extremas (Comité Contra-reloj en guerra). Estrategia y pragmatismo veloz definirá cuál rama gubernamental no perece.", img: "/static/Elecciones.jpeg" },
+                { title: "I C E", link: "/ICE", desc: "Responde urgentemente con leyes trans-migratorias seguras y eficaces protegiendo el bienestar fronterizo de miles, enlazando controles exhaustivos aduaneros inmediatos.", img: "/static/ICE.jpeg" },
+                { title: "INVESTIGACIÓN", link: "/Investigacion", desc: "El Comité en las sombras. Acceso irrestricto de búsqueda táctil realística tipo forense para emitir las bases que fundamentarán todos los reportes de alerta diplomáticos.", img: "/static/Investigacion.jpeg" } 
+            ];
+
+            return (
+                <section className="bg-transparent pt-20 md:pt-32 pb-32 md:pb-40 w-full overflow-hidden relative">
+                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-white/5 rounded-full blur-[140px] pointer-events-none"></div>
+
+                    <div className="text-center px-6 mb-12 md:mb-20 relative z-10">
+                        <span className="font-space uppercase tracking-[0.2em] text-white/50 text-xs font-semibold mb-2 block border-b border-white/10 pb-4 inline-block px-12">Puntos Críticos Globales</span>
+                        <h2 className="text-white text-5xl md:text-7xl font-space font-bold mt-4 uppercase tracking-tighter">Frentes Abiertos</h2>
+                    </div>
+
+                    {/* TRANSFORMACIONES MOVIDAS A CLASES PARA PERMITIR UNA VISTA NORMAL EN MÓVIL Y SESGADA EN ESCRITORIO */}
+                    <div className="relative mx-auto flex items-center justify-center max-w-[95%] lg:max-w-7xl h-[65vh] md:h-[65vh] overflow-hidden md:-skew-x-[10deg]">
+                        <div className="w-full h-full flex flex-row">
+                            {committeesData.map((comite, idx) => {
+                                const isActive = activeId === idx;
+                                return (
+                                    <div 
+                                        key={idx} onClick={() => setActiveId(idx)}
+                                        className={`group relative overflow-hidden transition-[flex,width] duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] border-l-[0.5px] border-r-[0.5px] border-white/20 hover:border-white/40 border-dotted cursor-pointer bg-[#000000] ${isActive ? 'flex-[12]' : 'flex-[1] hover:flex-[1.5]'}`}
+                                    >
+                                        <div className="absolute left-[-20%] right-[-20%] top-[-5%] bottom-[-5%] pointer-events-none z-0 md:skew-x-[10deg]">
+                                            <div className={`w-full h-full bg-cover bg-center transition-all duration-[900ms] ease-out pointer-events-auto ${isActive ? 'scale-100 blur-[0px]' : 'scale-110 grayscale-[60%] blur-[2px] opacity-70 group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-[20%]'}`} style={{ backgroundImage: `url('${comite.img}')` }} />
+                                            <div className={`absolute inset-0 bg-gradient-to-t transition-opacity duration-700 ${isActive ? 'from-[#050505]/95 via-background/40 to-black/20 opacity-100' : 'from-black via-black/80 to-black opacity-100'}`}></div>
+                                        </div>
+
+                                        <div className="absolute top-0 bottom-0 left-[-15%] right-[-15%] z-10 flex p-8 md:skew-x-[10deg]">
+                                            <div className="h-full w-full mx-auto relative px-[5%] md:px-[10%]">
+                                                
+                                                <div className={`h-full w-full flex flex-col justify-end text-left items-start overflow-hidden pointer-events-auto transition-opacity duration-[900ms] ${isActive ? 'opacity-100 opacity-delay max-w-[800px] visible animate-fade-in' : 'opacity-0 max-w-[0px] invisible hidden'}`}>
+                                                    <span className="hidden md:block font-space uppercase tracking-widest text-[0.65rem] text-black bg-white rounded font-bold px-2 py-1 mb-4 mix-blend-screen transition-transform duration-[800ms] translate-y-0 opacity-90 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] hover:bg-neutral-300 pointer-events-auto shadow">STATUS // ACTIVO</span>
+                                                    <h3 className="text-white font-space text-3xl md:text-5xl font-black mb-3 uppercase tracking-tighter shadow-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transform">
+                                                        {comite.title}
+                                                    </h3>
+                                                    <p className="hidden md:block text-white/80 font-sans text-sm md:text-[0.95rem] md:pr-10 leading-[1.6] line-clamp-3 mb-6 transform font-light md:font-normal max-w-sm">
+                                                        {comite.desc}
+                                                    </p>
+                                                    {/* BOTÓN ARREGLADO: Cambio de button a etiqueta A con href. Fix de color de hover. */}
+                                                    <a href={comite.link} className="inline-flex w-fit bg-transparent border border-white/40 hover:border-white text-white px-5 py-2.5 rounded font-space text-xs font-bold transition-all duration-300 items-center gap-2 uppercase tracking-[0.1em] pointer-events-auto mb-2 relative group overflow-hidden">
+                                                        <span className="relative z-10 transition-colors duration-300 group-hover:text-black">Conoce Más</span> 
+                                                        <IconArrowRight className="w-4 h-4 relative z-10 -translate-x-1 group-hover:translate-x-1 transition-all duration-300 group-hover:text-black" />
+                                                        <div className="absolute top-0 bottom-0 -left-[100%] right-[100%] z-0 bg-white group-hover:-left-0 group-hover:right-0 transition-all duration-[600ms] ease-[cubic-bezier(0.19,1,0.22,1)] md:-skew-x-[10deg]" />
+                                                    </a>
+                                                </div>
+
+                                                <div className={`h-full w-full absolute inset-0 pt-16 flex items-start justify-center top-[25%] lg:top-[30%] text-center overflow-visible pointer-events-none transition-opacity duration-300 origin-center ${isActive ? 'opacity-0 pointer-events-none invisible' : 'opacity-100 delay-500'}`}>
+                                                    <h3 className="text-white/70 font-space uppercase tracking-[0.35em] text-[1.1rem] sm:text-[0.80rem] whitespace-nowrap overflow-visible opacity-50 drop-shadow-md group-hover:opacity-100 group-hover:text-white transition-colors writing-vertical">
+                                                        {comite.title}
+                                                    </h3>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ═══ COMPONENTE 2: EL MALETÍN DEL DELEGADO ═══
+        const TheDelegatesBriefcase = () => {
+            const protocols = [
+                {
+                    num: "01", icon: <IconMic className="w-6 h-6 text-white/50 group-hover:text-black transition-colors" />, title: "Disrupción Retórica", desc: "Desarma bloques enteros utilizando silencios pautados, entonaciones gélidas y mociones quirúrgicamente ubicadas durante debates que hieren políticamente a todo estado opuesto frontal."
+                },
+                {
+                    num: "02", icon: <IconFileText className="w-6 h-6 text-white/50 group-hover:text-black transition-colors" />, title: "Archivo de Letalidad", desc: "Memoriza antecedentes de tribunales ajenos previos, cita folios irrebatibles extraídos a primera vista usando tu porta-credenciales diplomáticas oculto. Destruye tesis mal hiladas a diestra y siniestra siempre legal."
+                },
+                {
+                    num: "03", icon: <IconHandshake className="w-6 h-6 text-white/50 group-hover:text-black transition-colors" />, title: "Mercados Secretos", desc: "Transfiere sobornos lícitos con las súper-potencias detrás de bambalinas. Convence secretarios mientras dictas decretos blindados extraídos al amanecer al finalizar jornada global asíncrona real."
+                }
+            ];
+
+            return (
+                <section className="bg-transparent py-24 md:py-32 px-6 border-b border-white/5 overflow-hidden font-sans">
+                    <div className="max-w-7xl mx-auto z-10 relative">
+                        <div className="flex flex-col lg:flex-row justify-between lg:items-end border-b border-white/5 pb-12 mb-10 md:mb-16 gap-10">
+                            <div>
+                                <span className="flex items-center gap-3 font-space uppercase tracking-[0.25em] text-white/40 text-[0.65rem] font-bold mb-5 opacity-90"><IconPlus className="w-4 h-4 text-white" /> Manual Pre-Inscripción</span>
+                                <h2 className="text-4xl sm:text-5xl lg:text-[4.8rem] font-space font-black uppercase tracking-tighter text-white leading-[0.95]">
+                                    El Maletín <br/> <span className="font-instrument-serif text-white/60 italic font-light lowercase">Táctico Integral</span>
+                                </h2>
+                            </div>
+                            <p className="hidden lg:block lg:max-w-lg text-white/50 font-sans text-sm lg:text-base leading-relaxed text-justify">
+                                Las cámaras del SVPMUN castigan la improvisación ingenua con rechazos públicos al debate asambleísta total frontal al piso inferior; a los grandes perfiles audaces precursores líderes innovadores diplomáticos resolutivos y tajantes se adhiere una insignia brillante histórica indiscutible absoluta total permanente suprema al escudo protocolar que portan hoy. 
+                            </p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                            {protocols.map((ptc, i) => (
+                                <div key={i} className="group cursor-crosshair bg-background border border-white/10 hover:bg-white p-8 md:p-10 flex flex-col justify-between aspect-auto md:aspect-[4/5] relative transition-colors duration-[600ms]">
+                                    
+                                    <div className="flex justify-between items-start mb-6 md:mb-8 z-10 relative">
+                                        <div className="w-12 h-12 bg-white/5 group-hover:bg-[#000] flex items-center justify-center rounded transition-colors duration-500 shadow">
+                                            {React.cloneElement(ptc.icon, { className: 'w-5 h-5 text-white/70 group-hover:text-white transition-colors duration-[500ms]' })}
+                                        </div>
+                                        <span className="font-space font-black text-2xl lg:text-3xl tracking-tighter text-white/20 group-hover:text-black/30 transition-colors">[{ptc.num}]</span>
+                                    </div>
+
+                                    <div className="z-10 relative mt-auto md:group-hover:-translate-y-4 transition-transform duration-[600ms] ease-out">
+                                        <h3 className="font-space font-bold uppercase tracking-tight text-white group-hover:text-black text-xl md:text-2xl mb-2 md:mb-4 leading-tight">{ptc.title}</h3>
+                                        <div className="hidden sm:block h-[2px] w-8 bg-white group-hover:bg-black group-hover:w-16 transition-all duration-500 mb-4 md:mb-6"></div>
+                                        <p className="hidden sm:block font-sans text-[0.85rem] font-light leading-relaxed text-white/50 group-hover:text-black/70 max-w-sm drop-shadow-[0_1px_rgba(255,255,255,0.1)] opacity-90 transition-colors">
+                                            {ptc.desc}
+                                        </p>
+                                    </div>
+                                    <div className="absolute inset-0 mix-blend-difference border-[12px] border-transparent group-hover:border-black pointer-events-none transition-colors duration-[800ms]"></div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+// ═══ COMPONENTE EXTRA: GALERÍA 3D CAROUSEL ═══
+        const { motion, AnimatePresence, useAnimation, useMotionValue, useTransform } = window.Motion;
+        const useIsomorphicLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+        
+        function useMediaQuery(query) {
+            const [matches, setMatches] = React.useState(false);
+            useIsomorphicLayoutEffect(() => {
+                const matchMedia = window.matchMedia(query);
+                const handleChange = () => setMatches(matchMedia.matches);
+                handleChange();
+                matchMedia.addEventListener("change", handleChange);
+                return () => matchMedia.removeEventListener("change", handleChange);
+            }, [query]);
+            return matches;
+        }
+
+        const Carousel = React.memo(({ handleClick, controls, cards, isCarouselActive }) => {
+            const isScreenSizeSm = useMediaQuery("(max-width: 640px)");
+            
+            const cardSpace = isScreenSizeSm ? 135 : 220; 
+            const cylinderWidth = cardSpace * cards.length; 
+            
+            const radius = Math.round(cylinderWidth / (2 * Math.PI)); 
+            
+            const rotation = useMotionValue(0);
+            const transform = useTransform(rotation, (value) => `rotate3d(0, 1, 0, ${value}deg)`);
+
+            return (
+                <div className="flex w-full items-center justify-center bg-transparent absolute inset-0 m-auto pointer-events-none" style={{ perspective: "1200px", height: '100%', touchAction: 'none' }}>
+                    <motion.div
+                        drag={isCarouselActive ? "x" : false}
+                        className="relative flex h-full origin-center cursor-grab active:cursor-grabbing justify-center items-center pointer-events-auto"
+                        style={{ transform, transformStyle: "preserve-3d", width: '100vw' }}
+                        onDrag={(_, info) =>
+                            isCarouselActive && rotation.set(rotation.get() + info.delta.x * 0.20)
+                        }
+                        onDragEnd={(_, info) =>
+                            isCarouselActive && controls.start({
+                                rotateY: rotation.get() + info.velocity.x * 0.04,
+                                transition: { type: "spring", stiffness: 50, damping: 60, mass: 0.8 }
+                            })
+                        }
+                        animate={controls}
+                    >
+                        {cards.map((imgUrl, i) => (
+                            <motion.div
+                                key={`key-${i}`}
+                                className="absolute flex origin-center items-center justify-center p-2 hover:opacity-100 transition-opacity force-high-res"
+                                style={{
+                                    width: `${cardSpace}px`,
+                                    height: isScreenSizeSm ? '200px' : '320px', 
+                                    transform: `rotateY(${Math.round(i * (360 / cards.length))}deg) translateZ(${radius}px)`, 
+                                    transformStyle: "preserve-3d",
+                                }}
+                                onClick={() => handleClick(imgUrl, i)}
+                            >
+                                <motion.img
+                                    layoutId={`photo-${i}`} 
+                                    src={imgUrl}
+                                    alt={`Delegacion ${i+1}`}
+                                    className="pointer-events-none w-full h-full rounded-[14px] object-cover shadow-[0_5px_15px_rgba(0,0,0,0.5)] border border-white/10 force-high-res"
+                                   
+                                />
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            );
+        });
+
+        function ThreeDPhotoCarousel() {
+            const [activeImg, setActiveImg] = React.useState(null);
+            const [activeIndex, setActiveIndex] = React.useState(null);
+            const [isCarouselActive, setIsCarouselActive] = React.useState(true);
+            const controls = useAnimation();
+            
+            const cards = React.useMemo(() => Array.from({ length: 11 }, (_, i) => `/static/delegaciones/${i + 1}.jpeg`), []);
+
+            const handleClick = (imgUrl, index) => {
+                setActiveImg(imgUrl);
+                setActiveIndex(index);
+                setIsCarouselActive(false);
+                controls.stop(); 
+            };
+            
+            const handleClose = () => {
+                setActiveImg(null);
+                setActiveIndex(null);
+                setIsCarouselActive(true);
+            };
+
+            return (
+                <div className="w-full h-full relative overflow-hidden flex bg-transparent select-none force-high-res">
+                    <AnimatePresence>
+                        {activeImg && (
+                            <motion.div
+                                initial={{ opacity: 0, backdropFilter: "blur(0px)" }} 
+                                animate={{ opacity: 1, backdropFilter: "blur(8px)" }} 
+                                exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                                transition={{ duration: 0.3 }}
+                                onClick={handleClose}
+                                className="fixed inset-0 flex items-center justify-center p-6 md:p-12 bg-black/80 z-50 cursor-pointer pointer-events-auto force-high-res"
+                            >
+                                <motion.img
+                                    layoutId={`photo-${activeIndex}`} 
+                                    src={activeImg}
+                                    transition={{ type: "spring", stiffness: 220, damping: 28 }}
+                                    className="w-auto h-auto max-w-[95vw] max-h-[85vh] md:max-w-[70vw] rounded-lg md:rounded-2xl shadow-2xl object-contain bg-transparent ring-2 ring-white/10 force-high-res"
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    
+                    <Carousel handleClick={handleClick} controls={controls} cards={cards} isCarouselActive={isCarouselActive} />
+                </div>
+            );
+        }
+        // ═══ COMPONENTE 3: (NUEVO) QUÉ ES SVP / DELEGACIÓN OFICIAL ═══
+        const AboutSVPSection = () => {
+            return (
+                <section className="bg-transparent py-24 sm:py-32 px-6 relative overflow-hidden flex flex-col items-center">
+                    <div className="absolute top-[10%] right-[-5%] w-[50vw] h-[50vw] bg-white/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+                    
+                    <div className="max-w-7xl mx-auto w-full relative z-10">
+                        {/* Texto dividido para balance visual, minimalista */}
+                        <div className="flex flex-col lg:flex-row items-start lg:items-end mb-12 md:mb-16 gap-10 lg:gap-16 pb-12 w-full justify-between">
+                            <div className="flex flex-col text-left max-w-xl">
+                                <span className="font-space uppercase tracking-[0.25em] text-white/40 text-[0.65rem] font-bold mb-4 flex items-center gap-2 w-max whitespace-nowrap">
+                                    <div className="w-[3px] h-[3px] bg-white rounded-full"></div> SVP DELEGATION 
+                                </span>
+                                <h2 className="text-5xl sm:text-6xl md:text-7xl font-space font-black uppercase tracking-tighter text-white leading-[0.95]">
+                                    Legión <br className="hidden sm:block"/> <span className="font-instrument-serif text-white/60 italic font-light lowercase transform -rotate-1 origin-left drop-shadow-md">Directiva</span>
+                                </h2>
+                            </div>
+                            <div className="hidden lg:block max-w-[34rem]">
+                                <p className="text-white/60 font-sans text-sm md:text-[0.95rem] font-light leading-relaxed lg:pl-6 text-left sm:text-justify border-l-0 lg:border-l border-white/10 mt-6 lg:mt-0 transition-opacity">
+                                    San Vicente de Paúl (SVP) encarna un manifiesto estricto sobre lo que es la resolución intelectual inquebrantable a edad juvenil. No acudimos para recitar normas al aire, existimos porque nuestro perfil forja, estructura e impacta resultados tajantes durante debates. Es el lugar cumbre que separa estudiantes prometedores de figuras geopolíticas definitivas sin marcha atrás y de clase real probada frente a crisis globales.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {/* Bloque / Portarretrato Foto Oficial minimalista en grid */}
+                        <div className="relative w-full overflow-hidden p-[2px] bg-white/10 rounded overflow-hidden shadow-2xl flex relative hover:shadow-[0_15px_60px_rgba(255,255,255,0.06)] group duration-1000">
+                             {/* Borde flotante hover (Luminosidad) */}
+                             <div className="absolute inset-0 z-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-150%] group-hover:translate-x-[150%] duration-[2000ms] pointer-events-none mix-blend-overlay"></div>
+                             
+                            {/* Inner core frame */}
+                             <div className="w-full h-auto aspect-video md:aspect-[2.35/1] xl:aspect-[2.5/1] overflow-hidden bg-[#0a0a0d] z-10 relative cursor-crosshair">
+                                
+                                <div className="absolute inset-0 scale-[1.03] group-hover:scale-100 transition-all duration-[1s] ease-out bg-[url(/static/Familia.jpeg)] bg-contain bg-no-repeat bg-center filter grayscale group-hover:grayscale-0 opacity-[0.4] group-hover:opacity-100 mix-blend-lighten group-hover:mix-blend-normal pointer-events-auto"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-black/20 pointer-events-none group-hover:opacity-40 transition-opacity duration-1000 z-10"></div>
+                                
+                                {/* Insignia Minimalista Texto Hover foto */}
+                                <div className="absolute bottom-6 right-8 left-8 sm:left-auto md:bottom-8 z-20 md:right-10 flex items-center md:items-end md:justify-end gap-4 transform opacity-[0.9] sm:opacity-100 translate-y-3 sm:group-hover:translate-y-0 transition-transform duration-1000 ease-[cubic-bezier(0.2,0,0,1)]">
+                                     <div className="flex flex-col text-left sm:text-right hidden sm:flex h-full border-r-[2px] border-white pr-4 my-1 opacity-0 group-hover:opacity-100 transition-opacity duration-[800ms] mix-blend-screen drop-shadow-md overflow-hidden pt-1">
+                                         <h4 className="font-space uppercase tracking-widest text-[0.60rem] md:text-xs font-semibold text-white pointer-events-auto animate-fade-slide-in-2 m-0 p-0 block mt-0 text-shadow-md truncate text-white leading-tight -translate-x-full group-hover:translate-x-0 duration-1000 origin-right transition-transform mb-[0.2rem]">Status Operativo Oficial</h4>
+                                         <span className="font-sans uppercase text-[0.45rem] sm:text-[0.55rem] font-light text-white/50 animate-fade-in block leading-none transition-colors -translate-x-[20%] group-hover:-translate-x-0 group-hover:delay-700 duration-1000 w-full mb-[0rem]">Apertura Presidencial Global Completada</span>
+                                     </div>
+                                    <h2 className="text-2xl sm:text-3xl md:text-5xl font-instrument-serif text-white z-20 m-0 uppercase flex font-black mix-blend-normal leading-none italic pointer-events-auto opacity-70 group-hover:opacity-100">
+                                         Delegación Oficial SVPMUN'26
+                                    </h2>
+                                </div>
+
+                                <div className="hidden md:inline-block absolute top-4 left-4 z-20 font-space uppercase text-[0.45rem] tracking-[0.2em] font-semibold bg-white text-black p-[4px] px-[8px] md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-[900ms] shadow font-bold leading-[1]">NIVEL ESTRELLA. MODO ARCHIVADO.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ═══ COMPONENTE EXTRA: TESTIMONIOS CIRCULARES (Animación CSS Nativa) ═══
+        function calculateGap(width) {
+            const minWidth = 1024;
+            const maxWidth = 1456;
+            const minGap = 60;
+            const maxGap = 86;
+            if (width <= minWidth) return minGap;
+            if (width >= maxWidth) return Math.max(minGap, maxGap + 0.06018 * (width - maxWidth));
+            return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
+        }
+
+        const CircularTestimonials = ({ testimonials, autoplay = true, colors = {}, fontSizes = {} }) => {
+            const colorName = colors.name || "#000";
+            const colorDesignation = colors.designation || "#6b7280";
+            const colorTestimony = colors.testimony || "#4b5563";
+            const colorArrowBg = colors.arrowBackground || "#141414";
+            const colorArrowFg = colors.arrowForeground || "#f1f1f7";
+            const colorArrowHoverBg = colors.arrowHoverBackground || "#00a6fb";
+            const fontSizeName = fontSizes.name || "1.5rem";
+            const fontSizeDesignation = fontSizes.designation || "0.925rem";
+            const fontSizeQuote = fontSizes.quote || "1.125rem";
+
+            const [activeIndex, setActiveIndex] = useState(0);
+            const [isFading, setIsFading] = useState(false);
+            const [hoverPrev, setHoverPrev] = useState(false);
+            const [hoverNext, setHoverNext] = useState(false);
+            const [containerWidth, setContainerWidth] = useState(1200);
+
+            const imageContainerRef = useRef(null);
+            const autoplayIntervalRef = useRef(null);
+
+            const testimonialsLength = useMemo(() => testimonials.length, [testimonials]);
+            const activeTestimonial = useMemo(() => testimonials[activeIndex], [activeIndex, testimonials]);
+
+            useEffect(() => {
+                function handleResize() {
+                    if (imageContainerRef.current) setContainerWidth(imageContainerRef.current.offsetWidth);
+                }
+                handleResize();
+                window.addEventListener("resize", handleResize);
+                return () => window.removeEventListener("resize", handleResize);
+            }, []);
+
+            const handleNext = useCallback(() => {
+                setIsFading(true);
+                setTimeout(() => {
+                    setActiveIndex((prev) => (prev + 1) % testimonialsLength);
+                    setIsFading(false);
+                }, 300);
+                if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+            }, [testimonialsLength]);
+            
+            const handlePrev = useCallback(() => {
+                setIsFading(true);
+                setTimeout(() => {
+                    setActiveIndex((prev) => (prev - 1 + testimonialsLength) % testimonialsLength);
+                    setIsFading(false);
+                }, 300);
+                if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+            }, [testimonialsLength]);
+
+            useEffect(() => {
+                if (autoplay) {
+                    autoplayIntervalRef.current = setInterval(() => {
+                        setIsFading(true);
+                        setTimeout(() => {
+                            setActiveIndex((prev) => (prev + 1) % testimonialsLength);
+                            setIsFading(false);
+                        }, 5000);
+                    }, 5000);
+                }
+                return () => { if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current); };
+            }, [autoplay, testimonialsLength]);
+
+            function getImageStyle(index) {
+                const gap = calculateGap(containerWidth);
+                const maxStickUp = gap * 0.8;
+                const isActive = index === activeIndex;
+                const isLeft = (activeIndex - 1 + testimonialsLength) % testimonialsLength === index;
+                const isRight = (activeIndex + 1) % testimonialsLength === index;
+                
+                if (isActive) {
+                    return { zIndex: 3, opacity: 1, pointerEvents: "auto", transform: `translateX(0px) translateY(0px) scale(1) rotateY(0deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+                }
+                if (isLeft) {
+                    return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+                }
+                if (isRight) {
+                    return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+                }
+                return { zIndex: 1, opacity: 0, pointerEvents: "none", transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            }
+
+            return (
+                <div className="testimonial-container">
+                    <div className="testimonial-grid">
+                        <div className="image-container" ref={imageContainerRef}>
+                            {testimonials.map((testimonial, index) => (
+                                <img
+                                    key={testimonial.src}
+                                    src={testimonial.src}
+                                    alt={testimonial.name}
+                                    className="testimonial-image"
+                                    style={getImageStyle(index)}
+                                />
+                            ))}
+                        </div>
+                        <div className="testimonial-content">
+                            <div className={`transition-all duration-300 ease-in-out ${isFading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+                                <h3 className="name" style={{ color: colorName, fontSize: fontSizeName }}>
+                                    {activeTestimonial.name}
+                                </h3>
+                                <p className="designation" style={{ color: colorDesignation, fontSize: fontSizeDesignation }}>
+                                    {activeTestimonial.designation}
+                                </p>
+                                <p className="quote" style={{ color: colorTestimony, fontSize: fontSizeQuote }}>
+                                    {activeTestimonial.quote}
+                                </p>
+                            </div>
+                            <div className="arrow-buttons">
+                                <button
+                                    className="arrow-button"
+                                    onClick={handlePrev}
+                                    style={{ backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }}
+                                    onMouseEnter={() => setHoverPrev(true)}
+                                    onMouseLeave={() => setHoverPrev(false)}
+                                >
+                                    <IconArrowLeft />
+                                </button>
+                                <button
+                                    className="arrow-button"
+                                    onClick={handleNext}
+                                    style={{ backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }}
+                                    onMouseEnter={() => setHoverNext(true)}
+                                    onMouseLeave={() => setHoverNext(false)}
+                                >
+                                    <IconArrowRight />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const testimonialsData = [
+            { quote: "Saludos delegados! Soy Rafael Mujica, Secretario General de Svpmun, les envío el mayor de los éxitos y que Dios me los bendiga a todos.", name: "Rafael Mujica", designation: "Secretario General", src: "staff/Rafael.jpeg" },
+            { quote: "¡Saludos, delegados! Mi nombre es Gabriela Requena y tengo el honor de ser la Secretaria Académica de esta Cuarta Edición. Mi misión principal es asegurar un debate exigente, fluido y con un nivel académico impecable para que cada intervención realmente marque la diferencia. Esta edición fue construida con una entrega total, estrategia fina y muchísima dedicación para ofrecerles una experiencia única e inolvidable. Confíen plenamente en su preparación y disfruten de la experiencia, nos vemos :)", name: "Gabriela Requena", designation: "Secretaria Academica", src: "staff/Gabriela.jpeg" },
+            { quote: "Hola Delegados! Espero que se encuentren muy bien! Mi nombre es María Paula Castellar, Secretaria de Logística de esta edición de SVPMUN. Es para mi un completo honor formar parte de la organización de este modelo conjunto a todo el STAFF organizador. Espero que esta IV edición sea una oportunidad más para explotar todo lo que saben y llevar su desempeño académico al más alto nivel! 💙 «Un político joven suele ser un muchacho que ha perdido el entusiasmo y lo ha cambiado por la ambición.» -Mario Benedetti", name: "Maria Paula", designation: "Secretaria de Logistica",src: "staff/Maria.jpeg" },
+            { quote: "¡Una joya escondida! El servicio impecable y la atención general a los detalles crearon una experiencia memorable. ¡Lo recomiendo ampliamente a todos!", name: "Sara Riera", designation: "Faculty Advisor",src: "staff/Sarah.jpeg" },
+            { quote: "¡Hola! Soy Anabella Bravo, de quinto año, y estoy en SVPMUN desde primero. Ahora asumo como Secretaria de Publicidad y Redes, encargada de Instagram, TikTok y toda la imagen de nuestra delegación. Mi meta es transmitir la unión y responsabilidad que representa a SVPMUN con mucho orgullo.", name: "Anabella Bravo", designation: "Secretaria de Publicidad",src: "staff/Anabella.jpeg" },
+            { quote: "¡Una joya escondida! El servicio impecable y la atención general a los detalles crearon una experiencia memorable. ¡Lo recomiendo ampliamente a todos!", name: "Ahmed Smaili", designation: "Coord. de Programacion",src: "staff/.jpeg" }
+        ];
+
+        const CircularTestimonialsDemo = () => (
+            <section className="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5">
+                <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
+                    <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block border-l-2 border-white/20 pl-3">Reseñas Clasificadas</span>
+                    <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
+                        Cuerpo <span className="text-white/70 italic font-instrument-serif tracking-normal">STAFF</span>
+                    </h2>
+                </div>
+                <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20">
+                    <div className="items-center justify-center relative flex w-full" style={{ maxWidth: "1024px" }}>
+                        <CircularTestimonials testimonials={testimonialsData} autoplay={true} colors={{ name: "#f7f7ff", designation: "#e1e1e1", testimony: "#f1f1f7", arrowBackground: "#141414", arrowForeground: "#f7f7ff", arrowHoverBackground: "#333" }} fontSizes={{ name: "28px", designation: "20px", quote: "20px" }} />
+                    </div>
+                </div>
+            </section>
+        );
+
+        // ═══ ENSAMBLADOR MAESTRO ═══
+        const AppDemoMaster = () => {
+            return (
+                <main className="min-h-screen bg-background text-foreground font-sans w-full relative">
+                    <ResponsiveHeroBanner />
+
+                    <div className="relative w-full z-10 overflow-hidden bg-transparent pb-32">
+                        {/* ══ FOCOS DIFUMINADOS (EFECTO METALICO AZUL ELECTRICO) EN TODA LA PÁGINA SALVO INICIO ══ */}
+                        <div className="absolute inset-0 pointer-events-none z-[-1] overflow-hidden">
+                            <div className="absolute top-[0%] left-[-15%] w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] rounded-full blur-[160px] bg-[#0c2557] opacity-90"></div>
+                            <div className="absolute top-[25%] right-[-10%] w-[90vw] h-[90vw] md:w-[60vw] md:h-[60vw] rounded-full blur-[150px] bg-[#051c4a] opacity-80"></div>
+                            <div className="absolute top-[60%] left-[10%] w-[100vw] h-[100vw] md:w-[60vw] md:h-[60vw] rounded-full blur-[180px] bg-[#06338b] opacity-50 mix-blend-screen"></div>
+                            <div className="absolute bottom-[0%] right-[-15%] w-[80vw] h-[80vw] md:w-[45vw] md:h-[45vw] rounded-full blur-[160px] bg-[#02183e] opacity-90"></div>
+                        </div>
+
+                        {/* LAS SECCIONES CARGAN POR DELANTE CON BG TRANSPARENTE EN ESTE BLOQUE */}
+                        <div className="relative z-10 w-full flex flex-col">
+                            <TheManifesto />
+                            <CommitteesAccordion />
+                            <TheDelegatesBriefcase />
+                            <AboutSVPSection />
+                            <section className="bg-transparent relative w-full overflow-hidden flex flex-col items-center border-t border-white/5 py-32 z-10">
+                                <div className="max-w-7xl mx-auto mb-10 text-center relative z-10">
+                                    <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block">Registro Fotográfico</span>
+                                    <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
+                                        Galería <span className="text-white/70 italic font-instrument-serif tracking-normal">3D</span>
+                                    </h2>
+                                </div>
+                                <div className="w-full h-[50vh] sm:h-[65vh] relative z-20">
+                                    <ThreeDPhotoCarousel />
+                                </div>
+                            </section>
+                            <CircularTestimonialsDemo />
+                        </div>
+                    </div>
+                </main>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<AppDemoMaster />);
+    </script>
+    
+    <!-- ═══ SCRIPT GSAP LOADER REAJUSTADO ═══ -->
+    <script>
+      (function () {
+        const safetyNet = setTimeout(() => {
+          document.querySelector('.loader')?.remove();
+          const rootEl = document.getElementById('root');
+          if (rootEl) {
+              rootEl.style.opacity = '1';
+              rootEl.style.visibility = 'visible';
+          }
+        }, 4000);
+
+        function initLoader() {
+          if (typeof gsap === 'undefined') {
+            clearTimeout(safetyNet);
+            document.querySelector('.loader')?.remove();
+            const rootEl = document.getElementById('root');
+            if (rootEl) {
+                rootEl.style.opacity = '1';
+                rootEl.style.visibility = 'visible';
+            }
+            return;
+          }
+
+          clearTimeout(safetyNet);
+
+          const loader       = document.querySelector('.loader');
+          const loaderSlices = document.querySelectorAll('.loader__slice');
+          const smallSpans   = document.querySelectorAll('.loader__text span');
+          const hiSpans      = document.querySelectorAll('.loader__hi-text span');
+
+          if (!loader) return;
+          gsap.set([smallSpans, hiSpans], { autoAlpha: 1 });
+
+          const introTl = gsap.timeline();
+          introTl.set([smallSpans, hiSpans], { yPercent: 150 });
+          introTl.to(smallSpans, { yPercent : 0, stagger  : 0.18, duration : 0.65, ease : 'power3.inOut' });
+          introTl.to(hiSpans, { yPercent : 0, stagger  : 0.2, duration : 0.7, ease : 'power3.inOut' }, '+=0.3');
+          introTl.to({}, { duration: 1.1 }); // Tiempo que dura el texto en pantalla
+          introTl.to(smallSpans, { yPercent : -150, stagger  : 0.1, duration : 0.35, ease : 'power3.inOut' });
+          introTl.to(hiSpans, { yPercent : -150, stagger  : 0.15, duration : 0.4, ease : 'power3.inOut' }, '<0.08');
+          // Aparece React Root mientras el loader sube
+          introTl.to('#root', { autoAlpha : 1, duration  : 0.1 }, '-=0.1');
+          introTl.to(loaderSlices, { yPercent : 100, stagger  : 0.08, duration : 0.7, ease : 'power3.inOut' }, '<');
+          introTl.to(loader, { opacity  : 0, duration : 0.5, ease : 'power2.inOut', onComplete: () => { loader.remove(); } }, '-=0.3');
+        }
+
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initLoader); } else { initLoader(); }
+      })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Photo Carousel (High-Res Edition)</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "framer-motion": "https://esm.sh/framer-motion@11.0.8?external=react"
+      }
+    }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body, html { margin: 0; padding: 0; background-color: #030303; color: white; width: 100vw; height: 100vh; overflow: hidden; }
+        .cursor-grabbing, .cursor-grab { user-select: none; -webkit-user-select: none; }
+        
+        /* SOLUCIÓN AL BUG 3D DEL NAVEGADOR:
+           Estos modificadores prohíben estrictamente la compresión rasterizada cuando metes
+           imágenes gigantes dentro de elementos chicos en tercera dimensión (CSS 3D Transforms) */
+        .force-high-res {
+            image-rendering: high-quality;
+            image-rendering: -webkit-optimize-contrast; /* Fuerzo nitidez (filtro bilineal / lanczos) al hacer chica la foto 4k */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden; 
+            -webkit-backface-visibility: hidden; 
+            transform: translateZ(0); 
+            -webkit-transform: translate3d(0, 0, 0); 
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center m-0 p-0 relative">
+
+    <div id="root" class="w-full h-full absolute inset-0 flex justify-center items-center"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
+        import { createRoot } from "react-dom/client";
+        import { AnimatePresence, motion, useAnimation, useMotionValue, useTransform } from "framer-motion";
+
+        const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+        function useMediaQuery(query) {
+            const [matches, setMatches] = useState(false);
+            useIsomorphicLayoutEffect(() => {
+                const matchMedia = window.matchMedia(query);
+                const handleChange = () => setMatches(matchMedia.matches);
+                handleChange();
+                matchMedia.addEventListener("change", handleChange);
+                return () => matchMedia.removeEventListener("change", handleChange);
+            }, [query]);
+            return matches;
+        }
+
+        const Carousel = memo(({ handleClick, controls, cards, isCarouselActive }) => {
+            const isScreenSizeSm = useMediaQuery("(max-width: 640px)");
+            
+            const cardSpace = isScreenSizeSm ? 135 : 220; 
+            const cylinderWidth = cardSpace * cards.length; 
+            
+            // SEGUNDA SOLUCIÓN A BORROSO: Usamos Math.round porque cuando CSS genera píxeles con número decimal (.432px) todo se desestabiliza visualmente
+            const radius = Math.round(cylinderWidth / (2 * Math.PI)); 
+            
+            const rotation = useMotionValue(0);
+            const transform = useTransform(rotation, (value) => `rotate3d(0, 1, 0, ${value}deg)`);
+
+            return (
+                <div className="flex w-full items-center justify-center bg-transparent absolute inset-0 m-auto pointer-events-none" style={{ perspective: "1200px", height: '100vh', touchAction: 'none' }}>
+                    <motion.div
+                        drag={isCarouselActive ? "x" : false}
+                        className="relative flex h-full origin-center cursor-grab active:cursor-grabbing justify-center items-center pointer-events-auto"
+                        style={{ transform, transformStyle: "preserve-3d", width: '100vw' }}
+                        onDrag={(_, info) =>
+                            isCarouselActive && rotation.set(rotation.get() + info.delta.x * 0.20)
+                        }
+                        onDragEnd={(_, info) =>
+                            isCarouselActive && controls.start({
+                                rotateY: rotation.get() + info.velocity.x * 0.04,
+                                transition: { type: "spring", stiffness: 50, damping: 60, mass: 0.8 }
+                            })
+                        }
+                        animate={controls}
+                    >
+                        {cards.map((imgUrl, i) => (
+                            <motion.div
+                                key={`key-${i}`}
+                                className="absolute flex origin-center items-center justify-center p-2 hover:opacity-100 transition-opacity force-high-res"
+                                style={{
+                                    width: `${cardSpace}px`,
+                                    height: isScreenSizeSm ? '200px' : '320px', 
+                                    // Ángulo fotográfico redondeado forzosamente para evadir blur
+                                    transform: `rotateY(${Math.round(i * (360 / cards.length))}deg) translateZ(${radius}px)`, 
+                                    transformStyle: "preserve-3d",
+                                }}
+                                onClick={() => handleClick(imgUrl, i)}
+                            >
+                                <motion.img
+                                    layoutId={`photo-${i}`} 
+                                    src={imgUrl}
+                                    alt={`Delegacion ${i+1}`}
+                                    className="pointer-events-none w-full h-full rounded-[14px] object-cover shadow-[0_5px_15px_rgba(0,0,0,0.5)] border border-white/10 force-high-res"
+                                    onError={(e) => { e.target.style.display = 'none' }} 
+                                />
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            );
+        });
+
+        function ThreeDPhotoCarousel() {
+            const [activeImg, setActiveImg] = useState(null);
+            const [activeIndex, setActiveIndex] = useState(null);
+            const [isCarouselActive, setIsCarouselActive] = useState(true);
+            const controls = useAnimation();
+            
+            const cards = useMemo(() => Array.from({ length: 11 }, (_, i) => `./Delegacion/1 (${i + 1}).jpeg`), []);
+
+            const handleClick = (imgUrl, index) => {
+                setActiveImg(imgUrl);
+                setActiveIndex(index);
+                setIsCarouselActive(false);
+                controls.stop(); 
+            };
+            const handleClose = () => {
+                setActiveImg(null);
+                setActiveIndex(null);
+                setIsCarouselActive(true);
+            };
+
+            return (
+                <div className="w-full h-full relative overflow-hidden flex bg-transparent select-none force-high-res">
+                    
+                    <AnimatePresence>
+                        {activeImg && (
+                            <motion.div
+                                initial={{ opacity: 0, backdropFilter: "blur(0px)" }} 
+                                animate={{ opacity: 1, backdropFilter: "blur(8px)" }} 
+                                exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                                transition={{ duration: 0.3 }}
+                                onClick={handleClose}
+                                className="fixed inset-0 flex items-center justify-center p-6 md:p-12 bg-black/80 z-50 cursor-pointer pointer-events-auto force-high-res"
+                            >
+                                <motion.img
+                                    layoutId={`photo-${activeIndex}`} 
+                                    src={activeImg}
+                                    transition={{ type: "spring", stiffness: 220, damping: 28 }}
+                                    className="w-auto h-auto max-w-[95vw] max-h-[85vh] md:max-w-[70vw] rounded-lg md:rounded-2xl shadow-2xl object-contain bg-transparent ring-2 ring-white/10 force-high-res"
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    
+                    <Carousel handleClick={handleClick} controls={controls} cards={cards} isCarouselActive={isCarouselActive} />
+                </div>
+            );
+        }
+
+        const root = createRoot(document.getElementById("root"));
+        root.render(<ThreeDPhotoCarousel />);
+    </script>
+</body>
+</html>

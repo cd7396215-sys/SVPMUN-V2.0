@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVSMUN 2026 // MI6: EXTREMA PRIORIDAD</title>
+    
+    <!-- Fuentes para generar imponencia táctica brutalista -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Archivo Black para impacto puro, Space Grotesk para estructura seria, JetBrains Mono para data cruda -->
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@300;400;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Dependencias REACT, GSAP & TAILWIND -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'brutal': ['"Archivo Black"', 'sans-serif'],
+                        'grotesk': ['"Space Grotesk"', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        ops: {
+                            base: '#030303',
+                            panel: '#0a0a0c',
+                            red: '#cc0000',     // Rojo Sangre Intenso
+                            brightRed: '#ff1a1a', // Rojo de alerta militar
+                            text: '#f2f2f2',
+                            ghost: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    },
+                    letterSpacing: {
+                        'ultra-wide': '0.3em',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body, html { margin: 0; padding: 0; background-color: #030303; color: #f2f2f2; overflow-x: hidden; scroll-behavior: smooth; cursor: crosshair; }
+        ::selection { background-color: #cc0000; color: #fff; }
+
+        /* Capa de película militar de vigilancia, ruido dinámico de la lente táctica */
+        .film-grain {
+            position: fixed; inset: -200%; pointer-events: none; z-index: 100;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.05; animation: grain-shake 2s steps(2) infinite; mix-blend-mode: overlay;
+        }
+        @keyframes grain-shake { 0% {transform:translate(0,0)} 10% {transform:translate(-5%,-5%)} 20% {transform:translate(-10%,5%)} 30% {transform:translate(5%,-10%)} 40% {transform:translate(-5%,15%)} 50% {transform:translate(-10%,5%)} 60% {transform:translate(15%,0)} 70% {transform:translate(0,10%)} 80% {transform:translate(-15%,0)} 90% {transform:translate(10%,5%)} 100% {transform:translate(5%,0)} }
+
+        /* VIGILANCIA SEVERA: Vignette Negro Pesado alrededor de toda la app para ambiente fúnebre */
+        .heavy-vignette {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 99;
+            background: radial-gradient(circle at center, transparent 30%, rgba(3, 3, 3, 0.95) 90%, #000 100%);
+        }
+
+        /* ----- ROOT CERO ESTÁTICO ----- */
+        #root { visibility: hidden; opacity: 0; }
+
+        /* COMPORTAMIENTO REDACCIÓN: Documentos CLASIFICADOS que censuran las letras. Al pasar el cursor con fuerza (brutalismo), explota la palabra */
+        .tactical-redact { background-color: #1a1a1a; color: transparent; transition: all 0.15s cubic-bezier(0.11, 0, 0.5, 0); user-select: none; }
+        .tactical-redact:hover { background-color: #cc0000; color: #fff; box-shadow: 0 0 15px rgba(204, 0, 0, 0.8); cursor: none; text-shadow: 0 0 5px #fff; padding-left: 2px; padding-right: 2px;}
+        
+        .pulse-alert { animation: sirenPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes sirenPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* LOADER SEVERO DE IMPACTO PSICOLÓGICO */
+        #brutal-loader {
+            position: fixed; inset: 0; background: #cc0000; z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        #auth-text {
+            font-family: 'Archivo Black', sans-serif; font-size: 8vw; color: white; mix-blend-mode: exclusion;
+            line-height: 0.9; text-align: center; text-transform: uppercase;
+            animation: jitter 0.15s infinite; opacity: 0;
+        }
+        @keyframes jitter {
+            0% { transform: translateX(2px) translateY(1px); }
+            50% { transform: translateX(-2px) translateY(-1px); }
+            100% { transform: translateX(1px) translateY(2px); }
+        }
+
+        .cinematic-img { mix-blend-mode: luminosity; opacity: 0.4; transition: opacity 1.5s ease-out; }
+    </style>
+</head>
+<body>
+        <script src="/static/navbar.js"></script>
+    <!-- ELEMENTOS FIJOS ATMOSFÉRICOS (Aportan tensión pura sin afectar los botones) -->
+    <div class="film-grain"></div>
+    <div class="heavy-vignette"></div>
+
+    <!-- PRE-LOADER IMPACTANTE (Sangre e Impacto de choque inicial) -->
+    <div id="brutal-loader">
+        <h1 id="auth-text">REVISIÓN DE AUTORIZACIÓN<br/>TOP SECRET</h1>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useEffect, useRef, useState } = React;
+        const { createRoot } = ReactDOM;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // SVG Tácticos Limpios y Crudos
+        const IcLogoSVP = ({className}) => <svg viewBox="0 0 100 100" className={className} fill="none" stroke="currentColor" strokeWidth="6"><path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z" /><circle cx="50" cy="50" r="15"/></svg>;
+        const IcGlobe = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>;
+        const IcShieldAlert = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>;
+        const IcCrosshair = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></svg>;
+        const IcArchive = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="5" x="2" y="4" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg>;
+
+        const SevereNav = () => (
+            <nav className="fixed top-0 w-full p-6 md:p-8 flex justify-between items-start z-50 mix-blend-difference pointer-events-none text-white">
+                <div className="flex gap-4 items-center">
+                    <IcLogoSVP className="w-10 h-10 text-white animate-[pulse_4s_ease-in-out_infinite] opacity-60" />
+                    <div>
+                        <h2 className="font-brutal uppercase text-sm tracking-[0.1em] text-white">MI6 // Gabinete Táctico</h2>
+                        <span className="font-mono text-[9px] tracking-ultra-wide opacity-50 block uppercase">Nivel Clearance 6 Confirmado</span>
+                    </div>
+                </div>
+                <div className="flex flex-col items-end pointer-events-auto cursor-crosshair group relative">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-white text-black font-brutal uppercase text-[10px] tracking-widest relative overflow-hidden transition-all duration-300">
+                        <span className="relative z-10 block pr-2 group-hover:text-white transition-colors duration-200 border-r border-black/20 group-hover:border-white/20">ESTADO GLOBAL</span>
+                        <div className="w-2 h-2 rounded-full bg-ops-red pulse-alert ml-1 relative z-10 group-hover:bg-ops-brightRed transition-colors"></div>
+                        
+                        <div className="absolute top-0 bottom-0 left-[-100%] right-[-100%] bg-ops-red translate-y-[101%] group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
+                    </div>
+                </div>
+            </nav>
+        );
+
+        const ZeroDarkHero = () => {
+            const parallaxImg = useRef();
+            
+            useEffect(() => {
+                let ctx = gsap.context(() => {
+                    gsap.to(parallaxImg.current, {
+                        scale: 1.15, // Paneo extremadamente lento en zoom que da sensación de drone
+                        ease: "linear",
+                        scrollTrigger: { trigger: parallaxImg.current, start: "top top", end: "bottom top", scrub: 1 }
+                    });
+
+                    // Las apariciones brutales de los titulos
+                    const tl = gsap.timeline({delay: 2.1});
+                    tl.fromTo(".herotext", 
+                        { scale: 2, filter: "blur(20px)", opacity: 0 }, 
+                        { scale: 1, filter: "blur(0px)", opacity: 1, stagger: 0.1, duration: 1.2, ease: "power4.out" }
+                    );
+                    tl.fromTo(".divider-line", { scaleX: 0 }, { scaleX: 1, duration: 1.5, ease: "expo.out" }, "-=1");
+
+                    // Aparición en GSAP del target radical HUD lado derecho
+                    tl.fromTo(".imposing-target",
+                        { autoAlpha: 0, x: 50, skewX: -10, filter: "blur(30px) brightness(0%)" },
+                        { autoAlpha: 1, x: 0, skewX: 0, filter: "blur(0px) brightness(100%)", duration: 1.8, ease: "expo.out" },
+                        "-=1.5"
+                    );
+                });
+                return () => ctx.revert();
+            }, []);
+
+            return (
+                <section className="relative w-full min-h-[100vh] flex flex-col justify-end pb-[10vh] px-6 md:px-16 pt-[20vh] md:pt-[15vh] overflow-hidden">
+                    {/* Img background tipo drone térmico / ruinas destruidas */}
+                    <img 
+                        ref={parallaxImg}
+                        src="https://images.unsplash.com/photo-1596725852504-f5af7bbcecf6?q=80&w=3000&auto=format&fit=crop" 
+                        alt="War ruins drone footage"
+                        className="absolute top-[-5%] left-[-5%] w-[110%] h-[110%] object-cover cinematic-img blur-[2px] opacity-[0.25]"
+                    />
+                    
+                    {/* Superposicion Titulo Enorme (Oculto como marca de agua en fondo) */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-[-1]">
+                        <h1 className="font-brutal text-[25vw] leading-none uppercase text-white transform origin-center text-center w-full">H. Z. B</h1>
+                    </div>
+
+                    <div className="relative z-10 w-full flex flex-col lg:flex-row justify-between lg:items-end gap-10 mt-auto flex-grow max-w-[100%] mx-auto">
+                        
+                        <div className="flex flex-col gap-2 max-w-4xl relative mix-blend-difference w-full lg:w-3/5 xl:max-w-4xl z-[10] shrink-0 pointer-events-auto">
+                            <span className="herotext font-mono text-ops-brightRed tracking-widest text-[10px] md:text-[11px] mb-4 uppercase border-l-[3px] border-ops-brightRed pl-3 pb-0 bg-ops-red/5 p-2 rounded shadow">
+                                Objetivo Localizado // Amenaza Grado Alfa // Oriente Próximo
+                            </span>
+                            
+                            <h1 className="herotext font-brutal uppercase text-6xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.85] text-white tracking-tighter" style={{ textShadow: '0px 20px 60px rgba(0,0,0,1)' }}>
+                                La <span className="text-transparent relative" style={{WebkitTextStroke:'2px white'}}>diplomacia<div className="absolute -left-[10%] top-[40%] h-3 w-[120%] bg-[#cc0000] rotate-[-5deg] mix-blend-color opacity-80" /></span> <br/> fracasó.
+                            </h1>
+                            <div className="divider-line h-[4px] w-full bg-white mt-10 mb-6 origin-left shadow-[0_0_15px_#cc0000]"></div>
+                            
+                            <h3 className="herotext font-grotesk font-semibold text-2xl md:text-3xl lg:text-4xl xl:text-5xl uppercase tracking-tight text-[#f2f2f2] drop-shadow-2xl">
+                                Comité <span className="text-ops-red relative hover:opacity-10 transition">MI6 // MANDO ANTITERRORISTA</span>
+                            </h3>
+                            
+                            <div className="herotext font-mono font-normal mt-4 max-w-2xl text-[0.7rem] sm:text-sm md:text-base leading-relaxed text-[#a0a0a0] bg-[#000000]/70 p-4 border border-[#333] border-l-ops-red border-l-[3px] drop-shadow-2xl backdrop-blur">
+                                {/* MÓVIL: RESUMEN CORTO */}
+                                <p className="block md:hidden">
+                                    Amenaza <span className="tactical-redact px-1 font-bold">H E Z B O L L A H</span> localizada. La diplomacia convencional fracasó. Tu deber operativo: estructurar e infligir daño <span className="text-ops-brightRed underline font-bold uppercase mx-1">irrecuperable</span> y decisivo. Inicia contención táctica. Cero treguas.
+                                </p>
+                                {/* ESCRITORIO: TEXTO ORIGINAL */}
+                                <p className="hidden md:block">
+                                    Bienvenidos a las entrañas del paramilitarismo moderno. Nos enfrentamos al brazo radical <span className="tactical-redact px-1 font-bold">H E Z B O L L A H</span>: financiamiento encubierto global, asaltos cíclicos sobre frentes ajenos y mercados asimétricos desestabilizadores operados en <span className="tactical-redact px-1 text-white font-bold tracking-widest">sombras</span> civiles. 
+                                    La política convencional dictada en la asamblea superior se debilita. Tu deber operativo: estructurar e infligir daño <span className="text-ops-brightRed underline font-bold uppercase mx-1">irrecuperable</span> y decisivo antes de la crisis total inminente aquí pautada como irrepetible evento final nulo en curso activo de contención de desbordamiento total fatal de occidente por fin anhelado absoluto neutralizado táctico real de exterminio real por siempre sin precedentes a raíz actual extrema grave local total directo táctico actual puro ininterrumpido cero treguas más hoy.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {/* THE REPLACED GREEN VOID BOX: RADICAL TARGET ACQUIRED SECTOR */}
+                        <div className="imposing-target hidden lg:flex w-full lg:w-[45%] xl:w-2/5 flex-col items-center justify-center opacity-0 mt-8 mb-[5vh] z-[5] pointer-events-none absolute right-4 lg:relative flex-grow">
+                             
+                             <div className="relative w-full aspect-square max-h-[85vh] max-w-[650px] transform shadow-[-30px_-30px_100px_#000] xl:mt-[-5rem] xl:-right-12" style={{perspective:"2000px"}}>
+                                 
+                                 <div className="absolute inset-[-5%] border-[10px] border-[#1a1a1a]/40 bg-black/5 blur-[5px] backdrop-blur z-[0] transform rotate-3" style={{borderRadius: "45%"}}></div>
+                                 <div className="absolute inset-0 bg-[#aa0000]/10 blur-[80px] mix-blend-color-dodge rounded-full animate-pulse z-[1]"></div>
+                                 <div className="absolute inset-1/4 rounded-full border-[10px] border-[#cc0000] blur-3xl opacity-50 z-[-2]"></div>
+
+                                 {/* Tactical Scoping Rings of Drone HUD HUD Lock On Effect Rings and Hash Marks over targeted extremist geometry structure seal base silhouette fake target symbol structure visual proxy geometry... */}
+                                 <div className="w-full h-full relative" style={{transform:"rotateX(5deg) rotateY(-15deg)"}}>
+                                    
+                                     {/* Geometría amenazante interna, simulación abstracción facción hostil de extrema brutalidad letal en cruz */}
+                                     <svg className="w-[125%] h-[125%] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 drop-shadow-[0_0_20px_rgba(204,0,0,1)] z-[10] " viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                         <g className="animate-[pulse_1s_infinite_ease-out_reverse]" transform="translate(0,0) scale(1)">
+                                              {/* Brazo con rifle estilo estampa radical árabe, completamente reescrita como SVG limpio y brutalist militarista amenazante táctico sombra proxy enroque */}
+                                              <path fill="#222" stroke="#ff3333" strokeWidth="0.8" d="M 45 80 L 45 40 L 41 38 L 48 30 L 43 15 L 50 15 L 47 25 L 55 25 L 58 45 Z" className="opacity-70" style={{WebkitFilter:"drop-shadow( 0px 0px 8px #ff1a1a)"}} />
+                                              <path fill="#333" d="M25 80 C 25 75, 45 60, 48 45 L 62 48 C 65 65, 80 75, 85 85 Z" className="opacity-[0.85]"/>
+                                              {/* Arabesque aggressive swishes around in hazard black and deep hazard alert red colors block brutal text */}
+                                              <path fill="none" stroke="#aa0000" strokeWidth="1" strokeLinecap="square" d="M 28 65 Q 40 70 45 78 M 72 72 C 60 70 58 80 50 90 M 15 30 L 25 40 L 35 30" />
+                                         </g>
+                                     </svg>
+                                     
+                                     {/* Crosshairs & Scope Tracking Elements */}
+                                     <svg viewBox="0 0 100 100" className="w-[100%] h-[100%] z-[20] absolute inset-0 mix-blend-plus-lighter opacity-90 drop-shadow-[0_0_10px_#cc0000] animate-[spin_40s_linear_infinite]" fill="none" stroke="#fff">
+                                         <circle cx="50" cy="50" r="46" strokeWidth="1" stroke="rgba(255,26,26,0.6)" strokeDasharray="3 4 8 2" />
+                                         <circle cx="50" cy="50" r="39" strokeWidth="0.25" stroke="#cc0000" strokeDasharray="1 1" />
+                                         <circle cx="50" cy="50" r="43" strokeWidth="1.5" stroke="#444" strokeDasharray="50 5 15 5" />
+                                         
+                                         {/* Block scoping angles thick targeting block hash */}
+                                         <path stroke="#f1f1f1" strokeWidth="1" d="M6 50 L0 50 M100 50 L94 50" />
+                                         <path stroke="#f1f1f1" strokeWidth="2.5" d="M12 50 L25 50" />
+                                         <path stroke="#f1f1f1" strokeWidth="2.5" d="M75 50 L88 50" />
+                                         
+                                         <path stroke="#cc0000" strokeWidth="3" d="M50 0 L50 8 M50 12 L50 20" />
+                                         <path stroke="#cc0000" strokeWidth="3" d="M50 100 L50 92 M50 88 L50 80" />
+                                         <rect x="35" y="35" width="30" height="30" stroke="#fff" strokeWidth="0.5" strokeDasharray="10 20" />
+                                     </svg>
+
+                                     {/* Center rapid blinking laser dot for intense focus scale animation ping warning effect lock error track real visual lock hit effect visual focus zero code drone fire focus logic hit dot ping pulse extreme lock*/}
+                                     <div className="w-[1%] h-[1%] bg-white shadow-[0_0_20px_8px_#ffffff] animate-ping absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-difference z-[50]"></div>
+
+                                     {/* Outer Rotating Counter Ring */}
+                                     <svg viewBox="0 0 100 100" className="w-[100%] h-[100%] absolute left-0 top-0 z-[15] animate-[spin_10s_ease-in-out_infinite_alternate]" fill="none">
+                                         <circle cx="50" cy="50" r="48.5" stroke="#cc0000" strokeWidth="2.5" strokeDasharray="6 22 2" className="opacity-90" />
+                                         <circle cx="50" cy="50" r="33" stroke="#fff" strokeWidth="0.2" strokeDasharray="500" className="mix-blend-overlay opacity-[0.25]" />
+                                     </svg>
+
+                                     {/* Target Data / System Lock Overlay over SVG UI radar map interface track visual design target layout */}
+                                     <div className="absolute top-[28%] -left-[30%] font-mono text-[9px] uppercase tracking-ultra-wide flex flex-col items-start gap-1 font-bold z-[40] text-[#111] opacity-[0.95] bg-[#cc0000]/80 p-3 shadow-[0_0_20px_#cc0000] border-l-[6px] border-white backdrop-blur min-w-[280px]">
+                                         <div className="w-full flex justify-between pb-1 border-b-[2px] border-black/40 mb-1 font-brutal text-white text-xs">
+                                              <span>ESTATUS</span>
+                                              <span className="animate-pulse bg-black text-ops-brightRed px-1 drop-shadow-none text-[8px] flex items-center">CONFIRMADO [K.I.A PEND.]</span>
+                                         </div>
+                                         <p>Amenaza detectada HZ // ORÍGEN NO ALINEADO</p>
+                                         <div className="mt-1 font-normal bg-black p-1 pl-2 w-full text-white text-[8px] opacity-70 mt-1 whitespace-nowrap overflow-hidden">
+                                               {'> '} TRACK_SIG... {'>'} LOC_{Math.random().toFixed(4)} ... TARGETING // INICIADO EXPRESO F.
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             {/* Red warning bar over bottom of target */}
+                             <div className="w-[60vw] max-w-[850px] mt-6 flex relative flex-col right-0 pointer-events-none drop-shadow-[0_20px_30px_rgba(204,0,0,0.5)] bg-gradient-to-l from-transparent via-[#cc0000] to-transparent h-[40px] mix-blend-color-dodge lg:-mb-[5vh] justify-center items-center opacity-80 backdrop-blur" style={{transform:"skew(-20deg)"}}>
+                                <h4 className="font-brutal text-2xl uppercase text-[#111] leading-none mb-[-2px]" style={{WebkitTextStroke:"0.2px #fff"}}>ARMAMENTO TOTAL HABILITADO <span className="text-black bg-white inline-block h-6 animate-ping translate-x-2 -skew-x-[20deg] px-2 font-mono drop-shadow-[0_0_15px_#cc0000] opacity-[0.9]"></span></h4>
+                             </div>
+
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        const OperationBoard = () => {
+            
+            const intelRows = [
+                 { coor: "COORD 33.85°N, 35.53°E", act: "Interceptación Bancaria (Dahiya)", pic: "https://images.unsplash.com/photo-1549487222-54d924dfadbc?w=900&auto=format&fit=crop", threat: "CRÍTICA", info:"Aniquilación lícita requerida: Bloqueo inmediato del capital encriptado subterráneo empleado mediante ONGs escudo a gran escala. Las arcas financian células occidentales fantasma; detente ahí e identificas el cuello del grupo.", infoShort: "Bloqueo inmediato de capital encriptado subterráneo y ONGs escudo." },
+                 { coor: "RED GLOBAL SWIFT SEC-0", act: "Sabotaje de Alianzas Geopolíticas", pic: "https://plus.unsplash.com/premium_photo-1663040333203-d6cefa30bfce?w=900&auto=format&fit=crop", threat: "ALERTA I", info:"Rompe al principal brazo logístico: el financiamiento estatal que exporta guerra cruzada encubierta en tratados armamentísticos. No es diplomacia, es deshabilitación sistémica velada mientras dictamos al resto sonreír diplomáticamente.", infoShort: "Ruptura del brazo logístico y el financiamiento estatal enemigo." },
+                 { coor: "TÁCTICA FIELD ESPAÑA", act: "Comandos Encubiertos Asíncronos", pic: "https://images.unsplash.com/photo-1579361661330-227bbce27ba6?w=900&auto=format&fit=crop", threat: "LESIÓN L.", info: "Sustracción limpia, directa, sin dejar firma británica ni involucración del 5 EYES explícitamente probada a través de un comité veloz reescribiendo marcos punitivos simultáneos. Crisis en 3 fases sin pausa posible humana previsible actual aquí total y definitiva.", infoShort: "Sustracción limpia, directa y sin firma británica involucrada explícitamente." }
+            ];
+
+            const refContainer = useRef(null);
+
+            useEffect(() => {
+                let ctx = gsap.context(() => {
+                    const cards = gsap.utils.toArray('.brief-card');
+                    gsap.from(cards, {
+                        y: 100,
+                        opacity: 0,
+                        filter: "blur(20px)",
+                        duration: 1.5,
+                        stagger: 0.3,
+                        ease: "power3.out",
+                        scrollTrigger: { trigger: refContainer.current, start: "top 65%" }
+                    });
+                }, refContainer);
+                return () => ctx.revert();
+            }, []);
+
+            return (
+                <section ref={refContainer} className="relative z-10 w-full min-h-[90vh] bg-ops-base px-6 md:px-16 pt-32 pb-40 border-t-2 border-[#111] overflow-hidden">
+                    <div className="flex items-center gap-6 mb-24 max-w-7xl mx-auto border-b border-[#333] pb-6">
+                        <IcShieldAlert className="w-16 h-16 md:w-24 md:h-24 text-ops-brightRed p-4 border border-[#444] mix-blend-difference" />
+                        <div>
+                            <span className="block font-mono text-[#666] tracking-[0.2em] text-[10px] md:text-[13px] uppercase pb-2">Archivo Prioritario D99 // Resolución Fatal de Impacto // Ejecuciones Asincrónicas de crisis</span>
+                            <h2 className="font-brutal text-4xl sm:text-5xl md:text-6xl text-white uppercase transform scale-y-[1.1] leading-[0.8] mix-blend-screen opacity-95 text-shadow-red">Arquitectura<br/>del Terror <span className="text-ops-red ml-2 relative group hover:opacity-10 transition">. <div className="absolute top-1/2 left-0 w-full h-[60%] bg-white/20 translate-y-[-50%] z-[-1] blur-md pointer-events-none group-hover:animate-ping opacity-0 group-hover:opacity-100"></div></span></h2>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-[0.5px] border-[#333] max-w-[90%] md:max-w-[1400px] mx-auto bg-black perspective-2000 hover:shadow-[0_20px_100px_rgba(204,0,0,0.25)] transition-all duration-[2s]">
+                        {intelRows.map((doc, i) => (
+                             <div key={i} className="brief-card relative overflow-hidden group cursor-crosshair border-[0.5px] border-[#222] min-h-[500px] flex flex-col p-8 transition-[background-color] duration-700 hover:bg-[#070709]">
+                                
+                                <div className="absolute inset-0 bg-cover bg-center filter grayscale-[0.9] blur-[2px] opacity-10 group-hover:grayscale-[0.1] group-hover:opacity-40 group-hover:scale-105 group-hover:blur-[0px] mix-blend-luminosity origin-center duration-[1000ms] transition-all" style={{backgroundImage: `url(${doc.pic})`}}></div>
+                                <div className="absolute inset-0 bg-gradient-to-b from-[#000] via-[#000]/60 to-[#030303]/95 group-hover:to-ops-red/50 opacity-100 transition-colors duration-1000 pointer-events-none mix-blend-multiply"></div>
+                                <div className="absolute bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-transparent group-hover:border-white transition-colors duration-[400ms] m-4 translate-x-2 translate-y-2 opacity-50 shadow z-10 pointer-events-none" style={{clipPath: "polygon(0 100%, 100% 100%, 100% 0, 75% 0, 75% 75%, 0 75%)"}}></div>
+
+                                <div className="flex flex-col relative z-20 h-full w-full pointer-events-none mix-blend-screen text-shadow">
+                                     
+                                    <div className="flex justify-between items-center mb-8 border-b-[0.5px] border-[#444] pb-6">
+                                        <div className="font-mono bg-[#cc0000] text-white px-2 py-[0.15rem] font-bold text-[9px] uppercase tracking-wider">{doc.coor}</div>
+                                        <span className={`font-mono text-[9px] font-bold px-1 uppercase tracking-widest ${doc.threat === 'CRÍTICA' ? 'text-ops-brightRed animate-pulse' : 'text-white'}`}>{doc.threat} LEVEL</span>
+                                    </div>
+
+                                    <h3 className="font-grotesk text-3xl font-bold uppercase tracking-tight text-[#fff] opacity-[0.90] drop-shadow group-hover:-translate-y-2 transition-transform duration-[800ms] ease-[cubic-bezier(0,1.2,.7,1)]">{doc.act}</h3>
+
+                                    <div className="mt-auto h-auto relative overflow-hidden text-left bg-black/60 md:bg-black/80 md:group-hover:bg-black/95 p-6 backdrop-blur-[6px] translate-y-2 lg:translate-y-full md:opacity-0 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-[600ms] border-l-[3px] border-ops-brightRed origin-bottom z-30 shadow-black max-w-full overflow-clip break-words">
+                                        <div className="font-mono text-white/50 mb-3 text-[10px] tracking-ultra-wide flex items-center justify-between pointer-events-auto">
+                                            <span>EJECUCIÓN DEL MANDO</span> <IcArchive className="w-3 h-3 ml-2 opacity-80" /> 
+                                        </div>
+                                        <div className="font-grotesk text-[14px] md:text-sm font-semibold leading-relaxed text-[#eee] drop-shadow max-h-none block truncate pointer-events-auto" style={{whiteSpace: 'normal', wordBreak:'break-word', paddingRight:"1rem"}}>
+                                            {/* MÓVIL: RESUMEN CORTO */}
+                                            <span className="block md:hidden">{doc.infoShort}</span>
+                                            {/* ESCRITORIO: TEXTO ORIGINAL */}
+                                            <span className="hidden md:block">{doc.info}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                             </div>
+                        ))}
+                    </div>
+                </section>
+            );
+        }
+
+        /* ===== NUEVAS SECCIONES REHECHAS PARA MAYOR IMPACTO Y BRUTALISMO TÁCTICO ABSOLUTO ===== */
+
+        const TerminalSection = () => {
+             return(
+                 <section className="bg-ops-panel border-t-[8px] border-black overflow-hidden flex flex-col justify-center items-center w-full min-h-[85vh] px-4 py-32 text-center z-20 shadow-[0_-30px_60px_#000] relative pointer-events-none before:absolute before:inset-0 before:bg-[url('data:image/svg+xml,%3Csvg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath fill=\'none\' stroke=\'red\' stroke-width=\'0.2\' d=\'M0,50 L100,50 M50,0 L50,100\' opacity=\'0.3\'/%3E%3C/svg%3E')] before:opacity-50 before:z-[0]">
+                      
+                      {/* Heavy diagonal hazard lines / red emergency state backings logic drone UI track real background hazard impact */}
+                      <div className="absolute top-0 left-0 right-0 h-[20px] bg-[repeating-linear-gradient(-45deg,transparent,transparent_20px,rgba(204,0,0,1)_20px,rgba(204,0,0,1)_40px)] drop-shadow-[0_15px_15px_rgba(204,0,0,0.5)] z-0 mix-blend-screen opacity-[0.9]"></div>
+
+                      <div className="absolute -inset-[30%] bg-[radial-gradient(ellipse_at_center,rgba(204,0,0,0.20)_0%,transparent_60%)] mix-blend-color-dodge animate-pulse z-[1]"></div>
+                      <div className="absolute right-[5%] top-[10%] animate-[spin_60s_linear_infinite_reverse] bg-[conic-gradient(from_0deg_at_50%_50%,rgba(204,0,0,0.2),transparent_30deg)] w-[100vw] h-[100vw] pointer-events-none mix-blend-screen opacity-[0.4] transform -translate-x-1/2 rounded-full border border-red-500/10"></div>
+                      
+                      <div className="w-full max-w-[80%] mx-auto flex flex-col items-center justify-center border-b-[2px] border-black/80 pb-6 mb-16 opacity-[0.9] pointer-events-none relative z-10 drop-shadow-lg shadow-black">
+                            
+                            <span className="font-mono text-ops-panel bg-white tracking-[0.4em] lg:tracking-[0.8em] text-[10px] md:text-sm border border-ops-brightRed py-3 px-8 lg:px-16 font-extrabold shadow-[0_0_50px_#cc0000] uppercase mx-auto max-w-full text-center relative break-words shadow-2xl rounded-[1px]" style={{letterSpacing: "8px"}}>
+                                ESTADO: FALLO CIVIL — DECLARACIÓN BÉLICA 100% PERMITIDA 
+                                <div className="absolute h-full w-[4px] bg-[#cc0000] top-0 left-0 border-r border-[#ff3333]"></div>
+                            </span>
+                            
+                      </div>
+                      
+                      {/* MAIN TYPOGRAPHY SHOCK. Enorme orden inamovible ejecutora directa fatal inmenso aplomo UI military interface alert screen error visual final hit. */}
+                      <h2 className="font-brutal text-[14vw] md:text-[9.5rem] lg:text-[13rem] tracking-tighter uppercase mb-2 leading-[0.85] text-transparent relative w-full text-center mix-blend-difference z-[15] drop-shadow-[0_20px_50px_rgba(0,0,0,1)] bg-clip-text font-black scale-x-95">
+                            <span style={{WebkitTextStroke:"2px rgba(255, 255, 255, 1)", backgroundImage:"url('https://images.unsplash.com/photo-1542281286-9e0a16bb7366')", backgroundPosition:"center", WebkitBackgroundClip: "text"}}>EXTERMINA</span> 
+                            <br/> LA ESTRUCTURA.
+                            
+                            {/* Giant backdrop watermarked danger lettering. */}
+                            <div className="absolute text-[#cc0000] z-[-1] font-mono tracking-tighter mix-blend-overlay w-[200vw] font-black top-[10%] opacity-10 rotate-[90deg] leading-none pointer-events-none md:left-[-15%] lg:left-0 md:transform md:-translate-y-1/2 blur-[8px] whitespace-nowrap lg:scale-150 animate-pulse text-center select-none" style={{textShadow:"0 0 200px red"}}>NULL_CODE[ALFA_TERMINADO]_ERR0R</div>
+                      </h2>
+
+                      <div className="bg-black border-[0.5px] border-[#333] shadow-[0_20px_50px_rgba(204,0,0,0.2)] md:p-12 p-6 mx-auto relative group translate-y-12 backdrop-blur hover:bg-[#070707] transition-all max-w-[850px] overflow-hidden drop-shadow-xl text-center md:text-left z-20 md:border-l-[12px] md:border-ops-brightRed md:mb-12 cursor-none">
+                            <div className="absolute right-0 top-0 bottom-0 bg-[#cc0000] opacity-10 w-[150%] left-[-150%] translate-x-full duration-1000 group-hover:-translate-x-20 transition-all pointer-events-none transform skew-x-[-15deg] mix-blend-screen shadow-[inset_0_0_10px_white]"></div>
+
+                            <div className="font-mono font-medium text-[0.6rem] md:text-sm lg:text-base tracking-[0.2em] leading-loose uppercase z-20 text-[#a2a2a2] break-words relative drop-shadow mx-auto">
+                                {/* MÓVIL: RESUMEN CORTO */}
+                                <p className="block md:hidden">
+                                    AL CONTINUAR A SVSMUN DECLARA <span className="font-bold text-[#ff1a1a] drop-shadow-none px-1 rounded bg-[#cc0000]/10 mr-1 pb-1 inline">EJECUCIÓN 100% OPERATIVA.</span> INHABILITE LA ESTRUCTURA TERRORISTA SIN PAUSA. ELIMINE HZ SIN PERDÓN.
+                                </p>
+                                {/* ESCRITORIO: TEXTO ORIGINAL */}
+                                <p className="hidden md:block">
+                                    AL CONTINUAR A LA ASAMBLEA SVSMUN USTED DECLARA <span className="font-bold text-[#ff1a1a] drop-shadow-none md:px-1 rounded bg-[#cc0000]/10 mr-1 pb-1 inline">LA ASIMILACIÓN Y EJECUCIÓN 100% OPERATIVA. </span> NO SE OFRECERÁN REDES CÍVICAS COMO VÍAS ALTERNAS EN ORIENTE PRÓXIMO HASTA NO INHABILITAR CON DUREZA SIN PAUSA E INTACTO DOLOR TOTAL LA DIRECCIÓN DE INFRAESTRUCTURA TERRORISTA RADICAL SEÑALADA REBAJADA A CERO AHORA. ELIMINE HZ SIN PERDÓN.  
+                                </p>
+                            </div>
+                      </div>
+
+                      {/* CALL TO ACTION BOTÓN SEVERO IMPLACABLE ROJO FATAL CROSSHAIR TACTICAL LAUNCH MODO FULL LOCK ALPHA BUTTON. */}
+                      <div className="relative group scale-90 sm:scale-100 md:scale-110 lg:scale-125 z-40 mx-auto w-full px-4 flex justify-center pointer-events-auto mt-[8vh]">
+                         
+                         {/* Button Backlight pulse burn effect on target launch hit screen target hit error impact direct force error visual ui load button direct direct call focus pass link lock real real time trigger. */}
+                         <div className="absolute w-[80%] h-full top-0 md:-left-[2%] md:-top-4 bg-[#cc0000] blur-[40px] opacity-[0.25] group-hover:opacity-[0.95] group-hover:scale-110 group-hover:blur-[50px] transition-all duration-[600ms] pointer-events-none -z-10 mix-blend-color-dodge skew-x-[-5deg]"></div> 
+                         
+                         <button className="flex justify-between w-[95vw] md:w-max mx-auto items-center text-white bg-transparent uppercase font-mono border border-ops-brightRed ring-[3px] ring-black group overflow-hidden drop-shadow-2xl transition-all duration-300 hover:scale-[1.01] hover:rotate-[1deg] hover:-skew-y-2 transform hover:ring-[1px] hover:ring-[#ff5555] flex-row active:scale-95 group shadow-black drop-shadow shadow-[0_20px_100px_#cc0000] border-transparent" style={{boxShadow:"inset 0 0 100px rgba(0,0,0,0.8), 0 0 50px rgba(255, 0, 0, 0.4)"}}> 
+                              
+                              <div className="bg-[#cc0000] h-full flex flex-col p-4 md:p-8 lg:p-10 min-w-min justify-center relative shadow-black transition-colors z-20 group-hover:bg-[#111]">
+                                  <IcShieldAlert className="w-10 h-10 md:w-16 md:h-16 text-black relative z-10 transition duration-[600ms] group-hover:text-ops-brightRed transform scale-110 group-hover:scale-150 shadow" />
+                              </div>
+
+                              <span className="block px-6 md:px-12 py-6 font-brutal text-sm sm:text-lg md:text-3xl text-left font-black tracking-[-1px] relative bg-black/40 lg:leading-tight">
+                                  DESATAR PROTOCOLO 0
+                                  <div className="font-mono mt-1 flex uppercase font-semibold text-[#666] tracking-[0.2em] md:tracking-[0.45em] text-[7px] md:text-[9px] relative mt-2 pb-[5px]">
+                                       ALERTA FATAL [RECLUTAMIENTO: INGRESAR SVPMUN GABINETE] <IcArchive className="w-3 h-3 md:w-4 md:h-4 text-[#ff1a1a] mb-[5px] mx-2 shadow animate-[pulse_1.5s_infinite] right-[30%] block shrink-0"/> 
+                                  </div>
+                              </span>
+                              
+                              {/* Slashing Red overlay slide track line load graphic focus effect design clean vector path fill design focus UI element background target vector layer layout focus layer background hover real visual error block lock error */}
+                              <div className="absolute right-0 top-0 left-[0%] transform rotate-12 scale-[4] z-[-1] opacity-5 bg-ops-brightRed origin-bottom translate-x-[400%] skew-x-[-15deg] mix-blend-plus-lighter w-24 md:w-[350px] pointer-events-none rounded h-[120px] transition-transform duration-700 ease-in-out group-hover:translate-x-[-45%] bg-[#fff] border-white backdrop-invert"></div>
+                         </button>
+                      </div>
+                 </section>
+             );
+        }
+
+        const FooterIntelligence = () => {
+             return(
+                  <footer className="w-full relative z-30 pointer-events-none drop-shadow flex flex-col items-center pb-0 m-0 overflow-hidden text-left bg-black text-[#666]">
+                       
+                       {/* Red / black military warning border track error real bottom target screen block real red track visual edge padding. */}
+                       <div className="w-full h-8 flex overflow-hidden whitespace-nowrap font-mono text-[#000] font-black text-2xl tracking-[1em] relative tracking-widest border-t-[8px] border-[#333]" style={{backgroundImage: "repeating-linear-gradient(-45deg, #cc0000, #cc0000 20px, #1a1a1a 20px, #1a1a1a 40px)", height:"24px"}}></div>
+
+                       {/* Thick tactical HUD lower datagrid text terminal raw grid track structure design real footer content load raw layout final raw bottom bottom end terminal structure footer design element error visual visual ui lock terminal.  */}
+                       <div className="max-w-[1400px] w-full px-6 pt-24 pb-32 mix-blend-screen flex flex-col md:flex-row relative z-20 justify-between mx-auto md:border-b-none items-end min-h-32 text-center md:text-left mx-auto border-x-4 border-dashed border-[#1a1a1a]">
+
+                            <div className="flex-1 w-full lg:w-[45%] text-[9px] text-[#444] tracking-[0.25rem] lg:tracking-[0.45em] border-l-[4px] pl-6 ml-6 mb-6 font-bold lg:w-[45%] font-mono py-8 max-w-[800px] shadow shadow-xl opacity-[0.80] tracking-tight w-full bg-ops-panel border-l-red-500 rounded p-6 shadow-black select-text transform mb-16">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" className="inline block pb-2 opacity-50 mb-2 transform mb-[0.25rem] md:inline mx-auto opacity-50 relative bottom-[50px] mb-[-40px] text-[#900000]" viewBox="0 0 100 100" fill="currentColor">
+                                  <polygon points="50,15 15,90 85,90"></polygon>
+                                </svg> <br/>
+
+                                <div className="leading-[3]">
+                                    {/* MÓVIL: RESUMEN CORTO */}
+                                    <p className="block md:hidden">DECLARACIÓN TÁCTICA DEL FINAL DEL ORDEN EN SVSMUN. DIRECTIVA: PERSECUCIÓN FINAL DEL EJE HOSTIL. EJECUTA YA FIN_SEC.</p>
+                                    {/* ESCRITORIO: TEXTO ORIGINAL */}
+                                    <p className="hidden md:block">DECLARACIÓN TÁCTICA DEL FINAL OFICIAL DEL ORDEN GEOPOLÍTICO EN LA ASAMBLEA SVSMUN (NIVEL CONFIDENCIAL = ALPHA DESTRUCT). DIRECTIVA [NO SE PERMITEN ABSTENCIONES TIBIAS PARA RESPUESTAS A PARAMILICIA HOSTIL QUE REÚNA TERCEROS VICIOS E ILICITO PODER INTERNO BAJO FACHADA] TODO PERSECUCIÓN FINAL DEL EJE HOSTIL HASTA RESULTAR CERO EJE ABSOLUTO E HISTORIAL DE COMBATIENTE TERMINAL TOTAL NULL_SET Y ACABA AQUÍ COMPLETA INTERCEPTA MANDA A S. EJECUTA YA FIN_SEC COMPLETO.</p>
+                                </div>
+
+                                <span className="block mt-4 pt-4 tracking-[1.4rem] font-bold border-t border-t-[#cc0000]/30 font-brutal bg-[#222]/5 p-2 font-white relative left-[-3.1rem] opacity-30 select-all border-[#333] drop-shadow mx-auto hover:bg-[#fff] max-w-[650px] p-6 text-[30px] font-white w-[500px]" style={{WebkitTextStroke:"0px white", pointerEvents:"all"}}>(+53_RED_9)</span>
+                            </div>
+                            
+
+                            <div className="flex flex-col text-[130px] mr-12 -translate-y-[0vh] -rotate-0 md:-rotate-[-10deg] pb-6 bg-[#fff] mix-blend-color font-mono drop-shadow-[0_20px_450px_rgba(255,100,0,1)] mix-blend-multiply opacity-25 opacity-20 transform hover:-skew-y-6 text-[#990000] scale-[0.6] text-transparent hover:blur-[0px]" style={{fontFamily:'Jetbrains mono, monotype', paddingRight:"5vh", paddingTop: "0vh"}}>
+                                   [F9] {'>_'}
+                            </div>
+
+                       </div>
+
+                  </footer>
+             )
+        }
+
+
+        const App = () => {
+             return (
+                 <main className="w-full flex flex-col justify-start overflow-hidden">
+                     <ZeroDarkHero />
+                     <OperationBoard />
+                     <TerminalSection />
+                     <FooterIntelligence />
+                 </main>
+             )
+        }
+
+        /* 
+          ANIMACIÓN LÓGICA DE BRUTALIDAD DEL INICIO Y GSAP DEL RED RENDER 
+          Efectos: Screen tear mental / tensión afilada tipo alerta real táctica brutal / destellos rápidos. 
+        */
+        const loadInitialSiren = () => {
+            if(typeof gsap === "undefined") return;
+
+            const tlLoader = gsap.timeline({
+                onComplete: () => {
+                    const textEl = document.getElementById("auth-text");
+                    textEl.innerHTML = "ACCESO AUTORIZADO // EXTERMINIO INMINENTE HZ";
+                    textEl.style.fontSize = "5vw";
+                    gsap.to(textEl, { 
+                        opacity: 0, scale: 3, filter: 'blur(30px)', color:'#fff', mixBlendMode: 'normal',
+                        duration: 0.6, ease:"power4.in" 
+                    });
+                    
+                    gsap.to("#brutal-loader", {
+                        backgroundColor: '#fff', 
+                        opacity: 0, 
+                        duration: 1.5,
+                        delay: 0.4,
+                        ease: "power2.inOut",
+                        onComplete: () => { 
+                             document.getElementById('brutal-loader').style.display = "none";
+                        }
+                    });
+
+                    // Mount the app
+                    const rE = document.getElementById('root');
+                    const rw = createRoot(rE);
+                    rw.render(<App />);
+
+                    gsap.fromTo(rE, 
+                        { autoAlpha: 0 }, 
+                        { autoAlpha: 1, duration: 0.8, ease: "power4.out", delay: 0.6}
+                    );
+                }
+            });
+            
+            // Secuencia nerviosa rojo blanco rojo texto pantalla glitching simulando una intrusión visual (imponente).
+            tlLoader.to("#auth-text", {opacity: 1, duration: 0.1, delay:0.3})
+                    .to("#brutal-loader", {backgroundColor: '#fff', duration: 0.05, repeat:3, yoyo:true})
+                    .to("#auth-text", {opacity: 0, filter: 'blur(10px)', scale:0.9, duration: 0.5})
+                    .to("#auth-text", {opacity: 1, filter: 'blur(0px)', scale: 1.05, color: '#111', duration: 1.1, ease:"elastic.out(1, 0.4)"})
+                    .to({}, {duration: 0.9}); 
+        };
+
+        
+       if (document.readyState === 'loading') { 
+    document.addEventListener('DOMContentLoaded', loadInitialSiren); 
+} else { 
+    loadInitialSiren(); 
+}
+    </script>
+</body>
+</html>

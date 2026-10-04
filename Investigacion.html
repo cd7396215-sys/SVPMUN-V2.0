@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE GLOBAL CHRONICLE | Reporte NSA JFK 1964</title>
+    <!-- Google Fonts: Sans Serif Geométricas e imponentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Carga de React y ReactDOM -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- Carga de Babel para interpretar JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Carga de React y ReactDOM -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- Carga de Babel para interpretar JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
+<script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* === VARIABLES & BASE === */
+        :root {
+            --paper-bg: #ece5d3;
+            --ink-black: #111111;
+            --alert-red: #8b0000;
+            --paper-border: #333333;
+        }
+
+        body {
+            background-color: var(--paper-bg);
+            color: var(--ink-black);
+            font-family: 'Montserrat', sans-serif; /* Tipografía Sans Serif solicitada */
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px),
+                radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 4px 4px;
+            background-position: 0 0, 2px 2px;
+            overflow-x: hidden;
+        }
+
+        /* === CONTENEDOR PRINCIPAL === */
+        .newspaper-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            background-color: var(--paper-bg);
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Ruido y manchas en el papel */
+        .newspaper-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, transparent 20%, transparent 80%, rgba(139, 69, 19, 0.15) 100%);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* === CABECERA DEL PERIÓDICO === */
+        header {
+            text-align: center;
+            border-bottom: 6px double var(--paper-border);
+            border-top: 6px double var(--paper-border);
+            padding: 20px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--paper-border);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        h1.title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 8vw;
+            margin: 0;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            color: var(--ink-black);
+        }
+
+        .subtitle {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .alert-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(139, 0, 0, 0.15);
+            font-family: 'Oswald', sans-serif;
+            border: 8px solid rgba(139, 0, 0, 0.15);
+            padding: 10px 30px;
+            pointer-events: none;
+        }
+
+        /* === GRILLA DEL CONTENIDO === */
+        .main-news {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 40px;
+            border-bottom: 3px solid var(--paper-border);
+            padding-bottom: 40px;
+            margin-bottom: 30px;
+        }
+
+        h2.headline {
+            font-family: 'Oswald', sans-serif;
+            font-size: 5.5rem;
+            line-height: 1.1;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        h2.headline span.highlight {
+            color: var(--alert-red);
+        }
+
+        .story-text {
+            column-count: 2;
+            column-gap: 30px;
+            column-rule: 1px solid var(--paper-border);
+            font-size: 1.15rem;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .story-text p {
+            margin-top: 0;
+            margin-bottom: 1.5em;
+        }
+
+        .story-text p:first-child::first-letter {
+            float: left;
+            font-family: 'Oswald', sans-serif;
+            font-size: 6rem;
+            line-height: 4.5rem;
+            padding-top: 4px;
+            padding-right: 8px;
+            padding-left: 3px;
+        }
+
+        /* === IMÁGENES Y CENSURA === */
+        figure {
+            margin: 0 0 20px 0;
+            position: relative;
+        }
+
+        figure img, .seal-image img {
+            width: 100%;
+            height: auto;
+            filter: grayscale(100%) contrast(140%) sepia(20%); /* Efecto periódico antiguo */
+            border: 2px solid var(--paper-border);
+            display: block;
+        }
+
+        figcaption {
+            font-size: 0.9rem;
+            font-style: italic;
+            border-bottom: 1px solid var(--paper-border);
+            padding: 5px 0;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        /* EL BARRA DE CENSURA CREADA CON CSS SOBRE LOS OJOS */
+        .jfk-portrait {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .censor-bar {
+            position: absolute;
+            background-color: var(--ink-black);
+            color: #fff;
+            top: 25%; /* Ajuste para el nivel de los ojos en el retrato genérico usado */
+            left: 20%;
+            width: 60%;
+            height: 15%;
+            transform: rotate(-3deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 2vw;
+            letter-spacing: 5px;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+
+        /* === BARRA LATERAL === */
+        .sidebar {
+            border-left: 3px solid var(--paper-border);
+            padding-left: 40px;
+        }
+
+        .sidebar h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            margin-top: 0;
+            border-bottom: 4px double var(--paper-border);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        /* === NUEVAS EXTENSIONES DE LAYOUT === */
+        .extended-report-wrapper {
+            margin-bottom: 50px;
+        }
+
+        .divider {
+            border-top: 6px double var(--paper-border); 
+            margin: 40px 0;
+        }
+
+        .agencies-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 30px;
+            border-bottom: 1px solid var(--paper-border);
+            padding-bottom: 40px;
+        }
+
+        .agency-column {
+            text-align: center;
+        }
+
+        .agency-column figure img {
+            width: 70%;
+            margin: 0 auto 20px auto;
+            border: none;
+            filter: grayscale(100%) opacity(0.85) sepia(50%) contrast(160%); /* Apariencia estampada en sello federal */
+        }
+        
+        .agency-column h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            border-bottom: 1px dashed var(--paper-border);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .agency-column p {
+            font-size: 0.95rem;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        /* Documento Intercalado minimalista que atrae sin forzar a leer texto gigantesco */
+        .dossier-box {
+            background-color: #d1ccbe; /* Levemente mas sombreado, aspecto caja manila antigua */
+            border: 2px dashed var(--paper-border);
+            padding: 30px;
+            margin: 40px 10%;
+            font-weight: 500;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        .dossier-box .dossier-header {
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--paper-border);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .dossier-body {
+            font-family: monospace; /* Fuente de maquina de escribir nativa universal, limpia y de impacto sutil */
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+
+        /* === SECCIÓN DE INTERACTIVIDAD === */
+        .redacted-zone {
+            background-color: var(--ink-black);
+            color: var(--paper-bg);
+            padding: 30px;
+            margin-top: 40px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+        }
+
+        .redacted-zone:hover {
+            box-shadow: 0 0 20px var(--alert-red);
+        }
+
+        .redacted-content {
+            display: none;
+            font-weight: bold;
+        }
+
+        .reveal-btn {
+            font-family: 'Oswald', sans-serif;
+            background: none;
+            color: var(--paper-bg);
+            border: 2px solid var(--paper-bg);
+            padding: 10px 20px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: 0.2s all;
+        }
+        
+        .reveal-btn:hover {
+            background-color: var(--alert-red);
+            border-color: var(--alert-red);
+        }
+
+        .typewriter-text {
+            font-family: 'Oswald', sans-serif;
+            color: var(--alert-red);
+            font-weight: 800;
+            margin-top: 20px;
+            min-height: 20px;
+        }
+        
+        /* Detalle Inferior Minimalista de cierre final */
+        .footer-stamp {
+            text-align: center;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 8px;
+            margin-top: 60px;
+            margin-bottom: 10px;
+            opacity: 0.6;
+            font-weight: bold;
+        }
+
+        /* === RESPONSIVO === */
+        @media (max-width: 900px) {
+            .main-news {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-left: none;
+                border-top: 3px solid var(--paper-border);
+                padding-left: 0;
+                padding-top: 30px;
+            }
+            .story-text {
+                column-count: 1;
+            }
+            h1.title { font-size: 12vw; }
+            h2.headline { font-size: 3.5rem; }
+            .censor-bar { top: 30%; font-size: 1.5rem; } /* Ajuste de altura responsivo */
+            
+            .agencies-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .dossier-box {
+                margin: 20px 5%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="/static/navbar.js"></script>
+<div class="newspaper-container">
+    <div class="alert-stamp">CLASSIFIED NSA EYES ONLY</div>
+    
+    <header>
+        <div class="header-meta">
+            <span>VOL. CXI NO. 39.421</span>
+            <span>EDICIÓN NACIONAL EXCLUSIVA — NO DISTRIBUIR PUBLICAMENTE</span>
+            <span>JUEVES, 12 DE NOVIEMBRE DE 1964</span>
+            <span>PRECIO: CENSURADO</span>
+        </div>
+        <h1 class="title">THE GLOBAL CHRONICLE</h1>
+        <div class="subtitle">EDICIÓN ESPECIAL: INFORME DEL COMITÉ INVESTIGATIVO - SEÑALES SIGINT</div>
+    </header>
+
+    <main class="main-news">
+        <section class="lead-story">
+            <h2 class="headline">REPORTE NSA 1964: <span class="highlight">LA COMISIÓN WARREN MINTIÓ</span>, MÚLTIPLES TIRADORES IDENTIFICADOS</h2>
+            
+            <div class="story-text">
+                <p>WASHINGTON, D.C. — Documentos internos ultra-clasificados obtenidos en exclusiva, provenientes del recientemente establecido Comité Investigativo de Intercepciones de la Agencia de Seguridad Nacional (NSA), detallan conclusiones estremecedoras que desafían la narrativa oficial sobre la tragedia ocurrida en Dealey Plaza el pasado 22 de noviembre.</p>
+                
+                <p>El informe secreto, bautizado operativamente como <em>"Viento Cruzado"</em>, establece de manera inequívoca y utilizando interceptaciones acústicas y telemetría de señales clasificadas (SIGINT), que la narrativa de un solo "francotirador solitario" disparando desde el sexto piso del Depósito de Libros Escolares de Texas es físicamente y militarmente inconsistente con la telemetría acústica recabada ese fatídico viernes al mediodía.</p>
+
+                <p>"La secuencia balística detectada y el análisis del eco en los edificios colindantes indican la detonación de armas incompatibles con el fusil Carcano M91/38 en poder de Lee H. Oswald. Se ha confirmado fuego cruzado desde la loma cubierta de hierba", reza el memorándum censurado dirigido a la rama de Inteligencia.</p>
+
+                <p>Las ramificaciones de esta filtración sin precedentes amenazan con sacudir los mismísimos cimientos del actual gobierno. Analistas de inteligencia advirtieron inmediatamente al Director que el patrón direccional apuntaba a que operativos experimentados utilizaron geometría triangular, creando un 'pasillo de fuego' imposible de eludir.</p>
+
+                <p>Adicionalmente, archivos revelan que durante las semanas previas, la red de telecomunicaciones soviéticas entre la embajada en la Ciudad de México y Moscú emitió un aluvión anómalo de encriptaciones masivas que coincidieron matemáticamente con los movimientos documentados de Lee Harvey Oswald y otros agentes de procedencia no identificada, hoy catalogados como fantasmas operativos.</p>
+                
+                <p>Fuentes desde el seno del comité imploran protección, manifestando que cualquier desvío del veredicto oficial preestablecido conlleva una terminación letal y silenciada. La historia está escribiéndose entre tinta tachada.</p>
+            </div>
+        </section>
+
+        <aside class="sidebar">
+            <figure class="jfk-portrait">
+                <!-- Retrato Público mantenido y preservado a petición del usuario. Cargando óptimo. -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg" alt="Presidente Kennedy">
+                <div class="censor-bar">CLASIFICADO</div>
+            </figure>
+            <figcaption>ARCHIVO OBJETO #41: Rostro del 35° Presidente tras impacto. Informe médico primario difiere severamente de Bethesda.</figcaption>
+            
+            <h3>OPERACIÓN CORTINA NEGRA</h3>
+            <p><strong>El vínculo con Cuba:</strong> El rastro no se detiene en Dallas. Análisis de radio de onda corta por el cuartel general de Fort Meade registraron actividad de transmisiones encubiertas utilizando el método de estaciones de números horas antes del desfile presidencial.</p>
+            
+            <!-- Sello Oficial Vectorial - Imagen Corregida para cargar con extrema fiabilidad. Vector que encaja hermosamente de manera minimalista e imponente. -->
+            <figure style="padding:20px; background-color:#dfdac7; text-align: center; border: 2px dashed #000;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Seal_of_the_Federal_Bureau_of_Investigation.svg" alt="Sello de Investigaciones" style="border: none; mix-blend-mode: multiply; max-width: 80%; display:inline-block; margin-bottom: 0;">
+            </figure>
+            <figcaption>Exclusiva: La participación y coacción departamental inter-agencias está al descubierto en este lote filtrado de grabaciones fonográficas y comunicados entre J. Edgar Hoover y ramas del Ejecutivo.</figcaption>
+
+            <p>Se presume la purga sistemática de cintas magnetofónicas originales correspondientes al Departamento de Policía de Dallas, Canal 1. Todo parece apuntar a la coordinación interna y a la creación premeditada del chivo expiatorio perfecto.</p>
+        </aside>
+    </main>
+    
+    <!-- NUEVAS SECCIONES AÑADIDAS EXTENDIENDO LA PÁGINA (Estética Limpia, minimalista) -->
+    <div class="extended-report-wrapper">
+        <h2 style="font-family: 'Oswald', sans-serif; font-size: 3.8rem; margin: 0; text-transform:uppercase; text-align: center;">LA FISURA EN EL COMPLEJO MILITAR-INDUSTRIAL</h2>
+        <div style="width: 80px; height: 5px; background: var(--alert-red); margin: 15px auto;"></div>
+        <p style="text-align: center; font-size: 1.15rem; font-style: italic; max-width: 900px; margin: 0 auto; color: #444;">
+            Auditorías desclasificadas no pretenden confirmar identidades en campo; documentan lo más ominoso de la trama post-suceso: La competencia agresiva entre poderes domésticos para silenciarse mutuamente frente a un relato fallido e imponer control total sobre la Comisión asignada al dictamen público.
+        </p>
+
+        <!-- Grilla Limpia Visual: Ramas Institucionales y Sellos Vectoriales que NUNCA DEJAN DE CARGAR -->
+        <div class="agencies-grid">
+            <div class="agency-column">
+                <figure>
+                    <img src="data:image/svg+xml;utf8,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='60' cy='60' r='54' fill='none' stroke='%23333' stroke-width='4'/%3E%3Ccircle cx='60' cy='60' r='45' fill='none' stroke='%23333' stroke-width='2' stroke-dasharray='4 4'/%3E%3Ctext x='60' y='55' font-family='sans-serif' font-weight='900' font-size='28' text-anchor='middle' fill='%23333'%3E CIA %3C/text%3E%3Ctext x='60' y='75' font-family='monospace' font-weight='bold' font-size='11' text-anchor='middle' fill='%23333'%3E DOSSIER C4 %3C/text%3E%3C/svg%3E" alt="Central Intelligence Agency">
+                </figure>
+                <h4>COMPAÑÍA (CIA)</h4>
+                <p>Nombra como encargado operacional indirecto del sector hispanohablante bajo la tutela de J. Angleton; presiones constantes mediante contra-memorándums forjaron "historias pantallas" asociando arbitrariamente células foráneas exiliadas e informantes.</p>
+            </div>
+            
+            <div class="agency-column">
+                <figure>
+                   <img src="data:image/svg+xml;utf8,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='60' cy='60' r='54' fill='none' stroke='%23333' stroke-width='4'/%3E%3Ccircle cx='60' cy='60' r='45' fill='none' stroke='%23333' stroke-width='2' stroke-dasharray='4 4'/%3E%3Ctext x='60' y='55' font-family='sans-serif' font-weight='900' font-size='28' text-anchor='middle' fill='%23333'%3E NSA %3C/text%3E%3Ctext x='60' y='75' font-family='monospace' font-weight='bold' font-size='11' text-anchor='middle' fill='%23333'%3E SIGINT DOCS %3C/text%3E%3C/svg%3E" alt="National Security Agency">
+                </figure>
+                <h4>LOS INTERCEPTORES</h4>
+                <p>A pesar del esfuerzo de un subgrupo anónimo trabajando sin directriz Ejecutiva por filtrar un volumen titánico (denominado "Fila A") que invalidaría al tirador principal bajo los esquemas acústicos trigonométricos del registro municipal, dichos interceptos resultaron evaporados.</p>
+            </div>
+            
+            <div class="agency-column">
+                <figure>
+                    <img src="data:image/svg+xml;utf8,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='60' cy='60' r='54' fill='none' stroke='%23333' stroke-width='4'/%3E%3Ccircle cx='60' cy='60' r='45' fill='none' stroke='%23333' stroke-width='2' stroke-dasharray='4 4'/%3E%3Ctext x='60' y='55' font-family='sans-serif' font-weight='900' font-size='28' text-anchor='middle' fill='%23333'%3E DoD %3C/text%3E%3Ctext x='60' y='75' font-family='monospace' font-weight='bold' font-size='11' text-anchor='middle' fill='%23333'%3E DEF-FORCE-1 %3C/text%3E%3C/svg%3E" alt="Department of Defense">
+                </figure>
+                <h4>COMPONENTE ACTIVO DOD</h4>
+                <p>Modificaciones forzadas del control post mortem en centro logístico castrense: Injurias corporales distorsionadas para forzar coincidencias anatómicas bajo perfiles dictados pre-análisis. Médicos asignados operaron por órdenes y doctrina obligatoria antes de liberar al público sus reportes manipulados.</p>
+            </div>
+        </div>
+
+        <!-- Cajón Documental Insertado: Muy agradable a la vista, diseño monolinea sin cargar masilla de foto -->
+        <div class="dossier-box">
+            <div class="dossier-header">
+                <span>INVENTARIO: DSN-MAC/7-b. [EXTRACCIÓN NSA FÓLDER BLANCO]</span>
+                <span>FECHA EX.: 11-1964</span>
+            </div>
+            <div class="dossier-body">
+                > EXTREMA PRIORIDAD ... AUTORIDAD DIR: <br><br>
+                1. "La trayectoria dictada en los perfiles mediáticos ha comenzado a circular para las editoriales del bloque matutino... Detenga o redireccione cuestionamientos geográficos hacia una locación fija única posterior en ventana frontal este..."<br><br>
+                2. "...No emitir autorización, bajo nivel T-1 ni subsecuente de que grabaciones C-DICCT y canales radiales intercepten ondas adyacentes la hora H1. Muerte atribuida de actor material C1, lograda y consolidada hoy." <br><br>
+                > DESTRUIR O QUEMAR PREVIO INFORME. <span style="background-color: black; color: black;">--TACHADURA ORIGINAL TÉRMICA---</span> FIN EN LÍNEA DIRECTA G5.
+            </div>
+        </div>
+    </div>
+
+
+    <!-- BLOQUE INTERACTIVO: JAVASCRIPT & CSS -->
+    <section class="redacted-zone" id="interactZone" onclick="desclasificar()">
+        <h2 style="font-family: 'Oswald', sans-serif; text-align: center; font-size: 2.2rem; border-bottom: 2px dashed rgba(255,255,255,0.2); padding-bottom: 10px;">[ ÁREA DE ACCESO RESTRINGIDO - PROTOCOLOS SIGINT INTRUSOS DETECTADOS ]</h2>
+        <br>
+        <button class="reveal-btn" id="btn-revelar">>>> EXIGIR CLAVES DECENALES PARA ABRIR REPORTE SECRETO. [ CLICK AQUÍ ] <<< </button>
+        
+        <div class="redacted-content" id="textoOculto">
+            <p style="font-size: 1.1rem; border: 1px solid rgba(255,255,255,0.4); padding: 10px; color: #a19d92; margin-bottom: 25px;">[ ACCESO OTORGADO. DECIFRADO: CASCADA ALPHA-3. LECTURA EXTREMADAMENTE SENSIBLE ]</p>
+            
+            <p>DIRECTIVA INMEDIATA PARA OFICIALES ASIGNADOS DEL PERÍMETRO EN FECHA PÓSTUMA:</p>
+            <p style="font-size: 1.3rem;">"Cualquier evidencia física recuperable, fragmentos no encasillados en ranuras o incrustación en terreno o testigos, y cualquier registro de carácter magnetofónico u óptico que corrompa severamente y destruya el concepto geométrico del disparo dictado y atribuible en exclusiva responsabilidad penal única de "L.H.O" por motivos masivos de Seguridad de Defensa, quedará sujeta de secuestro alterado sin registro o simplemente será atomizada [INCINERADA DIRECTRIZ ZULU-5]. Permitir una confirmación pública de ejecución de triangulación simultánea pondría directamente de relieve al propio equipo ejecutor insertado causando inminentemente la implosión total nacional institucional..."</p>
+            <div class="typewriter-text" id="typewriter"></div>
+        </div>
+    </section>
+
+    <!-- Píe minimalista -->
+    <p class="footer-stamp">████ DOCUMENTO CLASIFICADO AL NIVEL PRELIMINAR - THE GLOBAL CHRONICLE ARCHIVE  1964 ████</p>
+</div>
+
+<!-- JAVASCRIPT (Idéntico a su función y petición) -->
+<script>
+    let isDecrypted = false;
+    const txtToType = "> PROCEDIMIENTO PURGA Z-NUCLEO INICIADO ... AGENTES ESPECIALES TÁCTICOS ESTÁN DESPACHADOS A TU ZONA RESIDENCIAL ACTUAL BASADOS EN LA FIRMA MAC Y FRECUENCIA. ABORTAR VISIÓN... ESTO ES UNA ORDEN FINAL DE TRANSMISIÓN.";
+    let speed = 40; /* Milisegundos entre letras ligeramente ajustados a buena fluidez*/
+    let i = 0;
+
+    function desclasificar() {
+        if (isDecrypted) return; // Evita que se dispare múltiples veces
+        isDecrypted = true;
+        
+        // Elementos UI
+        const btn = document.getElementById("btn-revelar");
+        const contenido = document.getElementById("textoOculto");
+        const container = document.getElementById("interactZone");
+        
+        // Efecto visual y cambio de colores impactantes
+        container.style.backgroundColor = "var(--alert-red)";
+        container.style.boxShadow = "inset 0 0 100px rgba(0,0,0,0.9)";
+        btn.style.display = "none";
+        
+        // Mostrar contenido secreto y aterrador escondido debajo
+        contenido.style.display = "block";
+        
+        // Efecto Typewriter asincrónico letal tipo consola vieja para el footer
+        setTimeout(typeWriter, 1200);
+    }
+
+    function typeWriter() {
+        if (i < txtToType.length) {
+            document.getElementById("typewriter").innerHTML += txtToType.charAt(i);
+            i++;
+            setTimeout(typeWriter, speed);
+        }
+    }
+</script>
+<!-- ====================================================================== -->
+<!-- COMPONENTE: MESAS DIRECTIVAS (INVESTIGACIÓN) -->
+<!-- ====================================================================== -->
+
+<style>
+    /* ═══ CSS MESAS DIRECTIVAS Y TESTIMONIOS CIRCULARES ═══ */
+    .mesas-container { width: 100%; max-width: 56rem; padding: 2rem 1rem; margin: 0 auto; }
+    .mesas-grid { display: grid; gap: 3rem; }
+    .mesas-image-wrapper { position: relative; width: 100%; height: 24rem; perspective: 1000px; }
+    .mesas-image { position: absolute; width: 100%; height: 100%; object-fit: cover; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+    .mesas-content { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; }
+    .mesas-name { font-weight: bold; margin-bottom: 0.25rem; }
+    .mesas-designation { margin-bottom: 1.5rem; }
+    .mesas-quote-container { overflow-y: auto; padding-right: 1rem; max-height: 250px; margin-bottom: 1.5rem; scroll-behavior: smooth; }
+    .mesas-quote { line-height: 1.75; white-space: pre-line; }
+    .mesas-quote-container::-webkit-scrollbar { width: 4px; }
+    .mesas-quote-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    .mesas-arrow-buttons { display: flex; gap: 1.5rem; margin-top: auto; }
+    .mesas-arrow-button { width: 2.7rem; height: 2.7rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s; border: none; }
+    @media (max-width: 768px) { .mesas-grid { gap: 2rem; } .mesas-image-wrapper { height: 18rem; } .mesas-quote-container { max-height: 35vh; } }
+    @media (min-width: 768px) { .mesas-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .mesas-quote-container { max-height: 350px; } }
+</style>
+
+<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5"></section>
+
+<script type="text/babel">
+    const { useState, useEffect, useRef, useMemo, useCallback } = React;
+    const { createRoot } = ReactDOM;
+
+    const IconArrowRight = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
+    const IconArrowLeft = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>;
+
+    function calculateGap(width) {
+        const minWidth = 1024; const maxWidth = 1456; const minGap = 60; const maxGap = 86;
+        if (width <= minWidth) return minGap;
+        if (width >= maxWidth) return Math.max(minGap, maxGap + 0.06018 * (width - maxWidth));
+        return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
+    }
+
+    const ComponenteMesas = ({ directivos, autoplay = false, colors = {}, fontSizes = {} }) => {
+        const colorName = colors.name || "#000"; const colorDesignation = colors.designation || "#6b7280";
+        const colorTestimony = colors.testimony || "#4b5563"; const colorArrowBg = colors.arrowBackground || "#141414";
+        const colorArrowFg = colors.arrowForeground || "#f1f1f7"; const colorArrowHoverBg = colors.arrowHoverBackground || "#00a6fb";
+        const fontSizeName = fontSizes.name || "1.5rem"; const fontSizeDesignation = fontSizes.designation || "0.925rem"; const fontSizeQuote = fontSizes.quote || "1.125rem";
+
+        const [activeIndex, setActiveIndex] = useState(0); const [isFading, setIsFading] = useState(false);
+        const [hoverPrev, setHoverPrev] = useState(false); const [hoverNext, setHoverNext] = useState(false);
+        const [containerWidth, setContainerWidth] = useState(1200);
+
+        const imageContainerRef = useRef(null); const autoplayIntervalRef = useRef(null);
+        const directivosLength = useMemo(() => directivos.length, [directivos]);
+        const activeDirectivo = useMemo(() => directivos[activeIndex], [activeIndex, directivos]);
+
+        useEffect(() => {
+            function handleResize() { if (imageContainerRef.current) setContainerWidth(imageContainerRef.current.offsetWidth); }
+            handleResize(); window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        const handleNext = useCallback(() => {
+            setIsFading(true);
+            setTimeout(() => { setActiveIndex((prev) => (prev + 1) % directivosLength); setIsFading(false); }, 300);
+            if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+        }, [directivosLength]);
+        
+        const handlePrev = useCallback(() => {
+            setIsFading(true);
+            setTimeout(() => { setActiveIndex((prev) => (prev - 1 + directivosLength) % directivosLength); setIsFading(false); }, 300);
+            if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+        }, [directivosLength]);
+
+        useEffect(() => {
+            if (autoplay) { autoplayIntervalRef.current = setInterval(() => { handleNext(); }, 15000); }
+            return () => { if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current); };
+        }, [autoplay, handleNext]);
+
+        function getImageStyle(index) {
+            const gap = calculateGap(containerWidth); const maxStickUp = gap * 0.8;
+            const isActive = index === activeIndex; const isLeft = (activeIndex - 1 + directivosLength) % directivosLength === index; const isRight = (activeIndex + 1) % directivosLength === index;
+            if (isActive) return { zIndex: 3, opacity: 1, pointerEvents: "auto", transform: `translateX(0px) translateY(0px) scale(1) rotateY(0deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            if (isLeft) return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            if (isRight) return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            return { zIndex: 1, opacity: 0, pointerEvents: "none", transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+        }
+
+        return (
+            <div className="mesas-container">
+                <div className="mesas-grid">
+                    <div className="mesas-image-wrapper" ref={imageContainerRef}>
+                        {directivos.map((directivo, index) => (
+                            <img key={directivo.src + index} src={directivo.src} alt={directivo.name} className="mesas-image" style={getImageStyle(index)} />
+                        ))}
+                    </div>
+                    <div className="mesas-content">
+                        <div className={`transition-all duration-300 ease-in-out ${isFading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'} flex flex-col h-full`}>
+                            <h3 className="mesas-name font-space" style={{ color: colorName, fontSize: fontSizeName }}>{activeDirectivo.name}</h3>
+                            <p className="mesas-designation font-sans uppercase tracking-widest text-xs font-semibold" style={{ color: colorDesignation, fontSize: fontSizeDesignation }}>{activeDirectivo.designation}</p>
+                            <div className="mesas-quote-container font-sans font-light">
+                                <p className="mesas-quote" style={{ color: colorTestimony, fontSize: fontSizeQuote }}>{activeDirectivo.quote}</p>
+                            </div>
+                        </div>
+                        <div className="mesas-arrow-buttons">
+                            <button className="mesas-arrow-button" onClick={handlePrev} style={{ backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverPrev(true)} onMouseLeave={() => setHoverPrev(false)}><IconArrowLeft /></button>
+                            <button className="mesas-arrow-button" onClick={handleNext} style={{ backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverNext(true)} onMouseLeave={() => setHoverNext(false)}><IconArrowRight /></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const mesasData = [
+        { 
+            name: "Mathias Martínez", 
+            designation: "Vicepresidente de Investigación", 
+            src: "/static/mesas/inves2.jpeg",
+            quote: `Mi nombre Mathias Martínez, tengo 18 años, soy graduado del Colegio Pablo VI, donde además de haberme formado académicamente, comprendí el verdadero significado del respeto y el esfuerzo. Formo parte del Modelo de Naciones Unidas desde hace aproximadamente dos años, tiempo, que ha sido bastante significativo para mí, debido a todo lo que sigo aprendido de las temáticas y personas increíbles que conforman esta actividad.\n\nDurante ese tiempo delegando, participé en 9 modelos como delegado, incluyendo CAMIMUN, UFTMUN SVPMUN (2024), SPMUN, RCMUN, SVPMUN (2025), MASMUN, RCMUN, SIMUN (2026). Posteriormente, participé como Mesa Directiva en LASAMUN y CABMUN 2026.\n\nPor mi parte, tengo muchas expectativas al respecto de este comité de investigación, junto a mis compañeros, comprendemos la exigencia académica requiere prepararse para este tipo de comité, pero aún así, confiamos en las capacidades de nuestros delegados para indagar, investigar y entender el contexto de la Guerra Fría durante los años 60. de la misma forma, esperamos, que los participantes de esta comisión de investigación den la talla para resolver el trágico asesinato del presidente Jhon F. Kennedy, y que sobre todas las cosas, se diviertan participando\n\nPor esas razones, me complace formar parte de esta IV Edición del Modelo de Naciones Unidas del Colegio San Vicente de Paúl.`
+        },
+        { 
+            name: "Maurizio Bellotto", 
+            designation: "Vicepresidente de Investigación", 
+            src: "/static/mesas/inves.jpeg",
+            quote: `¡Oli! ^^ mi nombre es Maurizio Bellotto, o simplemente Mau, soy estudiante de Economía de la UCLA y seré parte de la Mesa Directiva del Comité de Investigación.\n\nHe participado en varias ocasiones en los Modelos de Naciones Unidas, ya sea como Mesa Directiva o como Delegado. Sin embargo, mis participaciones más destacadas son haber sido parte del grupo de SVPMUN que ganó la primer MD del Colegio y ser recurrente Mesa Directiva en los modelos de SVPMUN.\n\nIn bocca al lupo, ragazzi!\n\nLo que importa verdaderamente en la vida no son los objetivos que nos marcamos, sino los caminos que seguimos para lograrlo\n\n-Peter Bamm`
+        }
+    ];
+
+    const SeccionMesasDirectivas = () => (
+        <div className="w-full relative">
+            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
+                <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block border-l-2 border-white/20 pl-3">Estructura de Autoridad</span>
+                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
+                    Mesas <span className="text-white/70 italic font-instrument-serif tracking-normal">Directivas</span>
+                </h2>
+            </div>
+            <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20">
+                <div className="items-center justify-center relative flex w-full" style={{ maxWidth: "1024px" }}>
+                    <ComponenteMesas directivos={mesasData} autoplay={false} colors={{ name: "#f7f7ff", designation: "#e1e1e1", testimony: "#f1f1f7", arrowBackground: "#141414", arrowForeground: "#f7f7ff", arrowHoverBackground: "#333" }} fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} />
+                </div>
+            </div>
+        </div>
+    );
+
+    const mesasRoot = createRoot(document.getElementById('mesas-directivas-section'));
+    mesasRoot.render(<SeccionMesasDirectivas />);
+</script>
+</body>
+</html>

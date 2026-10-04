@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVPMUN · Crisis Bicameral Electoral — Colombia 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<!-- Carga de React y ReactDOM -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- Carga de Babel para interpretar JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* ============================================================
+   SVPMUN — CRISIS BICAMERAL ELECTORAL · COLOMBIA 2026
+   Sistema visual: expediente de crisis + portada de prensa
+   ============================================================ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+:root{
+  --bg:#0d0b08; --bg2:#14110c;
+  --bone:#efe7d6; --muted:#a3987f; --faint:#6b6353;
+  --ink:#161209;
+  --paper:#e9e1cf; --paper2:#f2ecdc; --paper-ink:#1d1810; --paper-muted:#5b5140;
+  --gold:#c8a24a; --gold-dim:rgba(200,162,74,.32);
+  --danger:#a41e22;
+  --accent:#c8a24a; --accent-soft:rgba(200,162,74,.14);
+  --ember:#ffb45e; --glow:rgba(200,164,86,.09);
+  --paper-accent:#8a6c1f;
+  --side-l:#d5382c; --side-r:#4e78e6;
+  --font-serif:'Fraunces',Georgia,serif;
+  --font-sans:'Archivo',Verdana,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+body[data-theme="left"]{
+  --accent:#e0402f; --accent-soft:rgba(224,64,47,.14);
+  --ember:#ff9a5e; --glow:rgba(224,58,44,.10); --paper-accent:#b3211f;
+}
+body[data-theme="right"]{
+  --accent:#5e8bff; --accent-soft:rgba(94,139,255,.14);
+  --ember:#bcd0ff; --glow:rgba(94,134,255,.10); --paper-accent:#1e4bb8;
+}
+body{
+  background:var(--bg); color:var(--bone);
+  font:400 16.5px/1.75 var(--font-sans);
+  overflow-x:hidden; transition:background 1s ease;
+  -webkit-font-smoothing:antialiased;
+}
+body.lock{overflow:hidden}
+::selection{background:var(--accent); color:#0d0b08}
+a{color:inherit}
+img,svg{display:block}
+button{font-family:inherit; cursor:pointer}
+
+/* ---------- Lógica móvil/escritorio solicitada ---------- */
+.mobile-only { display: none !important; }
+@media(max-width:860px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: block !important; }
+  span.mobile-only, i.mobile-only, b.mobile-only { display: inline !important; }
+}
+/* -------------------------------------------------------- */
+
+/* ---------- Capas atmosféricas fijas ---------- */
+#ashes{position:fixed; inset:0; z-index:1; pointer-events:none}
+#grain{position:fixed; inset:-40px; z-index:2; pointer-events:none; opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");}
+body::after{content:''; position:fixed; inset:0; z-index:3; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(0,0,0,.55) 100%);}
+#scanlines{position:fixed; inset:0; z-index:3; pointer-events:none; opacity:.05;
+  background:repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.9) 2px 3px);}
+#cursorGlow{position:fixed; width:640px; height:640px; z-index:4; pointer-events:none;
+  left:0; top:0; transform:translate(-50%,-50%); mix-blend-mode:screen;
+  background:radial-gradient(circle, var(--glow) 0%, transparent 62%); transition:opacity .5s;}
+
+/* ---------- Marco de expediente ---------- */
+#frame{position:fixed; inset:12px; z-index:60; pointer-events:none;
+  border:1px solid var(--gold-dim); transition:border-color 1s;}
+.corner{position:absolute; width:18px; height:18px}
+.corner::before,.corner::after{content:''; position:absolute; background:var(--gold); opacity:.75; transition:background 1s}
+.corner::before{width:18px; height:1px} .corner::after{width:1px; height:18px}
+.c-tl{top:-1px; left:-1px} .c-tr{top:-1px; right:-1px} .c-bl{bottom:-1px; left:-1px} .c-br{bottom:-1px; right:-1px}
+.c-tr::before,.c-br::before{right:0} .c-bl::after,.c-br::after{bottom:0}
+.c-tr::after{right:0} .c-br::after{right:0; bottom:0} .c-bl::before{bottom:0} .c-br::before{bottom:0; right:0}
+
+/* ---------- Nav ---------- */
+nav{position:fixed; top:0; left:0; right:0; z-index:50; height:60px;
+  display:flex; align-items:center; gap:22px; padding:0 34px;
+  transition:background .5s, border-color .5s, backdrop-filter .5s; border-bottom:1px solid transparent;}
+nav.scrolled{background:rgba(13,11,8,.84); backdrop-filter:blur(14px); border-color:var(--gold-dim)}
+.brand{display:flex; align-items:center; gap:12px; text-decoration:none}
+.brand .seal-mini{width:32px; height:32px; flex:none}
+.brand b{font:600 12px/1.1 var(--font-mono); letter-spacing:.24em; color:var(--bone)}
+.brand b em{display:block; font-style:normal; color:var(--muted); font-weight:400; letter-spacing:.18em; margin-top:3px; font-size:9.5px}
+.nav-links{display:flex; gap:26px; margin-left:auto}
+.nav-links a{font:500 11px/1 var(--font-mono); letter-spacing:.22em; color:var(--muted); text-decoration:none; padding:6px 0; position:relative; transition:color .3s}
+.nav-links a::after{content:''; position:absolute; left:0; bottom:0; width:100%; height:1px; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .35s}
+.nav-links a:hover{color:var(--bone)} .nav-links a:hover::after{transform:scaleX(1)}
+.nav-right{display:flex; align-items:center; gap:16px; margin-left:auto}
+.nav-links + .nav-right{margin-left:0}
+#clock{font:500 11.5px/1 var(--font-mono); letter-spacing:.14em; color:var(--muted); display:flex; align-items:center; gap:8px}
+#clock i{width:13px; height:13px; color:var(--accent)}
+.live{display:flex; align-items:center; gap:8px; font:600 10px/1 var(--font-mono); letter-spacing:.26em; color:var(--danger)}
+.live-dot{width:7px; height:7px; border-radius:50%; background:var(--danger); animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1; box-shadow:0 0 0 0 rgba(164,30,34,.5)} 50%{opacity:.55; box-shadow:0 0 0 6px rgba(164,30,34,0)}}
+#sideChip{display:none; align-items:center; gap:8px; font:600 10px/1 var(--font-mono); letter-spacing:.2em; color:var(--bone);
+  border:1px solid var(--accent); padding:7px 12px; border-radius:2px; background:var(--accent-soft)}
+#sideChip.on{display:flex}
+#sideChip .dot{width:8px; height:8px; background:var(--accent); flex:none}
+#soundBtn{display:flex; align-items:center; gap:8px; background:none; border:1px solid var(--gold-dim); color:var(--muted);
+  padding:7px 13px; font:600 10px/1 var(--font-mono); letter-spacing:.22em; transition:all .3s; border-radius:2px}
+#soundBtn:hover{border-color:var(--accent); color:var(--bone)}
+#soundBtn.on{color:var(--accent); border-color:var(--accent)}
+#soundBtn i{width:13px; height:13px}
+#icOn{display:none} #soundBtn.on #icOn{display:inline-flex} #soundBtn.on #icOff{display:none}
+
+/* ---------- Tipos editoriales ---------- */
+.kicker{font:600 11px/1 var(--font-mono); letter-spacing:.38em; color:var(--accent); text-transform:uppercase; transition:color 1s}
+.sec-title{font:600 clamp(2.1rem,4.6vw,3.9rem)/1.04 var(--font-serif); letter-spacing:-.015em; color:var(--bone); margin:14px 0 0}
+.sec-title em{font-style:italic; font-weight:500; color:var(--accent); font-size:.62em; vertical-align:.28em; margin-right:.35em; transition:color 1s}
+.sec-sub{max-width:640px; color:var(--muted); margin-top:18px; font-size:15.5px}
+section{position:relative; z-index:10; padding:clamp(80px,11vh,130px) 0; scroll-margin-top:70px}
+.wrap{width:min(1180px, calc(100% - 48px)); margin:0 auto}
+.rule{height:1px; background:var(--gold-dim); margin:26px 0; transform:scaleX(0); transform-origin:left; transition:transform 1.4s cubic-bezier(.2,.7,.2,1) .2s}
+.in .rule, .rule.in{transform:scaleX(1)}
+.rule.dbl{height:5px; border-top:1px solid var(--gold-dim); border-bottom:1px solid var(--gold-dim); background:transparent}
+
+/* ---------- Reveal ---------- */
+.reveal{opacity:0; transform:translateY(30px); filter:blur(7px);
+  transition:opacity .95s ease, transform .95s cubic-bezier(.2,.7,.2,1), filter .95s ease;
+  transition-delay:var(--d,0s)}
+.reveal.in{opacity:1; transform:none; filter:none}
+
+/* ---------- HERO ---------- */
+#hero{min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:96px 0 0}
+#ghost{position:absolute; top:6%; left:50%; transform:translateX(-50%); z-index:-1;
+  font:900 clamp(170px,32vw,430px)/1 var(--font-serif); color:transparent;
+  -webkit-text-stroke:1px rgba(200,162,74,.14); letter-spacing:-.02em; user-select:none; pointer-events:none; will-change:transform}
+.hero-inner{text-align:center; position:relative}
+.hero-seal{width:82px; height:82px; margin:0 auto 20px}
+.tricolor{display:flex; height:5px; width:190px; margin:0 auto}
+.tricolor span{flex:1}
+.tricolor span:nth-child(1){background:#fcd116} .tricolor span:nth-child(2){background:#003893} .tricolor span:nth-child(3){background:#ce1126}
+.hero-kicker{margin-top:22px}
+.byline{font:400 10.5px/1.9 var(--font-mono); letter-spacing:.22em; color:var(--faint); margin-top:12px; text-transform:uppercase}
+h1.hero-title{margin-top:26px; font-family:var(--font-serif); font-weight:900; color:var(--bone);
+  font-size:clamp(3.1rem,10.5vw,9.4rem); line-height:.94; letter-spacing:-.022em; text-transform:uppercase}
+h1.hero-title .ln{display:block; overflow:hidden; padding:0 .06em}
+h1.hero-title .ln > span{display:block; transform:translateY(115%); animation:riseUp 1.05s cubic-bezier(.16,.8,.24,1) forwards}
+h1.hero-title .ln:nth-child(1) > span{animation-delay:.15s}
+h1.hero-title .ln:nth-child(2) > span{animation-delay:.3s}
+h1.hero-title .ln:nth-child(3) > span{animation-delay:.45s}
+h1.hero-title .ital{font-style:italic; font-weight:600; color:var(--accent); transition:color 1s}
+@keyframes riseUp{to{transform:translateY(0)}}
+.hero-deck{margin-top:28px; font:500 clamp(15px,2vw,20px)/1.5 var(--font-sans); color:var(--muted); letter-spacing:.02em}
+.hero-deck em{font-family:var(--font-serif); font-style:italic; color:var(--bone); font-size:1.15em; padding:0 .1em}
+.hero-meta{margin-top:26px; display:flex; justify-content:center; align-items:center; gap:26px; flex-wrap:wrap}
+.hero-meta .hm{font:500 11px/1 var(--font-mono); letter-spacing:.18em; color:var(--muted); display:flex; gap:8px; align-items:center}
+.hero-meta .hm i{width:13px; height:13px; color:var(--accent)}
+.stamp{display:inline-block; padding:9px 15px; border:2.5px solid var(--danger); color:var(--danger);
+  font:600 11px/1 var(--font-mono); letter-spacing:.3em; transform:rotate(-6deg); border-radius:3px; opacity:.9; animation:stampIn 1s cubic-bezier(.2,1.4,.3,1) 1.1s both}
+@keyframes stampIn{from{opacity:0; transform:rotate(-6deg) scale(2.2)} to{opacity:.9; transform:rotate(-6deg) scale(1)}}
+.hero-cta{margin-top:40px; display:flex; justify-content:center; gap:18px; flex-wrap:wrap}
+.btn{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:12px;
+  padding:17px 30px; font:700 12px/1 var(--font-mono); letter-spacing:.24em; text-transform:uppercase;
+  text-decoration:none; border:1px solid var(--gold-dim); background:transparent; color:var(--bone); border-radius:2px; transition:color .4s, border-color .4s}
+.btn .wipe{position:absolute; inset:0; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .45s cubic-bezier(.7,0,.2,1); z-index:0}
+.btn span, .btn i{position:relative; z-index:1}
+.btn i{width:15px; height:15px}
+.btn:hover .wipe{transform:scaleX(1)}
+.btn:hover{color:#0d0b08; border-color:var(--accent)}
+.btn.solid{border-color:var(--accent); color:#0d0b08}
+.btn.solid .wipe{background:var(--bone)}
+.btn.solid:hover{color:var(--bg)}
+
+/* Bandera 3D */
+#flagStage{position:relative; width:min(980px, calc(100% - 32px)); height:clamp(300px,46vh,520px); margin:52px auto 0;
+  cursor:grab; touch-action:none; border-top:1px solid var(--gold-dim); border-bottom:1px solid var(--gold-dim)}
+#flagStage.dragging{cursor:grabbing}
+#flagStage canvas{width:100%; height:100%; display:block}
+#flagHint{position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:22px;
+  font:500 9.5px/1 var(--font-mono); letter-spacing:.22em; color:var(--faint); pointer-events:none; white-space:nowrap}
+#flagHint span{display:flex; align-items:center; gap:7px}
+#flagHint i{width:12px; height:12px; color:var(--accent)}
+
+/* Ticker de prensa */
+.ticker{position:relative; margin-top:44px; border-top:1px solid var(--gold-dim); border-bottom:1px solid var(--gold-dim);
+  background:rgba(10,8,6,.6); overflow:hidden; height:46px; display:flex; align-items:center}
+.ticker::before{content:'EN VIVO'; position:absolute; left:0; top:0; bottom:0; z-index:2; display:flex; align-items:center; gap:9px;
+  padding:0 18px; background:var(--bg); border-right:1px solid var(--gold-dim);
+  font:700 10px/1 var(--font-mono); letter-spacing:.26em; color:var(--accent)}
+.ticker-track{display:inline-flex; align-items:center; white-space:nowrap; animation:tick 68s linear infinite; padding-left:120px}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+.tk{font:400 13px/1 var(--font-mono); color:var(--bone); letter-spacing:.02em}
+.tk b{color:var(--accent); font-weight:600; letter-spacing:.14em}
+.tk-sep{color:var(--faint); margin:0 26px; font:700 12px/1 var(--font-mono)}
+
+/* ---------- Contexto: la hoja de papel ---------- */
+#contexto{background:var(--paper); color:var(--paper-ink);
+  box-shadow:0 40px 90px rgba(0,0,0,.65) inset, 0 -30px 60px rgba(0,0,0,.5) inset;
+  border-top:1px solid rgba(0,0,0,.5); border-bottom:1px solid rgba(0,0,0,.55)}
+#contexto .kicker{color:var(--paper-accent)}
+#contexto .sec-title{color:var(--paper-ink)}
+#contexto .rule{background:rgba(24,18,10,.28)}
+#contexto .rule.dbl{border-color:rgba(24,18,10,.28)}
+.paper-grid{display:grid; grid-template-columns:minmax(0,7fr) minmax(0,4.4fr); gap:56px; margin-top:36px}
+.paper-cols{column-count:2; column-gap:44px; column-rule:1px solid rgba(24,18,10,.22);
+  font-size:16px; line-height:1.8; color:#2a2115; text-align:justify; hyphens:auto}
+.paper-cols p{margin-bottom:1.2em; break-inside:avoid-column}
+.paper-cols p.lead::first-letter{font-family:var(--font-serif); font-weight:900; float:left;
+  font-size:4.9em; line-height:.76; padding:.06em .1em 0 0; color:var(--paper-accent)}
+.paper-date{font:500 11px/1 var(--font-mono); letter-spacing:.24em; color:var(--paper-muted); margin-top:10px}
+.pullquote{margin:44px 0 0; padding:30px 8px; border-top:3px solid var(--paper-ink); border-bottom:1px solid rgba(24,18,10,.3);
+  font:500 clamp(1.5rem,2.6vw,2.1rem)/1.35 var(--font-serif); font-style:italic; text-align:center; color:#241c0f}
+.pullquote small{display:block; font:600 10px/1 var(--font-mono); font-style:normal; letter-spacing:.3em; color:var(--paper-muted); margin-top:14px}
+.clips{display:flex; flex-direction:column; gap:34px; padding-top:8px}
+.clip{position:relative; background:var(--paper2); padding:26px 24px 18px;
+  box-shadow:6px 10px 0 rgba(24,18,10,.16), 0 18px 34px rgba(24,18,10,.28);
+  border:1px solid rgba(24,18,10,.14); transition:transform .55s cubic-bezier(.2,.7,.2,1); will-change:transform}
+.clip .tape{position:absolute; top:-13px; left:50%; width:92px; height:26px; transform:translateX(-50%) rotate(-3deg);
+  background:rgba(224,214,182,.9); box-shadow:0 2px 6px rgba(24,18,10,.22); border-left:1px dashed rgba(24,18,10,.2); border-right:1px dashed rgba(24,18,10,.2)}
+.clip-head{display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--paper-ink); padding-bottom:8px}
+.clip-head b{font:800 12px/1 var(--font-sans); font-stretch:115%; letter-spacing:.2em}
+.clip-head span{font:400 9px/1 var(--font-mono); letter-spacing:.2em; color:var(--paper-muted)}
+.clip h4{font:700 clamp(1.05rem,1.5vw,1.3rem)/1.22 var(--font-serif); margin:14px 0 10px; color:#1d1710}
+.clip p{font-size:13.5px; line-height:1.65; color:#3b3122}
+.clip-foot{margin-top:14px; padding-top:8px; border-top:1px dashed rgba(24,18,10,.3);
+  font:400 9px/1 var(--font-mono); letter-spacing:.24em; color:var(--paper-muted); display:flex; justify-content:space-between}
+.clip .stamp{position:absolute; right:14px; bottom:44px; transform:rotate(-9deg); padding:6px 10px; font-size:9px; letter-spacing:.24em}
+
+/* ---------- Tablero electoral ---------- */
+.board-head{display:flex; flex-wrap:wrap; gap:34px; justify-content:space-between; align-items:flex-end}
+.count{display:flex; gap:4px; align-items:baseline; font-family:var(--font-mono); color:var(--bone)}
+.cu{text-align:center}
+.cu b{display:block; font:600 clamp(2rem,4.4vw,3.6rem)/1 var(--font-mono); letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.cu span{font:500 9px/1 var(--font-mono); letter-spacing:.3em; color:var(--faint); display:block; margin-top:9px}
+.count > i{font:400 clamp(1.6rem,3.4vw,2.7rem)/1 var(--font-serif); font-style:italic; color:var(--accent); align-self:flex-start; margin-top:6px; animation:blink 2s infinite; transition:color 1s}
+@keyframes blink{50%{opacity:.25}}
+.count-label{font:600 10px/1 var(--font-mono); letter-spacing:.3em; color:var(--accent); margin-bottom:12px; transition:color 1s}
+.hemi-wrap{margin-top:38px; border:1px solid var(--gold-dim); background:rgba(10,8,6,.45); padding:26px 20px 12px; overflow-x:auto}
+.hemi-top{display:flex; flex-wrap:wrap; gap:10px 30px; align-items:center; justify-content:space-between; padding:0 10px 18px}
+.hemi-legend{display:flex; gap:24px; flex-wrap:wrap}
+.hl{display:flex; align-items:center; gap:9px; font:600 10.5px/1 var(--font-mono); letter-spacing:.18em; color:var(--muted)}
+.hl i{width:11px; height:11px; border-radius:50%}
+#hemiViz{width:100%; min-width:640px; height:auto}
+.seat{opacity:0; transition:fill .45s, opacity .6s, stroke .3s; cursor:pointer}
+.seat.on{opacity:1}
+.s-left{fill:#d5382c} .s-right{fill:#4e78e6} .s-und{fill:#7c7259}
+.seat:hover{stroke:var(--bone); stroke-width:2}
+#hemiTip{position:fixed; z-index:70; pointer-events:none; background:#0d0b08; border:1px solid var(--gold);
+  padding:8px 12px; font:500 10.5px/1.6 var(--font-mono); letter-spacing:.12em; color:var(--bone); display:none; white-space:nowrap}
+#hemiTip b{color:var(--accent)}
+#majority{margin-top:14px; text-align:center; font:700 12px/1.5 var(--font-mono); letter-spacing:.22em; padding:15px 10px;
+  border:1px dashed var(--gold-dim); color:var(--muted); transition:all .4s}
+#majority.win{border-style:solid; border-width:2px}
+#majority.win.m-l{color:#ff6a58; border-color:#d5382c}
+#majority.win.m-r{color:#8fb2ff; border-color:#4e78e6}
+.shift{margin-top:34px; display:grid; grid-template-columns:auto 1fr auto; gap:22px; align-items:center;
+  border:1px solid var(--gold-dim); padding:24px 28px; background:rgba(10,8,6,.4)}
+.shift .sk{font:700 10px/1.7 var(--font-mono); letter-spacing:.26em; color:var(--accent); transition:color 1s}
+.shift .sk small{display:block; color:var(--faint); font-weight:400; letter-spacing:.2em; margin-top:5px}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:34px; background:transparent; cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:2px; background:var(--gold-dim)}
+input[type=range]::-moz-range-track{height:2px; background:var(--gold-dim)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; margin-top:-10px;
+  background:var(--accent); transform:rotate(45deg) scale(.9); border:1px solid var(--bone); transition:background 1s}
+input[type=range]::-moz-range-thumb{width:20px; height:20px; border-radius:0; background:var(--accent); transform:rotate(45deg); border:1px solid var(--bone)}
+.shift-lab{font:600 10px/1 var(--font-mono); letter-spacing:.22em; color:var(--muted); text-align:center; margin-top:10px}
+.shift-lab b{color:var(--bone)}
+#shiftVal{color:var(--accent)}
+
+/* ---------- La disyuntiva ---------- */
+.arena{margin-top:46px; display:grid; grid-template-columns:1fr 74px 1fr; align-items:stretch}
+.side{position:relative; padding:46px 42px 42px; border:1px solid var(--gold-dim); background:rgba(10,8,6,.4);
+  overflow:hidden; transition:border-color .5s, background .5s, transform .5s cubic-bezier(.2,.7,.2,1)}
+.side::before{content:''; position:absolute; top:0; left:0; right:0; height:7px; background:var(--sc); opacity:.9}
+.side::after{content:''; position:absolute; top:7px; bottom:0; left:0; width:0; background:var(--sc); opacity:.06; transition:width .5s}
+.side:hover{transform:translateY(-5px); border-color:rgba(200,162,74,.55)}
+.side:hover::after{width:100%}
+.side-l{--sc:var(--side-l)} .side-r{--sc:var(--side-r)}
+.side.active{border-color:var(--sc); background:rgba(10,8,6,.7); box-shadow:0 0 0 1px var(--sc) inset}
+.side.active::after{width:100%; opacity:.1}
+.side-kicker{font:700 11px/1 var(--font-mono); letter-spacing:.32em; color:var(--sc)}
+.side-name{font:600 clamp(1.7rem,2.8vw,2.5rem)/1.1 var(--font-serif); color:var(--bone); margin-top:14px}
+.side-motto{font:italic 500 1.05rem/1.5 var(--font-serif); color:var(--muted); margin-top:8px}
+.side-pillars{list-style:none; margin-top:26px; border-top:1px solid var(--gold-dim)}
+.side-pillars li{padding:11px 0 11px 4px; border-bottom:1px solid rgba(200,162,74,.14); font-size:14px; color:#c9c0aa; display:flex; gap:14px}
+.side-pillars li::before{content:'—'; color:var(--sc); flex:none}
+.side-stats{margin-top:22px; font:500 11px/1.8 var(--font-mono); letter-spacing:.14em; color:var(--faint)}
+.side-stats b{color:var(--bone)}
+.btn-side{position:relative; overflow:hidden; margin-top:30px; width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:20px 24px; background:transparent; border:1.5px solid var(--sc); color:var(--sc);
+  font:800 15px/1 var(--font-mono); letter-spacing:.24em; transition:color .4s}
+.btn-side .fill{position:absolute; inset:0; background:var(--sc); transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.7,0,.2,1)}
+.btn-side b, .btn-side i, .btn-side small{position:relative; z-index:1; display:block}
+.btn-side small{font:500 9.5px/1 var(--font-mono); letter-spacing:.3em; opacity:.75; margin-top:7px; text-align:left}
+.btn-side i{width:20px; height:20px; flex:none}
+.btn-side:hover{color:#0d0b08} .btn-side:hover .fill{transform:scaleX(1)}
+.btn-side:active{transform:translateY(2px)}
+.side-badge{position:absolute; top:20px; right:20px; font:700 9px/1 var(--font-mono); letter-spacing:.24em;
+  color:#0d0b08; background:var(--sc); padding:6px 10px}
+.btn-desert{margin-top:14px; width:100%; padding:13px; background:none; border:1px dashed var(--gold-dim);
+  color:var(--muted); font:600 10px/1 var(--font-mono); letter-spacing:.26em; transition:all .3s}
+.btn-desert:hover{color:var(--bone); border-color:var(--bone)}
+.vs{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px}
+.vs::before{content:''; position:absolute; top:0; bottom:0; left:50%; width:1px; background:var(--gold-dim)}
+.vs .medal{width:54px; height:54px; border:1px solid var(--gold); border-radius:50%; display:grid; place-items:center;
+  font:italic 600 1.3rem/1 var(--font-serif); color:var(--accent); background:var(--bg); z-index:1; transition:color 1s}
+.vs .vs-txt{writing-mode:vertical-rl; font:700 10px/1 var(--font-mono); letter-spacing:.5em; color:var(--faint)}
+.arena-note{margin-top:26px; text-align:center; font:400 12px/1.8 var(--font-mono); letter-spacing:.08em; color:var(--faint); max-width:640px; margin-left:auto; margin-right:auto}
+
+/* ---------- Dossier ---------- */
+#dossier{padding-top:0}
+.dossier-inner{border:1px solid var(--sc); background:rgba(10,8,6,.5); position:relative}
+.dossier-inner::before{content:''; position:absolute; top:0; left:0; right:0; height:7px; background:var(--sc)}
+.dos-head{padding:44px 46px 34px; border-bottom:1px solid var(--gold-dim)}
+.dos-head .kicker{color:var(--sc)}
+.dos-name{font:600 clamp(2rem,4vw,3.4rem)/1.05 var(--font-serif); color:var(--bone); margin-top:12px}
+.dos-pact{font:italic 500 clamp(1.05rem,1.6vw,1.3rem)/1.4 var(--font-serif); color:var(--sc); margin-top:8px}
+.dos-motto{margin-top:14px; font:500 11px/1.9 var(--font-mono); letter-spacing:.24em; color:var(--muted); text-transform:uppercase}
+.dos-grid{display:grid; grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:0}
+.dos-main{padding:40px 46px; border-right:1px solid var(--gold-dim)}
+.dos-main h4, .dos-aside h4{font:700 11px/1 var(--font-mono); letter-spacing:.3em; color:var(--accent); margin-bottom:20px; transition:color 1s}
+.doctrine{font-size:16.5px; line-height:1.85; color:#cdc4ad}
+.doctrine::first-letter{font-family:var(--font-serif); font-weight:900; float:left; font-size:4.2em; line-height:.78; padding:.05em .1em 0 0; color:var(--sc)}
+.pillars{list-style:none; margin-top:34px; counter-reset:pl}
+.pillars li{counter-increment:pl; padding:18px 0 16px 58px; position:relative; border-top:1px solid rgba(200,162,74,.16)}
+.pillars li::before{content:counter(pl, upper-roman); position:absolute; left:0; top:16px;
+  font:italic 600 1.5rem/1 var(--font-serif); color:var(--sc); width:44px}
+.pillars b{display:block; font:600 15px/1.3 var(--font-sans); letter-spacing:.06em; color:var(--bone); text-transform:uppercase}
+.pillars p{font-size:13.5px; color:var(--muted); margin-top:5px; line-height:1.65}
+.dos-aside{padding:40px 38px; display:flex; flex-direction:column; gap:34px}
+.stat-bar{margin-bottom:18px}
+.sb-head{display:flex; justify-content:space-between; align-items:baseline; font:600 10px/1 var(--font-mono); letter-spacing:.2em; color:var(--muted); margin-bottom:8px}
+.sb-head b{font-size:13px; color:var(--bone); letter-spacing:.1em}
+.sb-track{height:10px; border:1px solid var(--gold-dim); padding:1px}
+.sb-track i{display:block; height:100%; width:0; background:var(--sc); transition:width 1.4s cubic-bezier(.2,.7,.2,1) .3s}
+.in .sb-track i{width:var(--w)}
+.ap-list{list-style:none}
+.ap-list li{padding:12px 0 12px 26px; position:relative; font-size:13.5px; color:#c9c0aa; border-bottom:1px solid rgba(200,162,74,.12); line-height:1.6}
+.ap-list li::before{position:absolute; left:0; top:13px; font:700 12px/1.4 var(--font-mono)}
+.assets li::before{content:'+'; color:var(--sc)} .liabs li::before{content:'—'; color:var(--faint)}
+.dos-cab{padding:38px 46px; border-top:1px solid var(--gold-dim)}
+.dos-cab table{width:100%; border-collapse:collapse}
+.dos-cab th{font:700 10px/1 var(--font-mono); letter-spacing:.26em; color:var(--accent); text-align:left; padding:0 14px 14px; border-bottom:2px solid var(--gold-dim); transition:color 1s}
+.dos-cab td{padding:15px 14px; border-bottom:1px solid rgba(200,162,74,.14); font-size:13.5px; color:#c9c0aa; vertical-align:top}
+.dos-cab td:first-child{font:600 12px/1.6 var(--font-mono); letter-spacing:.12em; color:var(--bone); white-space:nowrap}
+.dos-cab tr:hover td{background:rgba(200,162,74,.05)}
+.dos-press{padding:38px 46px 46px; border-top:1px solid var(--gold-dim)}
+.press-list{list-style:none; display:flex; flex-direction:column; gap:2px}
+.press-list li{display:grid; grid-template-columns:112px 1fr; gap:20px; padding:17px 12px; align-items:start; border-bottom:1px solid rgba(200,162,74,.12); transition:background .3s}
+.press-list li:hover{background:rgba(200,162,74,.05)}
+.p-tag{font:700 9px/1 var(--font-mono); letter-spacing:.2em; padding:6px 8px; border:1px solid; justify-self:start; margin-top:4px}
+.p-fav{color:var(--sc); border-color:var(--sc)}
+.p-adv{color:var(--rival); border-color:var(--rival)}
+.press-list b{font:800 11px/1 var(--font-sans); font-stretch:115%; letter-spacing:.2em; color:var(--bone); display:block}
+.press-list p{font:italic 500 15px/1.5 var(--font-serif); color:var(--muted); margin-top:6px}
+.dos-actions{display:flex; gap:16px; flex-wrap:wrap; margin-top:34px}
+
+/* ---------- Reglas ---------- */
+.rules-doc{margin-top:44px; border:1px solid var(--gold-dim); background:rgba(10,8,6,.4); position:relative; padding:52px clamp(26px,5vw,64px)}
+.rules-doc .stamp{position:absolute; top:34px; right:34px; transform:rotate(8deg)}
+.rules-doc .stamp.blue{border-color:#4e78e6; color:#8fb2ff}
+.rules-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 56px; margin-top:8px}
+.rr{padding:22px 0 20px 66px; position:relative; border-bottom:1px solid rgba(200,162,74,.16)}
+.rr::before{content:attr(data-n); position:absolute; left:0; top:20px; font:italic 600 1.35rem/1 var(--font-serif); color:var(--accent); width:52px; transition:color 1s}
+.rr b{display:block; font:600 14px/1.4 var(--font-sans); letter-spacing:.08em; color:var(--bone); text-transform:uppercase}
+.rr p{font-size:13.5px; color:var(--muted); margin-top:6px; line-height:1.7}
+.rules-foot{margin-top:30px; font:400 11px/1.9 var(--font-mono); letter-spacing:.16em; color:var(--faint); text-align:center}
+
+/* ---------- Footer ---------- */
+footer{position:relative; z-index:10; border-top:1px solid var(--gold-dim); padding:70px 0 90px; text-align:center; margin-top:40px}
+footer .hero-seal{width:130px; height:130px; margin-bottom:28px}
+.foot-name{font:600 clamp(1.4rem,2.6vw,2rem)/1.2 var(--font-serif); color:var(--bone)}
+.foot-meta{margin-top:14px; font:400 10.5px/2 var(--font-mono); letter-spacing:.22em; color:var(--faint); text-transform:uppercase}
+footer .tricolor{margin:26px auto 0}
+
+/* ---------- Overlay toma de partido ---------- */
+#pledge{position:fixed; inset:0; z-index:55; display:grid; place-items:center; text-align:center;
+  visibility:hidden; clip-path:circle(0% at var(--px,50%) var(--py,50%));
+  background:var(--ov-bg,#180a07);
+  transition:clip-path 1s cubic-bezier(.7,0,.2,1), visibility 0s 1s, opacity .7s ease;}
+#pledge.show{visibility:visible; clip-path:circle(150% at var(--px,50%) var(--py,50%)); transition:clip-path 1.05s cubic-bezier(.7,0,.2,1) .08s, opacity .7s ease;}
+#pledge.ov-l{--ov-bg:#1c0906; --ov:#ff5a40}
+#pledge.ov-r{--ov-bg:#090f20; --ov:#7da6ff}
+.pl-k{font:600 11px/1 var(--font-mono); letter-spacing:.4em; color:var(--ov); opacity:0}
+.pl-name{font:italic 700 clamp(2.6rem,8vw,6.4rem)/1.05 var(--font-serif); color:var(--ov); margin-top:22px; opacity:0}
+.pl-pact{font:500 clamp(1.1rem,2vw,1.5rem)/1.4 var(--font-serif); color:var(--bone); margin-top:12px; opacity:0}
+.pl-motto{font:400 12px/1.8 var(--font-mono); letter-spacing:.3em; color:var(--muted); margin-top:18px; text-transform:uppercase; opacity:0}
+.pl-sub{margin-top:30px; font:400 13px/1.8 var(--font-sans); color:var(--muted); max-width:440px; margin-left:auto; margin-right:auto; opacity:0}
+#pledge.show .pl-k{animation:plUp .8s .55s cubic-bezier(.2,.8,.2,1) forwards}
+#pledge.show .pl-name{animation:plUp .9s .75s cubic-bezier(.2,.8,.2,1) forwards}
+#pledge.show .pl-pact{animation:plUp .9s .95s cubic-bezier(.2,.8,.2,1) forwards}
+#pledge.show .pl-motto{animation:plUp .9s 1.15s cubic-bezier(.2,.8,.2,1) forwards}
+#pledge.show .pl-sub{animation:plUp .9s 1.35s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes plUp{from{opacity:0; transform:translateY(34px); filter:blur(6px)} to{opacity:1; transform:none; filter:none}}
+#pledge .hero-seal{width:84px; height:84px; margin:0 auto 26px; opacity:0}
+#pledge.show .hero-seal{animation:plUp .8s .4s forwards}
+#pledge .hero-seal [stroke]{stroke:var(--ov)!important}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed; bottom:34px; left:50%; transform:translate(-50%,140%); z-index:90;
+  background:#0d0b08; border:1px solid var(--accent); color:var(--bone);
+  padding:16px 24px; font:600 11px/1.5 var(--font-mono); letter-spacing:.18em; display:flex; gap:12px; align-items:center;
+  transition:transform .55s cubic-bezier(.2,1.2,.3,1); max-width:calc(100vw - 40px); text-align:center}
+#toast.show{transform:translate(-50%,0)}
+#toast i{width:15px; height:15px; color:var(--accent); flex:none}
+
+/* ---------- Sello SVG ---------- */
+.seal-svg [stroke]{stroke:var(--accent); transition:stroke 1s}
+.seal-svg text{fill:var(--accent); transition:fill 1s}
+
+/* ============================================================
+   ═══════════ ADICIÓN — ANEXOS A · B · C (bloque nuevo) ═══════════
+   Tres secciones nuevas que mutan según body[data-theme].
+   No modifica ninguna regla previa: solo clases con prefijo ax-.
+   ============================================================ */
+.ax-ghost{position:absolute; top:1%; left:50%; transform:translateX(-50%); z-index:-1;
+  pointer-events:none; user-select:none; white-space:nowrap;
+  font:900 clamp(110px,20vw,270px)/1 var(--font-serif); letter-spacing:-.02em; color:transparent}
+/* ---- ANEXO A · mapa ---- */
+.axa-grid{display:grid; grid-template-columns:minmax(0,7.2fr) minmax(0,4.4fr); gap:44px; margin-top:42px; align-items:start}
+.axa-map{position:relative; border:1px solid var(--gold-dim); background:rgba(10,8,6,.45); padding:22px 16px 12px; overflow:hidden}
+.axa-map::after{content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(0,0,0,.5))}
+#axMap{width:100%; height:auto; display:block; position:relative; z-index:1}
+.axh{stroke:rgba(13,11,8,.9); stroke-width:.9; opacity:0; transition:fill .9s ease, opacity .7s ease; cursor:pointer}
+.axh:hover{stroke:var(--bone); stroke-width:1.6}
+.axh.on{opacity:1}
+.axh.aL{fill:#d5382c} .axh.aLm{fill:#93291f} .axh.aB{fill:#4e78e6} .axh.aBm{fill:#3a5ca0} .axh.aU{fill:#7c7259}
+.axh.at{fill:#ff5a40} .axh.at2{fill:#8fb2ff}
+.axh.on.at,.axh.on.at2{animation:axPulse 2.1s ease-in-out infinite}
+@keyframes axPulse{0%,100%{opacity:1} 50%{opacity:.4}}
+.axa-legend{display:flex; gap:22px; flex-wrap:wrap; justify-content:center; margin-top:14px; position:relative; z-index:1}
+.axa-legend .hl i{border-radius:2px}
+.axp-dot{animation:axPulse 2.1s infinite}
+.axa-caption{margin-top:16px; text-align:center; font:400 9.5px/1.9 var(--font-mono); letter-spacing:.2em; color:var(--faint)}
+#axMapTip{position:fixed; z-index:70; pointer-events:none; background:#0d0b08; border:1px solid var(--accent);
+  padding:8px 12px; font:500 10.5px/1.6 var(--font-mono); letter-spacing:.12em; color:var(--bone); display:none; white-space:nowrap}
+#axMapTip b{color:var(--accent)}
+.axa-panel{border:1px solid var(--gold-dim); background:rgba(10,8,6,.4); padding:30px 30px 26px}
+.axa-panel h4{font:700 11px/1.5 var(--font-mono); letter-spacing:.26em; color:var(--accent); margin-bottom:6px; transition:color 1s}
+.axa-panel .axp-sub{font:400 10px/1.7 var(--font-mono); letter-spacing:.16em; color:var(--faint); margin-bottom:20px}
+.axp{margin-bottom:18px}
+.axp-head{display:flex; justify-content:space-between; align-items:baseline; font:600 10px/1 var(--font-mono); letter-spacing:.16em; color:var(--muted); margin-bottom:8px}
+.axp-head b{font-size:11.5px; color:var(--bone); letter-spacing:.12em}
+.dualbar{display:flex; height:9px; border:1px solid var(--gold-dim); padding:1px}
+.dualbar span{height:100%}
+.dualbar .dl{background:#d5382c} .dualbar .dm{background:#7c7259; flex:1} .dualbar .dr{background:#4e78e6}
+.solo-bar{height:9px; border:1px solid var(--gold-dim); padding:1px}
+.axa-panel .solo-bar i{display:block; height:100%; width:0; background:var(--tc,#d5382c); transition:width 1.4s cubic-bezier(.2,.7,.2,1) .3s}
+.reveal.in .solo-bar i{width:var(--w)}
+.axp-target{border:1px dashed var(--tc,#d5382c); padding:12px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+  font:600 10.5px/1.5 var(--font-mono); letter-spacing:.14em; color:var(--bone); background:rgba(10,8,6,.5)}
+.axp-target em{font-style:normal; color:var(--tc,#d5382c); white-space:nowrap}
+.axa-foot{margin-top:10px; padding-top:16px; border-top:1px solid var(--gold-dim); font:italic 500 14px/1.6 var(--font-serif); color:var(--muted)}
+/* ---- ANEXO B · calle ---- */
+.axb-split{display:grid; grid-template-columns:1fr 130px 1fr; margin-top:42px; align-items:stretch}
+.axb-wall{padding:30px 30px 26px; border:1px solid; position:relative}
+.axb-wl{border-color:rgba(213,56,44,.45); background:linear-gradient(180deg, rgba(213,56,44,.09), rgba(213,56,44,.02) 60%)}
+.axb-wr{border-color:rgba(78,120,230,.45); background:linear-gradient(180deg, rgba(78,120,230,.09), rgba(78,120,230,.02) 60%)}
+.axb-wall-head{display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid; padding-bottom:10px; margin-bottom:4px}
+.axb-wl .axb-wall-head{border-color:#d5382c} .axb-wr .axb-wall-head{border-color:#4e78e6}
+.axb-wall-head b{font:800 12px/1 var(--font-sans); font-stretch:115%; letter-spacing:.22em; color:var(--bone)}
+.axb-wall-head span{font:400 9px/1 var(--font-mono); letter-spacing:.2em; color:var(--faint)}
+.ax-vnote{position:relative; margin-top:20px; background:var(--paper2); color:var(--paper-ink); padding:18px 20px 14px;
+  box-shadow:5px 8px 0 rgba(24,18,10,.16), 0 14px 26px rgba(24,18,10,.24); border:1px solid rgba(24,18,10,.14);
+  transform:rotate(var(--rot,0deg)); transition:transform .4s}
+.ax-vnote:hover{transform:rotate(0deg) translateY(-3px)}
+.ax-vnote::before{content:''; position:absolute; top:-6px; left:50%; width:11px; height:11px; margin-left:-5.5px; border-radius:50%;
+  background:var(--pin,#a41e22); box-shadow:0 2px 4px rgba(0,0,0,.5), inset 0 -3px 4px rgba(0,0,0,.35)}
+.ax-vnote q, .axb-mural q, .axb-plaque q, .axb-cloth q{quotes:'«' '»'}
+.ax-vnote q{font:italic 500 15px/1.55 var(--font-serif); color:#241c0f; display:block}
+.ax-vnote cite{display:block; margin-top:10px; font:400 9px/1.6 var(--font-mono); letter-spacing:.2em; color:var(--paper-muted); font-style:normal; text-transform:uppercase}
+.axb-seam{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:0 8px; position:relative}
+.axb-seam::before{content:''; position:absolute; top:0; bottom:0; left:50%; width:1px; background:var(--gold-dim)}
+.axb-scale{width:54px; height:54px; border:1px solid var(--gold); border-radius:50%; display:grid; place-items:center; background:var(--bg); z-index:1; color:var(--accent)}
+.axb-scale i{width:24px; height:24px}
+.axb-tie{font:700 12px/1 var(--font-mono); letter-spacing:.2em; color:var(--bone); border:1px solid var(--gold-dim); padding:8px 10px; background:var(--bg); z-index:1}
+.axb-reading{writing-mode:vertical-rl; font:600 10px/1 var(--font-mono); letter-spacing:.34em; color:var(--muted); text-align:center}
+.axb-rope{position:relative; height:72px; margin-top:36px}
+.axb-rope::before{content:''; position:absolute; left:0; right:0; top:10px; height:2px;
+  background:linear-gradient(90deg, transparent, #dca445 5%, #dca445 95%, transparent)}
+.bflag{position:absolute; top:12px; width:26px; height:38px; transform-origin:50% 0;
+  background:#c22a20; clip-path:polygon(0 0,100% 0,50% 100%); animation:axSwing 3.4s ease-in-out infinite; animation-delay:var(--dl,0s)}
+.bflag.gold{background:#dca445}
+@keyframes axSwing{0%,100%{transform:rotate(6deg)} 50%{transform:rotate(-6deg)}}
+.axb-chant{overflow:hidden; border-top:1px solid rgba(224,64,47,.4); border-bottom:1px solid rgba(224,64,47,.4); margin-top:34px; padding:20px 0; background:rgba(224,64,47,.05)}
+.axb-chant .ch-track{display:inline-flex; white-space:nowrap; animation:axChant 30s linear infinite}
+.axb-chant span{font:italic 800 clamp(1.5rem,3.2vw,2.6rem)/1 var(--font-serif); color:var(--accent); margin-right:.7em}
+@keyframes axChant{to{transform:translateX(-50%)}}
+.axb-murals{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:36px}
+.axb-mural{background:#a8201f; border:1px solid #dca445; color:#f8ece0; padding:30px 26px 24px; position:relative;
+  transform:rotate(var(--rot,0deg)); transition:transform .4s; box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.axb-mural:hover{transform:rotate(0deg) translateY(-4px)}
+.axb-mural::before{content:''; position:absolute; inset:6px; border:1px solid rgba(220,164,69,.35); pointer-events:none}
+.axb-mural q{font:700 clamp(1.05rem,1.7vw,1.4rem)/1.4 var(--font-serif); display:block}
+.axb-mural cite{display:block; margin-top:14px; font:400 9px/1.6 var(--font-mono); letter-spacing:.22em; color:rgba(248,236,224,.75); font-style:normal; text-transform:uppercase}
+.axb-cloth{margin-top:40px; position:relative; overflow:hidden; padding:46px 40px 40px; color:#f8e9d2;
+  background:linear-gradient(180deg,#b3211f,#7e1513); border-top:4px solid #dca445; border-bottom:4px solid #dca445}
+.axb-cloth::before{content:''; position:absolute; inset:0; opacity:.12;
+  background:repeating-linear-gradient(90deg, transparent 0 26px, rgba(255,255,255,.6) 26px 28px); animation:axWave 9s linear infinite}
+@keyframes axWave{to{background-position:56px 0}}
+.axb-cloth q{position:relative; font:800 clamp(1.3rem,2.6vw,2.1rem)/1.3 var(--font-serif); text-align:center; display:block; text-shadow:0 2px 0 rgba(0,0,0,.3)}
+.axb-cloth cite{display:block; position:relative; margin-top:16px; text-align:center; font:400 10px/1.6 var(--font-mono); letter-spacing:.26em; color:rgba(248,233,210,.8); font-style:normal; text-transform:uppercase}
+.axb-standards{display:flex; gap:20px; justify-content:center; margin-top:38px; flex-wrap:wrap}
+.std{width:96px; height:230px; background:linear-gradient(180deg,#17376f,#0f2650); border:1px solid rgba(125,166,255,.4); position:relative; display:flex; align-items:center; justify-content:center}
+.std::before{content:''; position:absolute; top:10px; bottom:10px; left:8px; right:8px; border:1px solid rgba(125,166,255,.25)}
+.std::after{content:''; position:absolute; left:0; right:0; bottom:-10px; height:10px; background:repeating-linear-gradient(90deg, #dfaa47 0 7px, transparent 7px 14px)}
+.std span{writing-mode:vertical-rl; font:700 13px/1 var(--font-mono); letter-spacing:.6em; color:#e9eef8}
+.axb-plaques{display:grid; grid-template-columns:repeat(3,1fr); gap:26px; margin-top:38px}
+.axb-plaque{border:1px solid rgba(94,139,255,.45); background:rgba(20,47,107,.16); padding:30px 26px; text-align:center; position:relative}
+.axb-plaque::before{content:''; position:absolute; top:8px; left:8px; right:8px; bottom:8px; border:1px solid rgba(94,139,255,.2); pointer-events:none}
+.axb-plaque q{font:italic 600 clamp(1.05rem,1.6vw,1.35rem)/1.5 var(--font-serif); color:var(--bone); display:block}
+.axb-plaque cite{display:block; margin-top:14px; font:400 9px/1.6 var(--font-mono); letter-spacing:.22em; color:var(--muted); font-style:normal; text-transform:uppercase}
+.axb-contract{margin-top:40px; background:var(--paper2); color:var(--paper-ink); padding:38px 42px 34px; position:relative; box-shadow:0 24px 50px rgba(0,0,0,.45); border:1px solid rgba(24,18,10,.2)}
+.axb-contract .ct-head{display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--paper-ink); padding-bottom:10px}
+.axb-contract .ct-head b{font:800 12px/1 var(--font-sans); font-stretch:115%; letter-spacing:.2em}
+.axb-contract .ct-head span{font:400 9px/1 var(--font-mono); letter-spacing:.2em; color:var(--paper-muted)}
+.axb-contract ol{list-style:none; margin-top:18px; counter-reset:ct}
+.axb-contract ol li{counter-increment:ct; padding:12px 0 12px 40px; position:relative; border-bottom:1px dashed rgba(24,18,10,.3); font-size:14.5px; color:#2a2115}
+.axb-contract ol li::before{content:counter(ct,decimal-leading-zero); position:absolute; left:0; top:13px; font:600 11px/1.6 var(--font-mono); color:#1e4bb8}
+.axb-sig{display:flex; gap:40px; margin-top:30px; flex-wrap:wrap}
+.sigf{flex:1; min-width:180px}
+.sigf .line{border-bottom:1px solid #55503f; height:34px; font:italic 400 18px/34px var(--font-serif); color:#55503f; text-align:center}
+.sigf .sig-ink{font-family:'Brush Script MT','Segoe Script',cursive; font-size:24px; color:#3a2f22}
+.sigf small{display:block; text-align:center; margin-top:8px; font:400 8.5px/1 var(--font-mono); letter-spacing:.26em; color:var(--paper-muted)}
+.axb-contract .stamp{position:absolute; top:22px; right:26px; transform:rotate(8deg)}
+.axb-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:38px; background:var(--gold-dim); border:1px solid var(--gold-dim)}
+.axb-stats .st{background:var(--bg2); padding:26px 18px; text-align:center}
+.axb-stats .st b{display:block; font:600 clamp(1.5rem,3vw,2.3rem)/1 var(--font-mono); color:var(--accent); font-variant-numeric:tabular-nums; transition:color 1s}
+.axb-stats .st span{display:block; margin-top:10px; font:500 9px/1.6 var(--font-mono); letter-spacing:.24em; color:var(--muted)}
+/* ---- ANEXO C · sala de situación ---- */
+.axc-grid{display:grid; grid-template-columns:350px minmax(0,1fr); gap:44px; margin-top:42px; align-items:start}
+.axc-monitor{border:1px solid var(--gold-dim); background:rgba(10,8,6,.55); padding:24px}
+.axc-mon-head{display:flex; justify-content:space-between; align-items:center; gap:10px; font:600 10px/1 var(--font-mono); letter-spacing:.2em; color:var(--muted); padding-bottom:14px; border-bottom:1px solid var(--gold-dim)}
+.axc-mon-head .live-mini{display:flex; align-items:center; gap:7px; color:var(--danger); font-weight:700; white-space:nowrap}
+.axc-radar{position:relative; width:min(260px,100%); aspect-ratio:1; margin:22px auto 8px; border-radius:50%;
+  border:1px solid rgba(200,162,74,.45); overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(200,162,74,.05), transparent 70%),
+    repeating-radial-gradient(circle at 50% 50%, transparent 0 30px, rgba(200,162,74,.14) 30px 31px),
+    #0a0806}
+.axc-radar::before{content:''; position:absolute; left:50%; top:0; bottom:0; width:1px; background:rgba(200,162,74,.2)}
+.axc-radar::after{content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:rgba(200,162,74,.2)}
+.ax-sweep{position:absolute; inset:0; border-radius:50%; mix-blend-mode:screen; opacity:.35;
+  background:conic-gradient(from 0deg, var(--accent), transparent 70deg); animation:axSweep 4.6s linear infinite}
+@keyframes axSweep{to{transform:rotate(360deg)}}
+.blip{position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%); font:700 8.5px/1 var(--font-mono); letter-spacing:.18em; color:var(--bone); white-space:nowrap; text-shadow:0 1px 3px #000}
+.blip::before{content:''; position:absolute; left:-12px; top:50%; width:7px; height:7px; margin-top:-3.5px; border-radius:50%; background:var(--bc,#c8a24a); animation:blipPing var(--bd,1.6s) ease-out infinite}
+@keyframes blipPing{0%{box-shadow:0 0 0 0 var(--bc,#c8a24a)} 100%{box-shadow:0 0 0 11px transparent}}
+.blip.fading{opacity:.45}
+.axc-radar-cap{text-align:center; font:500 9px/1.8 var(--font-mono); letter-spacing:.22em; color:var(--faint); margin-top:8px}
+.axc-gauge{margin-top:20px; border-top:1px solid var(--gold-dim); padding-top:18px}
+.axc-gauge .g-head{display:flex; justify-content:space-between; align-items:baseline; gap:10px; font:600 10px/1.4 var(--font-mono); letter-spacing:.18em; color:var(--muted); margin-bottom:10px}
+.g-head b{color:var(--gc,#c8a24a); letter-spacing:.12em; white-space:nowrap}
+.g-track{position:relative; height:12px; border:1px solid var(--gold-dim); padding:1px; background:repeating-linear-gradient(90deg, transparent 0 19px, rgba(200,162,74,.25) 19px 20px)}
+.axc-monitor .g-track i{position:absolute; top:1px; bottom:1px; left:1px; width:0; background:var(--gc,#c8a24a); transition:width 1.6s cubic-bezier(.2,.7,.2,1) .4s}
+.reveal.in .g-track i{width:var(--w)}
+.axc-col{position:relative}
+.axc-tl{list-style:none}
+.tl-day{display:grid; grid-template-columns:96px minmax(0,1fr); gap:18px; padding:16px 0; border-bottom:1px solid rgba(200,162,74,.16)}
+.tl-date{font:700 11px/1.5 var(--font-mono); letter-spacing:.18em; color:var(--accent); padding-top:3px; transition:color 1s}
+.tl-date small{display:block; font-weight:400; color:var(--faint); letter-spacing:.14em; margin-top:4px}
+.tl-day.gold .tl-date{color:var(--gold)}
+.tl-duo{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.tl-card{border-left:3px solid var(--tc,var(--gold)); background:rgba(10,8,6,.4); padding:14px 18px; position:relative}
+.tl-card b{display:block; font:600 10.5px/1.5 var(--font-mono); letter-spacing:.14em; color:var(--bone)}
+.tl-card p{font-size:13px; color:var(--muted); margin-top:5px; line-height:1.6}
+.tl-card .chip{display:inline-block; margin-top:9px; font:700 8.5px/1 var(--font-mono); letter-spacing:.2em; color:var(--tc,var(--gold)); border:1px solid; padding:4px 8px}
+.tl-card .tm{font:600 10.5px/1 var(--font-mono); color:var(--tc,var(--gold)); letter-spacing:.12em; margin-right:10px}
+.tl-final{margin-top:22px; border:1.5px solid var(--accent); background:var(--accent-soft); padding:26px 30px; display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; position:relative; transition:border-color 1s, background 1s}
+.tl-final .fin-t{font:700 clamp(1.2rem,2.4vw,1.9rem)/1.2 var(--font-serif); color:var(--bone)}
+.tl-final .fin-t em{color:var(--accent); font-style:italic; transition:color 1s}
+.tl-final .fin-h{font:500 10.5px/1.8 var(--font-mono); letter-spacing:.18em; color:var(--muted); max-width:440px}
+.tl-final .stamp{flex:none; animation:stampIn .9s cubic-bezier(.2,1.4,.3,1) .4s both}
+.axc-note{margin-top:26px; font:400 11px/1.8 var(--font-mono); letter-spacing:.12em; color:var(--faint); border-left:2px solid var(--gold-dim); padding-left:16px}
+/* ---- responsive de los anexos ---- */
+@media(max-width:1020px){
+  .axa-grid{grid-template-columns:1fr}
+  .axc-grid{grid-template-columns:1fr}
+}
+@media(max-width:860px){
+  .axb-split{grid-template-columns:1fr}
+  .axb-seam{flex-direction:row; height:auto; padding:18px 0; gap:12px}
+  .axb-seam::before{left:0; right:0; top:50%; bottom:auto; height:1px; width:auto}
+  .axb-reading{writing-mode:horizontal-tb; letter-spacing:.2em; text-align:center}
+  .axb-murals,.axb-plaques{grid-template-columns:1fr}
+  .axb-stats{grid-template-columns:1fr}
+  .tl-day{grid-template-columns:1fr; gap:8px}
+  .tl-duo{grid-template-columns:1fr}
+  .axb-contract{padding:30px 22px}
+}
+
+/* ============================================================
+   ═══════════ ADICIÓN — SELECTOR DE BANDO FLOTANTE (fs-) ═══════════
+   El botón dual: dos mitades (roja / azul) siempre visibles.
+   Reusa el motor original mediante eventos — no lo modifica.
+   ============================================================ */
+#factionSwitch{position:fixed; bottom:24px; left:50%; z-index:52;
+  display:flex; flex-direction:column; align-items:center; gap:9px;
+  transform:translate(-50%,0); opacity:1;
+  transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1)}
+#factionSwitch.fs-boot{opacity:0; transform:translate(-50%,150%); pointer-events:none}
+#factionSwitch.fs-lift{transform:translate(-50%,-66px)}
+#factionSwitch.fs-hide{opacity:0; transform:translate(-50%,140%); pointer-events:none}
+.fs-label{display:flex; align-items:center; gap:12px;
+  font:600 8.5px/1 var(--font-mono); letter-spacing:.42em; color:var(--faint); text-transform:uppercase}
+.fs-label i{display:block; width:36px; height:1px; background:var(--gold-dim)}
+.fs-body{display:flex; align-items:stretch;
+  border:1px solid var(--gold-dim); background:rgba(13,11,8,.9);
+  backdrop-filter:blur(14px); box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.fs-half{position:relative; overflow:hidden; display:flex; align-items:center; gap:13px;
+  padding:15px 24px 14px; min-width:238px; background:transparent; border:none; text-align:left;
+  color:var(--bone); flex:1 1 0;
+  transition:background .35s, box-shadow .35s, opacity .45s, flex-grow .5s cubic-bezier(.2,.7,.2,1)}
+.fs-l{--fc:#d5382c; --fct:#ff6a58}
+.fs-r{--fc:#4e78e6; --fct:#8fb2ff}
+.fs-half .fs-bar{position:absolute; top:0; left:0; right:0; height:3px; background:var(--fc); opacity:.9}
+.fs-ic{width:17px; height:17px; color:var(--fct); flex:none; position:relative; z-index:1; transition:color .35s}
+.fs-txt{position:relative; z-index:1}
+.fs-txt b{display:block; font:800 11px/1 var(--font-mono); letter-spacing:.2em; color:var(--bone); transition:color .35s}
+.fs-txt small{display:block; font:400 8.5px/1 var(--font-mono); letter-spacing:.12em; color:var(--faint); margin-top:5px}
+.fs-sweep{position:absolute; inset:0; z-index:0; background:var(--fc); opacity:.12;
+  transform:translateX(-102%); transition:transform .55s cubic-bezier(.65,0,.35,1), opacity .25s}
+.fs-half:hover{flex-grow:1.4; background:rgba(0,0,0,.18); box-shadow:0 0 0 1px var(--fc) inset}
+.fs-half:hover .fs-sweep{transform:translateX(0)}
+.fs-half:hover .fs-txt b{color:var(--fct)}
+.fs-half:active{transform:translateY(1px)}
+.fs-state{position:absolute; top:8px; right:9px; z-index:2;
+  font:700 7px/1 var(--font-mono); letter-spacing:.16em; color:#efe7d6;
+  background:#0d0b08; border:1px solid rgba(239,231,214,.28); padding:3px 6px}
+.fs-vs{display:grid; place-items:center; width:46px; flex:none; z-index:1;
+  font:italic 600 1.05rem/1 var(--font-serif); color:var(--accent);
+  background:var(--bg); border-left:1px solid var(--gold-dim); border-right:1px solid var(--gold-dim);
+  transition:color 1s}
+.fs-half.active{background:var(--fc); box-shadow:none}
+.fs-half.active .fs-bar{background:#0d0b08; opacity:.35}
+.fs-half.active .fs-ic{color:#0d0b08}
+.fs-half.active .fs-txt b{color:#0d0b08}
+.fs-half.active .fs-txt small{color:rgba(13,11,8,.72)}
+.fs-half.active .fs-sweep{display:none}
+#factionSwitch[data-side="left"] .fs-r,
+#factionSwitch[data-side="right"] .fs-l{opacity:.45}
+#factionSwitch[data-side="left"] .fs-r:hover,
+#factionSwitch[data-side="right"] .fs-l:hover{opacity:1}
+.fs-desert{font:600 8.5px/1 var(--font-mono); letter-spacing:.3em; color:var(--muted);
+  background:rgba(13,11,8,.9); backdrop-filter:blur(14px);
+  border:1px dashed var(--gold-dim); padding:9px 16px; cursor:pointer;
+  animation:fsUp .45s cubic-bezier(.2,.8,.2,1) both; transition:color .3s, border-color .3s}
+.fs-desert:hover{color:var(--bone); border-color:var(--bone)}
+@keyframes fsUp{from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none}}
+@media(max-width:860px){
+  #factionSwitch{bottom:14px; gap:7px}
+  .fs-label{display:none}
+  .fs-body{width:calc(100vw - 40px)}
+  .fs-half{min-width:0; padding:12px 10px; gap:9px}
+  .fs-txt small{display:none}
+  .fs-txt b{font-size:9.5px; letter-spacing:.13em}
+  .fs-vs{width:36px; font-size:.95rem}
+  .fs-ic{width:15px; height:15px}
+}
+
+/* ---------- Responsive ---------- */
+@media(max-width:1020px){
+  .paper-grid{grid-template-columns:1fr}
+  .dos-grid{grid-template-columns:1fr}
+  .dos-main{border-right:none; border-bottom:1px solid var(--gold-dim)}
+  .rules-grid{grid-template-columns:1fr}
+}
+@media(max-width:860px){
+  .nav-links{display:none}
+  nav{padding:0 20px; gap:12px}
+  #frame{inset:7px}
+  .arena{grid-template-columns:1fr}
+  .vs{height:92px; flex-direction:row}
+  .vs::before{top:50%; bottom:auto; left:0; right:0; width:auto; height:1px}
+  .vs .vs-txt{writing-mode:horizontal-tb; letter-spacing:.4em}
+  .paper-cols{column-count:1}
+  .dos-head,.dos-main,.dos-cab,.dos-press{padding-left:24px; padding-right:24px}
+  .press-list li{grid-template-columns:1fr; gap:8px}
+  .dos-cab td:first-child{white-space:normal}
+  .rules-doc .stamp{position:static; display:inline-block; margin-bottom:20px; transform:rotate(-4deg)}
+  .shift{grid-template-columns:1fr; gap:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important; transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body data-theme="neutral">
+    <script src="/static/navbar.js"></script>
+<!-- Atmosfera -->
+<canvas id="ashes" aria-hidden="true"></canvas>
+<div id="grain" aria-hidden="true"></div>
+<div id="scanlines" aria-hidden="true"></div>
+<div id="cursorGlow" aria-hidden="true"></div>
+
+<!-- Marco de expediente -->
+<div id="frame" aria-hidden="true">
+  <span class="corner c-tl"></span><span class="corner c-tr"></span>
+  <span class="corner c-bl"></span><span class="corner c-br"></span>
+</div>
+
+<!-- Navegación -->
+<nav id="nav">
+  <a class="brand" href="#hero">
+    <span class="seal-mini seal-svg" data-seal></span>
+    <b>CRISIS BICAMERAL<em>SVPMUN · MMXXVI</em></b>
+  </a>
+  <div class="nav-links">
+    <a href="#contexto">EXPEDIENTE</a>
+    <a href="#tablero">TABLERO</a>
+    <a href="#disyuntiva">BANDOS</a>
+    <a href="#reglas">REGLAS</a>
+  </div>
+  <div class="nav-right">
+    <div id="sideChip"><span class="dot"></span><span id="sideChipTxt">—</span></div>
+    <span id="clock"><i data-lucide="clock"></i><span id="clockTxt">--:--:--</span></span>
+    <span class="live"><span class="live-dot"></span>EN SESIÓN</span>
+    <button id="soundBtn" aria-label="Activar transmisión sonora">
+      <span id="icOff"><i data-lucide="volume-x"></i></span>
+      <span id="icOn"><i data-lucide="volume-2"></i></span>
+      <span>TRANSMISIÓN</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header id="hero">
+  <div id="ghost" aria-hidden="true">2026</div>
+  <div class="wrap hero-inner">
+    <div class="hero-seal seal-svg" data-seal></div>
+    <div class="tricolor" aria-hidden="true"><span></span><span></span><span></span></div>
+    <p class="kicker hero-kicker">SVPMUN · Modelo de Naciones Unidas · Comité de Crisis</p>
+    <p class="byline">Edición de crisis · Vol. I — N.º 2026 · Sala de prensa del Congreso · Bogotá D.C.</p>
+    <h1 class="hero-title">
+      <span class="ln"><span>Crisis</span></span>
+      <span class="ln"><span class="ital">Bicameral</span></span>
+      <span class="ln"><span>Electoral</span></span>
+    </h1>
+    <p class="hero-deck">Coalición de Izquierda <em>v.</em> Coalición de Derecha</p>
+    <div class="hero-meta">
+      <span class="hm"><i data-lucide="map-pin"></i>BOGOTÁ D.C. · COLOMBIA</span>
+      <span class="hm"><i data-lucide="calendar"></i>PRIMERA VUELTA — 31 · 05 · 2026</span>
+      <span class="stamp">URGENTE · NIVEL ALTO</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#contexto"><span class="wipe"></span><i data-lucide="newspaper"></i><span>Leer el expediente</span></a>
+      <a class="btn solid" href="#disyuntiva"><span class="wipe"></span><i data-lucide="flag"></i><span>Tomar partido</span></a>
+    </div>
+  </div>
+
+  <!-- Bandera tricolor 3D · arrastrable -->
+  <div id="flagStage" aria-label="Bandera de Colombia en tres dimensiones, arrastrable">
+    <div id="flagHint">
+      <span><i data-lucide="move"></i>ARRASTRA PARA GIRAR</span>
+      <span><i data-lucide="zoom-in"></i>RUEDA PARA ACERCAR</span>
+      <span><i data-lucide="wind"></i>MUEVE EL CURSOR: VIENTO</span>
+    </div>
+  </div>
+
+  <!-- Ticker de prensa -->
+  <div class="ticker" aria-label="Titulares en vivo">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== I. CONTEXTO ===================== -->
+<section id="contexto">
+  <div class="wrap">
+    <p class="kicker reveal">I. Antecedentes — Bogotá D.C., marzo de 2026</p>
+    <h2 class="sec-title reveal" style="--d:.1s"><em>i.</em>El país en la encrucijada</h2>
+    <div class="rule reveal" style="--d:.15s"></div>
+    <div class="paper-grid">
+      <div>
+        <p class="paper-date reveal">DESPACHO DEL CORRESPONSAL POLÍTICO — QUINCE SEMANAS PARA LAS URNAS</p>
+        <div class="paper-cols reveal" style="--d:.1s">
+          <div class="desktop-only">
+            <p class="lead">Colombia se encuentra en una encrucijada histórica y la tensión institucional ha alcanzado su punto más alto. Las elecciones de 2026 marcan un punto de inflexión sin precedentes en la dinámica política nacional.</p>
+            <p>La contienda contrapone la <b>Coalición de Izquierda</b>, enfocada en la consolidación de reformas sociales y la continuidad del modelo progresista, frente al vertiginoso ascenso de su contraparte de derecha: una fuerza conservadora que aboga por un giro radical en materia de seguridad, economía e institucionalidad.</p>
+            <p>El debate electoral trasciende la simple disputa por la Presidencia y las curules del Congreso. Representa una confrontación directa entre dos modelos de sociedad: uno centrado en la transformación social, el cambio de matriz productiva y las políticas de paz; el otro, enfocado en el orden, la mano dura, la defensa de la libertad económica y la reconsideración del rumbo institucional.</p>
+            <p>Con una opinión pública profundamente polarizada, acusaciones de lado y lado sobre la estabilidad democrática y una intensa disputa por el control de las mayorías legislativas, esta coyuntura define no solo quién gobernará, sino la dirección estructural que tomará Colombia en los próximos años.</p>
+          </div>
+          <div class="mobile-only">
+            <p class="lead">Colombia vive una tensión institucional histórica. Las elecciones de 2026 enfrentan dos modelos radicales: la <b>Coalición de Izquierda</b> (reformas y progresismo) vs. la <b>Coalición de Derecha</b> (seguridad y libre mercado). Con el país polarizado, el control del Congreso definirá el rumbo de la nación.</p>
+          </div>
+        </div>
+        <blockquote class="pullquote reveal" style="--d:.1s">
+          «No se disputa un gobierno. Se disputa la idea misma de país.»
+          <small>EDITORIAL CONJUNTO — PRENSA NACIONAL, 14 DE MARZO DE 2026</small>
+        </blockquote>
+      </div>
+      <div class="clips">
+        <div class="clip reveal" data-px="1.6" style="--rot:-2.4deg">
+          <div class="tape"></div>
+          <div class="clip-head"><b>EL CORREO NACIONAL</b><span>ED. MAÑANA</span></div>
+          <h4>La nación en dos mitades que ya no se hablan</h4>
+          <p class="desktop-only">Los sondeos confirman el empate estructural más prolongado en cuatro décadas: ningún candidato supera el 4% de ventaja desde enero. Los analistas hablan de «dos electorados paralelos» que consumen prensa, viven barrios y temen cosas distintas.</p>
+          <p class="mobile-only">Sondeos confirman empate estructural. Dos electorados paralelos y opuestos dividen al país.</p>
+          <div class="clip-foot"><span>BOGOTÁ · PÁG. 4A</span><span>3 MAR 2026</span></div>
+        </div>
+        <div class="clip reveal" data-px="1" style="--rot:1.8deg; --d:.12s">
+          <div class="tape"></div>
+          <div class="clip-head"><b>EL FARO</b><span>SEMANARIO</span></div>
+          <h4>273 curules en juego: el Congreso será el verdadero campo de batalla</h4>
+          <p class="desktop-only">Senado y Cámara renuevan íntegramente sus bancadas en marzo. Ni la izquierda ni la derecha parten con mayoría absoluta: 137 curules separan a cualquiera de los dos bloques del control total de la agenda legislativa.</p>
+          <p class="mobile-only">273 curules en juego. Ningún bloque tiene la mayoría absoluta asegurada para gobernar.</p>
+          <div class="clip-foot"><span>MEDELLÍN · PORTADA</span><span>9 MAR 2026</span></div>
+          <span class="stamp">CLAVE</span>
+        </div>
+        <div class="clip reveal" data-px="2.2" style="--rot:-1.2deg; --d:.2s">
+          <div class="tape"></div>
+          <div class="clip-head"><b>LA TRIBUNA</b><span>ED. TARDE</span></div>
+          <h4>El día que se rompió el empate — y volvió a romperse</h4>
+          <p class="desktop-only">Tres encuestas en una semana dieron tres líderes distintos. La volatilidad del votante indeciso, ya el 14% del electorado, obligó a las dos coaliciones a reabrir sus gabinetes de campaña. Todo indica que la crisis se definirá en el Congresso.</p>
+          <p class="mobile-only">Volatilidad extrema del voto indeciso (14%). La crisis se definirá de forma urgente en el Congreso.</p>
+          <div class="clip-foot"><span>CALI · PÁG. 2</span><span>17 MAR 2026</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== II. TABLERO ===================== -->
+<section id="tablero">
+  <div class="wrap">
+    <div class="board-head">
+      <div>
+        <p class="kicker reveal">II. El tablero electoral</p>
+        <h2 class="sec-title reveal" style="--d:.1s"><em>ii.</em>El hemiciclo en disputa</h2>
+        <div class="rule reveal" style="--d:.15s"></div>
+        <p class="sec-sub reveal" style="--d:.1s">Senado: 102 curules · Cámara: 171 curules · Mayoría absoluta conjunta: <b style="color:var(--bone)">137</b>. Desliza el corrimiento del voto indeciso y observa cómo se rompe —o se mantiene— el Congreso colgado.</p>
+      </div>
+      <div class="reveal" style="--d:.15s">
+        <p class="count-label">CAMINO A LAS URNAS</p>
+        <div class="count" aria-label="Cuenta regresiva">
+          <div class="cu"><b id="cdD">000</b><span>DÍAS</span></div><i>:</i>
+          <div class="cu"><b id="cdH">00</b><span>HORAS</span></div><i>:</i>
+          <div class="cu"><b id="cdM">00</b><span>MIN</span></div><i>:</i>
+          <div class="cu"><b id="cdS">00</b><span>SEG</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hemi-wrap reveal" style="--d:.15s">
+      <div class="hemi-top">
+        <div class="hemi-legend">
+          <span class="hl"><i style="background:#d5382c"></i>COALICIÓN DE IZQUIERDA</span>
+          <span class="hl"><i style="background:#4e78e6"></i>COALICIÓN DE DERECHA</span>
+          <span class="hl"><i style="background:#7c7259"></i>INDECISOS</span>
+        </div>
+        <span class="hl" style="letter-spacing:.2em">PLANTA DEL CONGRESO — PLENARIA CONJUNTA</span>
+      </div>
+      <svg id="hemiViz" viewBox="0 0 900 470" role="img" aria-label="Distribución del Congreso de Colombia"></svg>
+      <div id="majority">CONGRESO COLGADO — NINGÚN BLOQUE ALCANZA LAS 137 CURULES</div>
+    </div>
+
+    <div class="shift reveal" style="--d:.2s">
+      <div class="sk">CORRIMIENTO<br>DEL VOTO INDECISO<small>PROYECCIÓN DE BANCADA</small></div>
+      <div>
+        <input type="range" id="shiftRange" min="-100" max="100" value="0" step="1" aria-label="Corrimiento del voto indeciso">
+        <div class="shift-lab"><b id="shiftVal">TABLAS — 0%</b> · ARRASTRA HACIA TU BANDO</div>
+      </div>
+      <div class="sk" style="text-align:right">BANCADAS<br>VIVAS<small id="benchLive">IZQ 116 · DER 115 · IND 42</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ADICIÓN — TRES ANEXOS NUEVOS (A · B · C)
+     Van justo debajo del corrimiento del voto indeciso y cada uno
+     cambia por completo según el bando: neutral / izquierda / derecha.
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ANEXO A · EL TERRENO DEL VOTO (mapa hexagonal de Colombia) -->
+<section id="anexoA">
+  <div class="wrap">
+    <p class="kicker reveal" id="axaKicker">ANEXO A · CARTOGRAFÍA ELECTORAL</p>
+    <h2 class="sec-title reveal" style="--d:.1s" id="axaTitle"><em>A.</em> El terreno del voto</h2>
+    <div class="rule reveal" style="--d:.15s"></div>
+    <p class="sec-sub reveal" style="--d:.1s" id="axaSub"></p>
+    <div class="axa-grid">
+      <div class="axa-map reveal" style="--d:.1s" id="axaMapBox">
+        <svg id="axMap" viewBox="0 0 700 720" role="img" aria-label="Mapa electoral de Colombia"></svg>
+        <div class="axa-legend" id="axaLegend"></div>
+      </div>
+      <aside class="axa-panel reveal" style="--d:.18s" id="axaPanel"></aside>
+    </div>
+    <p class="axa-caption reveal" id="axaCaption" style="--d:.1s"></p>
+  </div>
+  <div id="axMapTip"></div>
+</section>
+
+<!-- ANEXO B · EL PULSO DE LA CALLE (voces / marcha / conversatorio) -->
+<section id="anexoB">
+  <div class="ax-ghost" id="axbGhost" aria-hidden="true"></div>
+  <div class="wrap" id="axbBody"></div>
+</section>
+
+<!-- ANEXO C · LA SEMANA DECISIVA (sala de situación + radar) -->
+<section id="anexoC">
+  <div class="ax-ghost" id="axcGhost" aria-hidden="true"></div>
+  <div class="wrap" id="axcBody"></div>
+</section>
+<!-- ════════════════ FIN DE LA ADICIÓN — SECCIONES ════════════════ -->
+
+<!-- ===================== III. DISYUNTIVA ===================== -->
+<section id="disyuntiva">
+  <div class="wrap">
+    <p class="kicker reveal">III. La disyuntiva</p>
+    <h2 class="sec-title reveal" style="--d:.1s"><em>iii.</em>Elige tu bando</h2>
+    <div class="rule reveal" style="--d:.15s"></div>
+    <p class="sec-sub reveal" style="--d:.1s">Este comité no observa la historia: la firma. Al aliarte, la sala entera —prensa, cenizas, bandera y expediente— se reconfigura a tu color, y el dossier de tu coalición queda desclasificado.</p>
+
+    <div class="arena">
+      <!-- Panel izquierda -->
+      <article class="side side-l reveal" id="panelL">
+        <span class="side-badge" hidden id="badgeL">ALIANZA ACTIVA</span>
+        <p class="side-kicker">COALICIÓN DE IZQUIERDA</p>
+        <h3 class="side-name">Pacto por la Transformación</h3>
+        <p class="side-motto">«La esperanza no se rinde»</p>
+        <ul class="side-pillars">
+          <li>Paz completa, tierra y soberanía alimentaria</li>
+          <li>Cambio de matriz productiva y transición justa</li>
+          <li>Estado presente donde el Estado nunca llegó</li>
+        </ul>
+        <p class="side-stats">PROYECCIÓN — SENADO <b>46/102</b> · CÁMARA <b>76/171</b> · VOTO <b>43,1%</b></p>
+        <button class="btn-side" id="btnL">
+          <span class="fill"></span>
+          <b>BANDO IZQUIERDA<small>ALIARSE CON LA COALICIÓN</small></b>
+          <i data-lucide="flame"></i>
+        </button>
+        <button class="btn-desert" id="desertL" hidden>ABANDONAR ESTE BANDO</button>
+      </article>
+
+      <div class="vs reveal" style="--d:.08s">
+        <span class="medal">v.</span>
+        <span class="vs-txt">TOMA DE PARTIDO</span>
+      </div>
+
+      <!-- Panel derecha -->
+      <article class="side side-r reveal" id="panelR" style="--d:.15s">
+        <span class="side-badge" hidden id="badgeR">ALIANZA ACTIVA</span>
+        <p class="side-kicker">COALICIÓN DE DERECHA</p>
+        <h3 class="side-name">Frente Horizonte</h3>
+        <p class="side-motto">«Orden, libertad, prosperidad»</p>
+        <ul class="side-pillars">
+          <li>Seguridad sin tregua y estado de derecho firme</li>
+          <li>Economía abierta, impuestos a la baja</li>
+          <li>Institucionalidad blindada, sin experimentos</li>
+        </ul>
+        <p class="side-stats">PROYECCIÓN — SENADO <b>44/102</b> · CÁMARA <b>71/171</b> · VOTO <b>42,6%</b></p>
+        <button class="btn-side" id="btnR">
+          <span class="fill"></span>
+          <b>BANDO DERECHA<small>ALIARSE CON LA COALICIÓN</small></b>
+          <i data-lucide="shield"></i>
+        </button>
+        <button class="btn-desert" id="desertR" hidden>ABANDONAR ESTE BANDO</button>
+      </article>
+    </div>
+    <p class="arena-note reveal">Pasa el cursor sobre un bando y las cenizas de la sala te ensayarán su color. Aliarte es reversible: puedes desertar y volver a la neutralidad del Estado.</p>
+  </div>
+</section>
+
+<!-- ===================== DOSSIER (se puebla según el bando) ===================== -->
+<section id="dossier" hidden>
+  <div class="wrap">
+    <div class="dossier-inner" id="dossierBody"></div>
+  </div>
+</section>
+
+<!-- ===================== IV. REGLAS ===================== -->
+<section id="reglas">
+  <div class="wrap">
+    <p class="kicker reveal">IV. Reglas de enganche — cómo se delibera</p>
+    <h2 class="sec-title reveal" style="--d:.1s"><em>iv.</em>Acuerdo de crisis</h2>
+    <div class="rule reveal" style="--d:.15s"></div>
+    <p class="sec-sub reveal" style="--d:.1s">Bicameralidad, poderes de crisis y prensa viva: las reglas que gobiernan esta simulación.</p>
+
+    <div class="rules-doc reveal" style="--d:.15s">
+      <span class="stamp">CONFIDENCIAL — SOLO DELEGADOS</span>
+      <span class="stamp blue" style="position:static; display:inline-block; margin:0 0 0 14px; transform:rotate(4deg)">COPIA 01/40</span>
+      <div class="rules-grid">
+        <div>
+          <div class="rr" data-n="I."><b>Naturaleza bicameral</b>
+            <p class="desktop-only">El comité sesiona como Congreso plenario: Senado (102) y Cámara (171) deliberan en plenaria conjunta y, cuando la crisis lo exija, en sesiones separadas por cámara. Toda ley requiere mayoría absoluta: 137 curules.</p>
+            <p class="mobile-only">Sesión plenaria conjunta de Senado y Cámara. Toda ley exige mayoría absoluta de 137 curules.</p>
+          </div>
+          <div class="rr" data-n="II."><b>Poderes del congresista</b>
+            <p class="desktop-only">Presentar y votar proyectos de ley estatutaria y ordinaria; citar e interpelar ministros; promover mociones de censura; solicitar declaratoria de urgencia; pedir sesión permanente en momentos de crisis aguda.</p>
+            <p class="mobile-only">Votar leyes, citar ministros, mociones de censura y pedir sesiones de urgencia permanente.</p>
+          </div>
+          <div class="rr" data-n="III."><b>Poderes de crisis</b>
+            <p class="desktop-only">Notas confidenciales al propio gabinete (respuesta en 15 minutos); filtraciones a la prensa —anónimas o firmadas, el riesgo es tuyo—; directivas de bancada para imponer disciplina de voto; negociaciones cruzadas con el bando rival.</p>
+            <p class="mobile-only">Puedes enviar notas al gabinete, filtrar datos a prensa y emitir directivas de bancada.</p>
+          </div>
+        </div>
+        <div>
+          <div class="rr" data-n="IV."><b>Velocidad de crisis</b>
+            <p class="desktop-only">Las actualizaciones llegan en vivo y sin aviso. Los hechos consumados son consumados: ninguna moción retrocede un titular ya publicado. La agenda la fija la crisis, no la silla.</p>
+            <p class="mobile-only">Actualizaciones en vivo y sin aviso. No hay vuelta atrás una vez el titular está publicado.</p>
+          </div>
+          <div class="rr" data-n="V."><b>Prensa viva</b>
+            <p class="desktop-only">Todo lo filtrado aparece en el ticker de la sala y nada se borra. Los titulares degradan o coronan candidatos: cuida tu fuente antes de tirar la piedra.</p>
+            <p class="mobile-only">Todo se publica en el ticker en vivo. Las noticias impulsan o destruyen candidatos de inmediato.</p>
+          </div>
+          <div class="rr" data-n="VI."><b>Victoria</b>
+            <p class="desktop-only">Se puntúa legislación aprobada, control de mayorías, manejo de crisis y narrativa pública. Gobernar exige curules; sobrevivir exige prensa. Nadie ha logrado las dos cosas sin desertar de algo.</p>
+            <p class="mobile-only">Ganas puntos por leyes, mayorías y control de crisis. Gobernar requiere curules; sobrevivir, prensa.</p>
+          </div>
+        </div>
+      </div>
+      <p class="rules-foot">— SECRETARÍA ACADÉMICA DE CRISIS · SVPMUN · FIRMADO EN BOGOTÁ D.C. —</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="hero-seal seal-svg" data-seal></div>
+  <p class="foot-name">SVP Model United Nations</p>
+  <p class="foot-meta">Secretaría Académica de Crisis<br>Comité: Crisis Bicameral Electoral · Tópico: Elecciones Colombianas de 2026<br>Diseñado para deliberar bajo presión</p>
+  <div class="tricolor" aria-hidden="true"><span></span><span></span><span></span></div>
+</footer>
+
+<!-- Overlay de toma de partido -->
+<div id="pledge" role="dialog" aria-modal="true">
+  <div>
+    <div class="hero-seal seal-svg" data-seal></div>
+    <p class="pl-k">EXPEDIENTE DESCLASIFICADO · TOMA DE PARTIDO</p>
+    <h2 class="pl-name" id="plName">—</h2>
+    <p class="pl-pact" id="plPact">—</p>
+    <p class="pl-motto" id="plMotto">—</p>
+    <p class="pl-sub">La sala se ha reconfigurado a tu color: cenizas, bandera, prensa y dossier. El documento de tu coalición aguarda abajo.</p>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="status"><i data-lucide="radio"></i><span id="toastTxt">—</span></div>
+<div id="hemiTip"></div>
+
+<script>
+/* ============================================================
+   SVPMUN · CRISIS BICAMERAL ELECTORAL — motor de la sala
+   ============================================================ */
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg){
+  $('#toastTxt').textContent = msg;
+  $('#toast').classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=> $('#toast').classList.remove('show'), 3600);
+}
+
+/* ---------- sello de la República (generado) ---------- */
+function condorMarkup(){
+  // Cóndor heráldico construido con plumas radiales — arte de grabado
+  const feather = (len, ang, base) => {
+    const a = ang*Math.PI/180;
+    const x = base.x + Math.sin(a)*0, y = base.y; // rotación vía transform
+    return `<path fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.4"
+      d="M0,0 C6.5,-13 6.5,-${len*0.72} 0,-${len} C-6.5,-${len*0.72} -6.5,-13 0,0 Z"
+      transform="translate(${base.x},${base.y}) rotate(${ang})"/>`;
+  };
+  let wings = '';
+  const W = [ {a:96,l:34},{a:74,l:45},{a:50,l:54},{a:26,l:58},{a:4,l:55} ];
+  W.forEach(f=>{ wings += feather(f.l, f.a, {x:112,y:86}); wings += feather(f.l, -f.a, {x:88,y:86}); });
+  const tail = [-14,0,14].map(a=>`<path fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1.3"
+     d="M0,0 C5,-10 5,-20 0,-27 C-5,-20 -5,-10 0,0 Z" transform="translate(100,102) rotate(${180+a})"/>`).join('');
+  return `<g>
+    ${wings}
+    <ellipse cx="100" cy="84" rx="12" ry="19" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.4"/>
+    <circle cx="90" cy="61" r="5.4" fill="currentColor" fill-opacity=".22" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M84,59 l-8,3.4 l8,3.6 z" fill="currentColor" fill-opacity=".35"/>
+    <path d="M88,55 c1.6,-3 4,-3 5.4,-.6" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    ${tail}
+    <path d="M64,132 h72" stroke="currentColor" stroke-width="1"/>
+  </g>`;
+}
+function sealSVG(){
+  return `<svg class="seal" viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true">
+    <g [stroke]>
+      <circle cx="100" cy="100" r="95" fill="none" stroke-width="1.6" stroke="currentColor" stroke-opacity=".9"/>
+      <circle cx="100" cy="100" r="87.5" fill="none" stroke-width=".7" stroke="currentColor" stroke-opacity=".6"/>
+      <circle cx="100" cy="100" r="60.5" fill="none" stroke-width=".7" stroke="currentColor" stroke-opacity=".6"/>
+      <g>
+        <path id="sealArc" fill="none" d="M100,21 a79,79 0 1,1 -0.01,0"/>
+        <text font-family="'IBM Plex Mono',monospace" font-size="10.6" letter-spacing="2.6" fill="currentColor">
+          <textPath href="#sealArc" textLength="492" lengthAdjust="spacingAndGlyphs">REPÚBLICA DE COLOMBIA · SVP MUN · CRISIS BICAMERAL ELECTORAL · MMXXVI ·</textPath>
+        </text>
+        <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="70s" repeatCount="indefinite"/>
+      </g>
+      <path d="M100,140 l3.2,7.2 7.8,.7 -5.9,5.2 1.8,7.6 -6.9,-4.2 -6.9,4.2 1.8,-7.6 -5.9,-5.2 7.8,-.7 z" fill="currentColor" fill-opacity=".25" transform="translate(0,-96) scale(.85) translate(17.6,17.6)"/>
+      <path d="M52,100 l2.4,5.4 5.8,.5 -4.4,3.9 1.3,5.7 -5.1,-3.1 -5.1,3.1 1.3,-5.7 -4.4,-3.9 5.8,-.5 z" fill="currentColor" fill-opacity=".3"/>
+      <path d="M148,100 l2.4,5.4 5.8,.5 -4.4,3.9 1.3,5.7 -5.1,-3.1 -5.1,3.1 1.3,-5.7 -4.4,-3.9 5.8,-.5 z" fill="currentColor" fill-opacity=".3"/>
+      <text x="100" y="156" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.2" letter-spacing="2.4" fill="currentColor" fill-opacity=".85">LIBERTAD Y ORDEN</text>
+      ${condorMarkup()}
+    </g>
+  </svg>`;
+}
+ $$('[data-seal]').forEach(el=>{ el.innerHTML = sealSVG(); });
+// quitar el pseudo-atributo [stroke] que usé solo como gancho de color
+ $$('.seal [stroke]').forEach(g=>{ g.setAttribute('stroke','none'); g.style.color='var(--accent)'; g.querySelectorAll('path,circle,ellipse,text,animateTransform').forEach(()=>{}); });
+// colorear trazos del sello con currentColor (ya aplicado arriba vía atributos)
+
+/* ---------- reloj Bogotá + countdown ---------- */
+const fmtClock = new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+setInterval(()=>{ $('#clockTxt').textContent = fmtClock.format(new Date()); }, 1000);
+ $('#clockTxt').textContent = fmtClock.format(new Date());
+const ELECTION = new Date('2026-05-31T08:00:00-05:00').getTime();
+function tickCd(){
+  let d = Math.max(0, ELECTION - Date.now());
+  const days = Math.floor(d/864e5), h = Math.floor(d%864e5/36e5), m = Math.floor(d%36e5/6e4), s = Math.floor(d%6e4/1e3);
+  $('#cdD').textContent = String(days).padStart(3,'0');
+  $('#cdH').textContent = String(h).padStart(2,'0');
+  $('#cdM').textContent = String(m).padStart(2,'0');
+  $('#cdS').textContent = String(s).padStart(2,'0');
+}
+tickCd(); setInterval(tickCd, 1000);
+
+/* ---------- ticker de prensa ---------- */
+const TICKERS = {
+  neutral:[
+    ['ÚLTIMA HORA','Empate técnico nacional: 43,1% frente a 42,6%, según firma CNA·Facto'],
+    ['EL CORREO NACIONAL','«La Colombia rural será el árbitro de mayo»'],
+    ['LA TRIBUNA','«Doce curules indecisas controlan el Congreso saliente»'],
+    ['EL FARO','«Bogotá y Medellín votan en direcciones opuestas»'],
+    ['VOZ DEL MAGDALENA','«El Pacífico bate récord de registro de nuevas votantes»'],
+    ['MERCADO ABIERTO','«La volatilidad del peso encadena su peor trimestre en siete años»'],
+    ['EL HERALDO','«Debates presidenciales: fecha sigue sin acuerdo entre los dos campamentos»'],
+    ['OBSERVATORIO ELECTORAL','Misión internacional confirma despliegue en 32 departamentos']
+  ],
+  left:[
+    ['ÚLTIMA HORA','La Coalición de Izquierda abre mesa de unidad con los movimientos sociales'],
+    ['LA MARCHA','«Un millón de personas llenan la Plaza de Bolívar»'],
+    ['TIERRA Y PAN','«La reforma agraria avanza en comisiones del Senado»'],
+    ['EL FARO','«La derecha amenaza con no reconocer resultados», denuncian observadores'],
+    ['LA TRIBUNA','«El giro de la seguridad: promesas que inquietan a las cortes»'],
+    ['VOZ DEL MAGDALENA','«Reincorporación: las cooperaturas piden voz en la campaña»'],
+    ['EL FARO','«Registro récord de jóvenes: el voto del cambio envejece bien»']
+  ],
+  right:[
+    ['ÚLTIMA HORA','La Coalición de Derecha sella la unidad en 21 departamentos'],
+    ['EL ORDEN','«Encuesta: seis de cada diez priorizan seguridad como primer tema»'],
+    ['MERCADO ABIERTO','«Inversión extranjera repunta ante posible giro de gobierno»'],
+    ['LA TRIBUNA','«Denuncias de presión del Ejecutivo sobre la rama judicial»'],
+    ['EL ORDEN','«El campo también quiere orden: el mapfre rural cambia de bando»'],
+    ['MERCADO ABIERTO','«Tarifas y apagones: el costo político de la transición»'],
+    ['EL HERALDO','«Las gremiales llaman a votar por la estabilidad»']
+  ]
+};
+function buildTicker(theme){
+  const set = TICKERS[theme]||TICKERS.neutral;
+  const html = set.map(([src,txt])=>`<span class="tk"><b>${src}</b> — «${txt}»</span><span class="tk-sep">///</span>`).join('');
+  $('#tickerTrack').innerHTML = html + html; // duplicado para bucle continuo
+}
+buildTicker('neutral');
+
+/* ---------- cenizas ascendentes ---------- */
+const ash = (function(){
+  const cv = $('#ashes'), ctx = cv.getContext('2d');
+  const PALETTES = {
+    neutral:[[201,164,86],[226,217,192],[255,255,255],[164,30,34]],
+    left:[[255,88,40],[255,150,70],[255,198,110],[224,58,44]],
+    right:[[110,160,255],[164,202,255],[255,255,255],[92,124,236]]
+  };
+  let W,H,DPR, particles=[], theme='neutral', preview=null, wind=0;
+  const N = matchMedia('(max-width:720px)').matches ? 70 : 150;
+  function resize(){
+    DPR = Math.min(devicePixelRatio||1, 2); W = innerWidth; H = innerHeight;
+    cv.width = W*DPR; cv.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function make(seed){
+    const p = {
+      x: Math.random()*W,
+      y: seed ? Math.random()*H : H + 10 + Math.random()*40,
+      vy: -(0.16 + Math.random()*0.5),
+      vx: (Math.random()-.5)*0.12,
+      r: 0.6 + Math.random()*Math.random()*3.2,
+      a: 0.25 + Math.random()*0.6,
+      fl: Math.random()*Math.PI*2,
+      fs: 0.6 + Math.random()*1.8,
+      ci: Math.floor(Math.random()*4),
+      c: null, t: null
+    };
+    const base = PALETTES[theme][p.ci];
+    p.c = base.slice(); p.t = base.slice();
+    return p;
+  }
+  function retarget(){
+    const pal = PALETTES[preview||theme];
+    particles.forEach(p=>{ p.t = pal[p.ci]; });
+  }
+  function init(){ resize(); particles = Array.from({length:N},()=>make(true)); }
+  init(); addEventListener('resize', ()=>{ init(); });
+  addEventListener('mousemove', e=>{ wind = clamp(wind + (e.movementX||0)*0.015, -4, 4); });
+  let t = 0;
+  function step(){
+    t += 0.016;
+    ctx.clearRect(0,0,W,H);
+    wind *= 0.94;
+    ctx.globalCompositeOperation = 'lighter';
+    for(const p of particles){
+      // color: interpola hacia el objetivo (transición de bando)
+      for(let i=0;i<3;i++) p.c[i] += (p.t[i]-p.c[i])*0.045;
+      p.x += p.vx + Math.sin(p.fl + t*p.fs)*0.32 + wind*0.5;
+      p.y += p.vy;
+      if(p.y < -14 || p.x < -20 || p.x > W+20){ Object.assign(p, make(false)); const pal=PALETTES[preview||theme]; p.t = pal[p.ci]; p.c = pal[p.ci].slice(); }
+      const flick = 0.72 + 0.28*Math.sin(p.fl*3 + t*p.fs*2);
+      const [r,g,b] = p.c.map(Math.round);
+      // halo de brasa para las partículas grandes
+      if(p.r > 2.1){ ctx.fillStyle = `rgba(${r},${g},${b},${(p.a*flick*0.13).toFixed(3)})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*2.8,0,7); ctx.fill(); }
+      ctx.fillStyle = `rgba(${r},${g},${b},${(p.a*flick).toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill();
+    }
+  }
+  return {
+    step,
+    setTheme(s){ theme = s; if(!preview) retarget(); },
+    setPreview(s){ preview = s; retarget(); }
+  };
+})();
+
+/* ---------- bandera 3D (Three.js) ---------- */
+const flag = (function(){
+  const stage = $('#flagStage');
+  if(!window.THREE){ stage.style.display='none'; return {setTexture(){}, step(){}}; }
+
+  function fabricNoise(c, w, h){
+    // trama de hilos + ruido de tela + viñeta de iluminación
+    for(let x=0;x<w;x+=5){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.03).toFixed(3)})`; c.fillRect(x,0,1,h); }
+    for(let y=0;y<h;y+=7){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.02).toFixed(3)})`; c.fillRect(0,y,w,1); }
+    for(let i=0;i<3200;i++){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.07).toFixed(3)})`;
+      c.fillRect(Math.random()*w, Math.random()*h, 1+Math.random()*1.6, 1+Math.random()*1.6); }
+    const g = c.createRadialGradient(w/2,h/2,h*0.25, w/2,h/2,w*0.62);
+    g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.30)');
+    c.fillStyle = g; c.fillRect(0,0,w,h);
+  }
+  function star(c, x, y, R, fill){
+    c.beginPath();
+    for(let i=0;i<10;i++){ const rr = i%2? R*0.42 : R; const a = -Math.PI/2 + i*Math.PI/5;
+      c[i?'lineTo':'moveTo'](x+Math.cos(a)*rr, y+Math.sin(a)*rr); }
+    c.closePath(); c.fillStyle = fill; c.fill();
+  }
+  function drawNeutral(c,w,h){
+    c.fillStyle='#f6c417'; c.fillRect(0,0,w,h*0.5);
+    c.fillStyle='#0a3f9e'; c.fillRect(0,h*0.5,w,h*0.25);
+    c.fillStyle='#ce1126'; c.fillRect(0,h*0.75,w,h*0.25);
+    c.fillStyle='rgba(28,18,4,0.07)'; c.fillRect(0,0,w,h);
+  }
+  function drawLeft(c,w,h){
+    c.fillStyle='#a8201f'; c.fillRect(0,0,w,h);
+    c.fillStyle='#dca445'; c.fillRect(0,h*0.088,w,h*0.017); c.fillRect(0,h*0.895,w,h*0.017);
+    star(c, w/2, h*0.185, h*0.062, '#e6b34e');
+    // gorro frigio
+    c.fillStyle='#e0ab47'; c.strokeStyle='#f6d68a'; c.lineWidth=3;
+    c.beginPath();
+    c.moveTo(w*0.352, h*0.60);
+    c.bezierCurveTo(w*0.344, h*0.36, w*0.43, h*0.245, w*0.53, h*0.255);
+    c.bezierCurveTo(w*0.598, h*0.262, w*0.65, h*0.325, w*0.684, h*0.41);
+    c.bezierCurveTo(w*0.652, h*0.386, w*0.613, h*0.38, w*0.588, h*0.41);
+    c.bezierCurveTo(w*0.58, h*0.48, w*0.556, h*0.565, w*0.533, h*0.60);
+    c.closePath(); c.fill(); c.stroke();
+    c.fillStyle='#dca445'; c.fillRect(w*0.34, h*0.60, w*0.206, h*0.048);
+    c.strokeStyle='rgba(122,64,14,0.4)'; c.lineWidth=2;
+    c.beginPath(); c.moveTo(w*0.43,h*0.58); c.quadraticCurveTo(w*0.46,h*0.42,w*0.5,h*0.33); c.stroke();
+  }
+  function drawRight(c,w,h){
+    c.fillStyle='#142f6b'; c.fillRect(0,0,w,h);
+    c.fillStyle='#e9eef8'; c.fillRect(0,h*0.088,w,h*0.017); c.fillRect(0,h*0.895,w,h*0.017);
+    // espada dorada
+    const cx=w/2, gold='#dfaa47', gold2='#f2cf82';
+    c.fillStyle=gold; c.strokeStyle=gold2; c.lineWidth=3;
+    c.beginPath(); c.moveTo(cx, h*0.24); c.lineTo(cx+w*0.021, h*0.335);
+    c.lineTo(cx+w*0.021, h*0.72); c.lineTo(cx-w*0.021, h*0.72); c.lineTo(cx-w*0.021, h*0.335);
+    c.closePath(); c.fill(); c.stroke();
+    c.strokeStyle='rgba(122,84,14,.5)'; c.lineWidth=2;
+    c.beginPath(); c.moveTo(cx, h*0.27); c.lineTo(cx, h*0.70); c.stroke();
+    c.fillStyle=gold; c.fillRect(cx-w*0.086, h*0.72, w*0.172, h*0.036);
+    c.beginPath(); c.arc(cx-w*0.09, h*0.738, h*0.026, 0, 7); c.fill();
+    c.beginPath(); c.arc(cx+w*0.09, h*0.738, h*0.026, 0, 7); c.fill();
+    c.fillStyle='#b98a33'; c.fillRect(cx-w*0.011, h*0.756, w*0.022, h*0.1);
+    c.fillStyle=gold2; c.beginPath(); c.arc(cx, h*0.885, h*0.028, 0, 7); c.fill();
+    // laureles
+    c.strokeStyle=gold; c.lineWidth=5;
+    const branch = dir=>{
+      c.beginPath(); c.moveTo(cx+dir*w*0.028, h*0.85);
+      c.quadraticCurveTo(cx+dir*w*0.17, h*0.72, cx+dir*w*0.2, h*0.42); c.stroke();
+      c.fillStyle=gold;
+      for(let t=0.18;t<=1;t+=0.14){
+        const bx = (1-t)*(1-t)*(cx+dir*w*0.028) + 2*(1-t)*t*(cx+dir*w*0.17) + t*t*(cx+dir*w*0.2);
+        const by = (1-t)*(1-t)*(h*0.85) + 2*(1-t)*t*(h*0.72) + t*t*(h*0.42);
+        c.save(); c.translate(bx,by); c.rotate(dir*(-0.9)); c.scale(1,0.55);
+        c.beginPath(); c.ellipse(0,-h*0.032, h*0.02, h*0.055, 0, 0, 7); c.fill(); c.restore();
+      }
+    };
+    branch(1); branch(-1);
+  }
+  const DRAWERS = { neutral:drawNeutral, left:drawLeft, right:drawRight };
+  function makeTexture(mode){
+    const c = document.createElement('canvas'); c.width=1024; c.height=590;
+    const x = c.getContext('2d');
+    DRAWERS[mode](x, 1024, 590);
+    fabricNoise(x, 1024, 590);
+    const tex = new THREE.CanvasTexture(c);
+    tex.encoding = THREE.sRGBEncoding;
+    tex.anisotropy = 4;
+    return tex;
+  }
+
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  stage.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 60);
+  let camZ = 6.4, camZT = 6.4;
+  camera.position.set(0, 0.15, camZ);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.52));
+  const dirL = new THREE.DirectionalLight(0xfff2dc, 1.15); dirL.position.set(2,3,4); scene.add(dirL);
+  const emberL = new THREE.PointLight(0xc8a24a, 0.9, 16); emberL.position.set(0,-3,2.4); scene.add(emberL);
+  const EMBER = { neutral:0xc8a24a, left:0xff5a2e, right:0x5a86ff };
+
+  const group = new THREE.Group(); scene.add(group);
+  // mástil
+  const mast = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.034,0.034,3.9,12),
+    new THREE.MeshStandardMaterial({color:0x8a6d2f, metalness:.75, roughness:.35})
+  );
+  mast.position.set(-2.88, 0.02, 0); group.add(mast);
+  const finial = new THREE.Mesh(new THREE.SphereGeometry(0.09,16,12), mast.material);
+  finial.position.set(-2.88, 1.98, 0); group.add(finial);
+  // bandera
+  const FW=5.6, FH=3.2, SX=110, SY=64;
+  const geo = new THREE.PlaneGeometry(FW, FH, SX, SY);
+  const mat = new THREE.MeshStandardMaterial({map:makeTexture('neutral'), side:THREE.DoubleSide, roughness:.88, metalness:0});
+  const mesh = new THREE.Mesh(geo, mat); group.add(mesh);
+  const pos = geo.attributes.position;
+  const baseX = new Float32Array(pos.count), baseY = new Float32Array(pos.count);
+  for(let i=0;i<pos.count;i++){ baseX[i]=pos.getX(i); baseY[i]=pos.getY(i); }
+
+  // interacción: arrastre, rueda, viento
+  let rotY=0, rotYT=0, rotX=0, rotXT=0, dragging=false, lx=0, ly=0, windF=0;
+  stage.addEventListener('pointerdown', e=>{ dragging=true; lx=e.clientX; ly=e.clientY; stage.classList.add('dragging'); stage.setPointerCapture(e.pointerId); });
+  stage.addEventListener('pointermove', e=>{
+    const dx = e.clientX-lx, dy = e.clientY-ly;
+    if(dragging){ rotYT += dx*0.0048; rotXT = clamp(rotXT + dy*0.003, -0.42, 0.5); }
+    windF = clamp(windF + Math.abs(dx)*0.0009, 0, 1.6);
+    lx = e.clientX; ly = e.clientY;
+  });
+  const endDrag = ()=>{ dragging=false; stage.classList.remove('dragging'); };
+  stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+  stage.addEventListener('wheel', e=>{ e.preventDefault(); camZT = clamp(camZT + e.deltaY*0.0022, 3.6, 9.6); }, {passive:false});
+
+  function resize(){
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+  resize(); addEventListener('resize', resize);
+
+  let t=0;
+  function step(){
+    t += 0.016;
+    windF *= 0.96;
+    for(let i=0;i<pos.count;i++){
+      const x = baseX[i], y = baseY[i];
+      const d = (x + FW/2)/FW;                     // 0 en el mástil → 1 en el extremo libre
+      const amp = (0.05 + d*d*0.95) * (1 + windF*1.5);
+      const z = ( Math.sin(x*1.15 - t*2.3)*0.22
+                + Math.sin(y*1.7 + t*1.15)*0.10
+                + Math.sin((x*0.6 + y*0.4) - t*1.8)*0.15 ) * amp;
+      pos.setZ(i, z);
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+    rotY += (rotYT-rotY)*0.08; rotX += (rotXT-rotX)*0.08;
+    group.rotation.set(rotX, rotY, 0);
+    group.position.y = Math.sin(t*0.8)*0.055;
+    camZ += (camZT-camZ)*0.08; camera.position.z = camZ;
+    renderer.render(scene, camera);
+  }
+  function setTexture(mode){
+    if(mat.map) mat.map.dispose();
+    mat.map = makeTexture(mode); mat.needsUpdate = true;
+    emberL.color.setHex(EMBER[mode]||EMBER.neutral);
+  }
+  return { step, setTexture };
+})();
+
+/* ---------- hemiciclo interactivo (273 curules) ---------- */
+(function(){
+  const svg = $('#hemiViz');
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEPTS = ['Bogotá D.C.','Antioquia','Valle del Cauca','Cundinamarca','Atlántico','Santander','Nariño','Cauca','Bolívar','Tolima','Caldas','Risaralda','Córdoba','Magdalena','Huila','Meta','Boyacá','Norte de Santander','Cesar','Quindío','Sucre','La Guajira','Chocó','Caquetá','Arauca','Putumayo'];
+  const seats = [];
+  const rows = [24,32,40,48,56,73], radii = [150,192,234,276,318,360];
+  const CX=450, CY=442, SPAN=172; // grados del arco
+  let n=0;
+  rows.forEach((count,ri)=>{
+    const r = radii[ri];
+    for(let i=0;i<count;i++){
+      const th = (-SPAN/2 + SPAN*(i/(count-1))) * Math.PI/180;
+      const seat = {
+        i: n++,
+        x: CX + r*Math.sin(th),
+        y: CY - r*Math.cos(th),
+        dept: DEPTS[Math.floor(Math.random()*DEPTS.length)],
+        bias: Math.random(),
+        type:'und', el:null
+      };
+      seats.push(seat);
+    }
+  });
+  seats.sort((a,b)=> a.x - b.x); // orden ideológico de izquierda a derecha
+  const L=116, U=42, R=115; // 273
+  seats.forEach((s,idx)=>{ s.type = idx < L ? 'left' : (idx < L+U ? 'und' : 'right'); });
+  // ruido en las fronteras
+  for(let k=0;k<7;k++){ const a=seats[L-1-k], b=seats[L+k]; const t=a.type; a.type=b.type; b.type=t; }
+  for(let k=0;k<7;k++){ const a=seats[L+U-1-k], b=seats[L+U+k]; const t=a.type; a.type=b.type; b.type=t; }
+
+  seats.forEach((s,idx)=>{
+    const c = document.createElementNS(NS,'circle');
+    c.setAttribute('cx', s.x.toFixed(1)); c.setAttribute('cy', s.y.toFixed(1));
+    c.setAttribute('r', 5.4); c.setAttribute('class','seat');
+    c.style.transitionDelay = (Math.random()*0.5)+'s';
+    c.dataset.i = s.i;
+    svg.appendChild(c); s.el = c;
+  });
+  // tarima
+  const desk = document.createElementNS(NS,'g');
+  desk.innerHTML = `<rect x="330" y="452" width="240" height="12" fill="rgba(200,162,74,.25)"/>
+    <text x="450" y="421" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" letter-spacing="6" fill="rgba(163,152,127,.85)">PRESIDENCIA</text>`;
+  svg.appendChild(desk);
+
+  const tip = $('#hemiTip');
+  svg.addEventListener('pointermove', e=>{
+    const c = e.target.closest('.seat');
+    if(!c){ tip.style.display='none'; return; }
+    const s = seats.find(o=>o.i == c.dataset.i);
+    tip.style.display='block';
+    tip.innerHTML = `<b>CURUL ${String(s.i+1).padStart(3,'0')}</b> · ${s.dept.toUpperCase()} · ${label(s.type)}`;
+    tip.style.left = Math.min(innerWidth-tip.offsetWidth-18, e.clientX+16)+'px';
+    tip.style.top = (e.clientY-38)+'px';
+  });
+  svg.addEventListener('pointerleave', ()=> tip.style.display='none');
+  function label(t){ return t==='left'?'COALICIÓN DE IZQUIERDA':(t==='right'?'COALICIÓN DE DERECHA':'INDECISO'); }
+  function className(t){ return t==='left'?'s-left':(t==='right'?'s-right':'s-und'); }
+
+  const MAJ = 137;
+  function recount(){
+    let l=0,r=0,u=0;
+    seats.forEach(s=>{ if(s.type==='left')l++; else if(s.type==='right')r++; else u++; });
+    return {l,r,u};
+  }
+  function paint(){
+    seats.forEach(s=> s.el.setAttribute('class','seat on '+className(s.type)));
+  }
+  function banner(c){
+    const m = $('#majority');
+    if(c.l >= MAJ){ m.className='win m-l'; m.textContent=`COALICIÓN DE IZQUIERDA ALCANZA MAYORÍA ABSOLUTA — ${c.l} DE ${MAJ} CURULES`; }
+    else if(c.r >= MAJ){ m.className='win m-r'; m.textContent=`COALICIÓN DE DERECHA ALCANZA MAYORÍA ABSOLUTA — ${c.r} DE ${MAJ} CURULES`; }
+    else { m.className=''; m.textContent=`CONGRESO COLGADO — NINGÚN BLOQUE ALCANZA LAS ${MAJ} CURULES`; }
+    $('#benchLive').textContent = `IZQ ${c.l} · DER ${c.r} · IND ${c.u}`;
+  }
+  $('#shiftRange').addEventListener('input', e=>{
+    const v = +e.target.value, s = Math.abs(v)/100, dir = Math.sign(v);
+    seats.forEach(st=>{
+      if(st.type0 === undefined) st.type0 = st.type;
+    });
+    // los indecisos originales se resuelven hacia el lado del arrastre
+    seats.forEach(st=>{
+      const base = st.type0==='und' ? 'und' : st.type0;
+      if(base==='und'){
+        const resolved = s > st.bias;
+        st.type = resolved ? (dir<0?'left':(dir>0?'right':'und')) : 'und';
+      }
+    });
+    paint(); banner(recount());
+    $('#shiftVal').textContent = v===0 ? 'TABLAS — 0%' : `${Math.abs(v)}% ${dir<0?'IZQ':'DER'}`;
+  });
+  // estado inicial
+  seats.forEach(s=> s.type0 = s.type);
+  paint(); banner(recount());
+  // encendido escalonado al entrar en pantalla
+  new IntersectionObserver((ents,obs)=>{
+    ents.forEach(en=>{ if(en.isIntersecting){ seats.forEach(s=>s.el.classList.add('on')); obs.disconnect(); } });
+  },{threshold:.3}).observe(svg);
+})();
+
+/* ---------- dossiers de bando ---------- */
+const DOSSIERS = {
+  left: {
+    side:'left', sc:'#e0402f', rival:'#5e8bff', rivalName:'la Coalición de Derecha',
+    name:'Coalición de Izquierda', pact:'Pacto por la Transformación',
+    motto:'«La esperanza no se rinde»',
+    doctrine:'<span class="desktop-only">La Coalición de Izquierda llega a 2026 como la fuerza que gobierna y la que defiende cada metro ganado en cuatro años de transformación. Su tesis es simple y radical a la vez: la transformación no termina, se defiende en las urnas. Continuidad de la paz total, reforma agraria, transición energética justa y un Estado presente allí donde el Estado nunca llegó. Su adversario interno no es la derecha: es el desgaste. La pregunta que atraviesa cada nota de su gabinete es la misma: ¿cómo se le pide a un país que siga cambiando cuando ya cambió tanto?</span><span class="mobile-only">La Coalición defiende 4 años de transformación. Promueve continuar la paz, reforma agraria y transición energética. Su mayor reto es el desgaste político.</span>',
+    pillars:[
+      ['Paz completa','Implementación integral de los acuerdos, reincorporación con economía real y diálogo persistente con los actores armados residuales. Sin paz, no hay presupuesto que alcance.'],
+      ['Tierra y soberanía alimentaria','Reforma agraria con compras públicas campesinas, defensa del agua y formalización de diez millones de hectáreas. La Colombia rural deja de ser una nota al pie.'],
+      ['Matriz productiva nueva','Transición energética con cadenas de valor locales: litio e hidrógeno verde, industrialización del campo, tarifas que no castiguen al pobre.'],
+      ['Derechos ampliados','Salud como derecho efectivo, educación superior pública escalonada y renta básica para jóvenes en los territorios más golpeados.'],
+      ['Colombia periférica','Regionalización del Estado, obras con control comunitario y presencia civil donde hoy solo llega el uniforme.']
+    ],
+    stats:[
+      ['INTENCIÓN DE VOTO','43,1%','43.1%'],
+      ['SENADO (PROYECCIÓN)','46 / 102','45%'],
+      ['CÁMARA (PROYECCIÓN)','76 / 171','44%'],
+      ['REGISTRO DE NUEVOS VOTANTES','+1,9 MILLONES','62%']
+    ],
+    cabinet:[
+      ['JEFE DE CAMPAÑA','Estrategia general, cronograma y sanción de toda nota pública de la coalición.'],
+      ['JEFA DE BANCADA — SENADO','Disciplina de voto, agenda legislativa y negociación de curules críticas.'],
+      ['VOCERÍA DE COMUNICACIONES','Manejo del news feed, réplica inmediata y monitoreo permanente de medios.'],
+      ['ENLACE TERRITORIAL','Gobernaciones, alcaldías y movimientos sociales: la maquinaria del territorio.'],
+      ['COMITÉ JURÍDICO','Veeduría electoral, tutelas de campaña y defensa del escrutinio.']
+    ],
+    assets:[
+      'La maquinaria territorial más completa del país: 8 de las 12 ciudades principales.',
+      'Registro récord de jóvenes y mujeres: el electorado del cambio creció.',
+      'La reforma agraria ya rinde frutos visibles en el Pacífico y el suroccidente.'
+    ],
+    liabs:[
+      'Desgaste de gestión e inflación que erosiona el voto urbano de renta media.',
+      'Fragmentación interna: siete frentes políticos bajo una sola lista.',
+      'Escándalo de financiación revelado por El Faro: dos tesoreros bajo investigación.'
+    ],
+    press:[
+      ['fav','LA MARCHA','«La plaza más grande de la historia ratifica al Pacto»'],
+      ['fav','TIERRA Y PAN','«La reforma agraria ya tiene majoría en comisiones»'],
+      ['adv','EL ORDEN','«Cuatro años para decepcionarse: el balance del cambio»'],
+      ['adv','MERCADO ABIERTO','«El riesgo país sube con cada encuesta favorable al Pacto»']
+    ]
+  },
+  right: {
+    side:'right', sc:'#5e8bff', rival:'#ff5a40', rivalName:'la Coalición de Izquierda',
+    name:'Coalición de Derecha', pact:'Frente Horizonte',
+    motto:'«Orden, libertad, prosperidad»',
+    doctrine:'<span class="desktop-only">La Coalición de Derecha encarna el giro del péndulo: la promesa de devolverle al Estado su tamaño y a la calle su autoridad. Seguridad con todas las fuerzas de la ley, economía abierta, impuestos a la baja y una Constitución interpretada sin experimentos. Su impulso no es nostalgia: es cólera electoral — el votante que castiga la inseguridad, la inflación y la sensación de desgobierno. Su riesgo tampoco es la izquierda: es su propia pluralidad, una derecha de gremios, uribistas, evangelistas y librales desencantados que solo comparten el verbo restituir. Cada nota de su gabinete termina con la misma advertencia: ganar sin romperse.</span><span class="mobile-only">Frente conservador que promete seguridad extrema, economía abierta e impuestos bajos. Su motor es el descontento por la inflación y la inseguridad. Su riesgo es su división interna.</span>',
+    pillars:[
+      ['Seguridad sin tregua','Pie de fuerza ampliada, régimen penitenciario efectivo y estado de excepción en las zonas críticas. La mano que el país pidió.'],
+      ['Economía de mercado','Formalización laboral, rebaja tributaria, apertura a la inversión y respeto absoluto a la propiedad. Emprender debe volver a ser rentable.'],
+      ['Institucionalidad blindada','Contrapesos, mérito y austeridad: un Estado que hace bien poco, pero lo hace impecable.'],
+      ['Energía confiable','Respaldo hidroeléctrico y térmico, exploración responsable y tarifas estables: nada de apagones ideológicos.'],
+      ['Corrupción con cárcel','Estado esbelto, compras públicas auditadas en vivo y cadena perpetua efectiva para el corrupto.']
+    ],
+    stats:[
+      ['INTENCIÓN DE VOTO','42,6%','42.6%'],
+      ['SENADO (PROYECCIÓN)','44 / 102','43%'],
+      ['CÁMARA (PROYECCIÓN)','71 / 171','41%'],
+      ['MOMENTUM DE CAMPAÑA','ASCENDENTE','78%']
+    ],
+    cabinet:[
+      ['DIRECTOR DE CAMPAÑA','Estrategia general, cronograma y sanción de toda nota pública de la coalición.'],
+      ['JEFE DE BANCADA — CÁMARA','Disciplina de voto, agenda legislativa y negociación de curules críticas.'],
+      ['VOCERÍA DE SEGURIDAD','Toda la narrativa de orden público, fuerzas militares y justicia penal.'],
+      ['ENLACE GREMIAL','Confecámaras, agroexportadores y banca: la logística de la confianza económica.'],
+      ['COMITÉ JURÍDICO','Veeduría electoral, impugnaciones y defensa del escrutinio.']
+    ],
+    assets:[
+      'Momentum ascendente: mejor evaluación en economía y seguridad desde 2024.',
+      'Unidad inédita de la derecha plural bajo una sola fórmula presidencial.',
+      'Financiación robusta y los mayores costos por segundo en pauta de la historia.'
+    ],
+    liabs:[
+      'Acusaciones de discurso autoritario que inquietan al electorado indeciso.',
+      'Techo estructural en las zonas rurales y periferias del Pacífico y el Caribe.',
+      'Cinco investigaciones judiciales abiertas contra la fórmula vicepresidencial.'
+    ],
+    press:[
+      ['fav','EL ORDEN','«El país pidió orden y alguien finalmente escuchó»'],
+      ['fav','MERCADO ABIERTO','«La bolsa celebra: el Horizonte ya es escenario base»'],
+      ['adv','LA MARCHA','«La nostalgia del hierro no es política social»'],
+      ['adv','EL FARO','«La promesa de estado de excepción inquieta a las cortes»']
+    ]
+  }
+};
+function renderDossier(d){
+  const stars = i => '★★★★★'.slice(0, Math.max(1, Math.round(i*5))) ;
+  return `
+  <div class="dos-head" style="--sc:${d.sc}">
+    <p class="kicker" style="color:${d.sc}">DOSSIER DESCLASIFICADO — SOLO BANCADA · TOMA DE PARTIDO REGISTRADA</p>
+    <h3 class="dos-name reveal">${d.name}</h3>
+    <p class="dos-pact reveal" style="--d:.06s">${d.pact}</p>
+    <p class="dos-motto reveal" style="--d:.1s">${d.motto} · Adversario en sala: ${d.rivalName}</p>
+  </div>
+  <div class="dos-grid">
+    <div class="dos-main">
+      <h4>DOCTRINA DE CAMPAÑA</h4>
+      <p class="doctrine reveal">${d.doctrine}</p>
+      <h4 style="margin-top:38px">LOS CINCO PILARES</h4>
+      <ol class="pillars">
+        ${d.pillars.map((p,i)=>`<li class="reveal" style="--d:${.05+i*.06}s"><b>${p[0]}</b><p>${p[1]}</p></li>`).join('')}
+      </ol>
+    </div>
+    <div class="dos-aside">
+      <div>
+        <h4>FUERZA EN LAS URNAS</h4>
+        ${d.stats.map((s,i)=>`<div class="stat-bar reveal" style="--d:${.05+i*.06}s">
+          <div class="sb-head"><span>${s[0]}</span><b>${s[1]}</b></div>
+          <div class="sb-track"><i style="--w:${s[2]}"></i></div>
+        </div>`).join('')}
+      </div>
+      <div>
+        <h4>ACTIVOS DE CAMPAÑA</h4>
+        <ul class="ap-list assets">${d.assets.map(a=>`<li class="reveal">${a}</li>`).join('')}</ul>
+      </div>
+      <div>
+        <h4>PASIVOS Y FILTRACIONES</h4>
+        <ul class="ap-list liabs">${d.liabs.map(a=>`<li class="reveal">${a}</li>`).join('')}</ul>
+      </div>
+    </div>
+  </div>
+  <div class="dos-cab">
+    <h4>GABINETE DE CRISIS — NÓMINA INTERNA</h4>
+    <table>
+      <thead><tr><th>CARGO</th><th>FUNCIONES EN CRISIS</th></tr></thead>
+      <tbody>${d.cabinet.map(c=>`<tr class="reveal"><td>${c[0]}</td><td>${c[1]}</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+  <div class="dos-press">
+    <h4>PRENSA DEL DÍA — LO QUE DICEN DE TI</h4>
+    <ul class="press-list">
+      ${d.press.map(p=>`<li class="reveal">
+        <span class="p-tag ${p[0]==='fav'?'p-fav':'p-adv'}">${p[0]==='fav'?'FAVORABLE':'ADVERSA'}</span>
+        <div><b>${p[1]}</b><p>${p[2]}</p></div>
+      </li>`).join('')}
+    </ul>
+    <div class="dos-actions">
+      <a class="btn" href="#reglas"><span class="wipe"></span><i data-lucide="scale"></i><span>Deliberar — reglas de enganche</span></a>
+      <button class="btn" id="btnAbandon"><span class="wipe"></span><i data-lucide="x"></i><span>Volver a la neutralidad</span></button>
+    </div>
+  </div>`;
+}
+
+/* ---------- cambio de bando / tema ---------- */
+let currentSide = null, busy = false;
+const PLEDGE_TXT = {
+  left:{ name:'Coalición de Izquierda', pact:'Pacto por la Transformación', motto:'«La esperanza no se rinde»' },
+  right:{ name:'Coalición de Derecha', pact:'Frente Horizonte', motto:'«Orden, libertad, prosperidad»' }
+};
+function applyTheme(side){
+  document.body.dataset.theme = side || 'neutral';
+  ash.setTheme(side || 'neutral');
+  flag.setTexture(side || 'neutral');
+  buildTicker(side || 'neutral');
+}
+function setPanelsUI(side){
+  $('#panelL').classList.toggle('active', side==='left');
+  $('#panelR').classList.toggle('active', side==='right');
+  $('#badgeL').hidden = side!=='left';
+  $('#badgeR').hidden = side!=='right';
+  $('#desertL').hidden = side!=='left';
+  $('#desertR').hidden = side!=='right';
+  $('#btnL').querySelector('b').innerHTML = side==='left'
+    ? 'BANDO IZQUIERDA<small>RENOVAR LA ALIANZA</small>'
+    : 'BANDO IZQUIERDA<small>ALIARSE CON LA COALICIÓN</small>';
+  $('#btnR').querySelector('b').innerHTML = side==='right'
+    ? 'BANDO DERECHA<small>RENOVAR LA ALIANZA</small>'
+    : 'BANDO DERECHA<small>ALIARSE CON LA COALICIÓN</small>';
+  const chip = $('#sideChip');
+  if(side){ chip.classList.add('on'); $('#sideChipTxt').textContent = side==='left'?'BANDO IZQUIERDA':'BANDO DERECHA'; }
+  else chip.classList.remove('on');
+}
+function showDossier(side){
+  const d = DOSSIERS[side];
+  const body = $('#dossierBody');
+  body.innerHTML = renderDossier(d);
+  $('#dossier').hidden = false;
+  // registrar reveals y iconos del contenido recién creado
+  body.querySelectorAll('.reveal').forEach(el=> revealObs.observe(el));
+  if(window.lucide) lucide.createIcons();
+  $('#btnAbandon').addEventListener('click', ()=> desert());
+}
+function chooseSide(side, ev){
+  if(busy) return;
+  if(side === currentSide){ toast('Ya militas en este bando. Renueva la fe en las urnas.'); return; }
+  busy = true;
+  const ov = $('#pledge');
+  ov.className = 'show' + (side==='left'?' ov-l':' ov-r');
+  const x = ev ? ev.clientX : innerWidth/2, y = ev ? ev.clientY : innerHeight/2;
+  ov.style.setProperty('--px', (x/innerWidth*100)+'%');
+  ov.style.setProperty('--py', (y/innerHeight*100)+'%');
+  const t = PLEDGE_TXT[side];
+  $('#plName').textContent = t.name; $('#plPact').textContent = t.pact; $('#plMotto').textContent = t.motto;
+  document.body.classList.add('lock');
+  setTimeout(()=>{ // la sala cambia de color tras el telón
+    applyTheme(side); currentSide = side; setPanelsUI(side); showDossier(side);
+  }, 1250);
+  setTimeout(()=>{ ov.classList.remove('show'); }, 3000);
+  setTimeout(()=>{
+    document.body.classList.remove('lock');
+    /* ═══ ARREGLO — PERMANECER EN EL LUGAR ═══
+       Antes aquí había un scrollIntoView hacia #dossier que "teletransportaba"
+       al usuario hasta abajo tras la pantalla de toma de partido.
+       Se eliminó: ahora conservas tu posición de scroll exacta. */
+    toast(`Dossier desclasificado — ${t.name.toUpperCase()}`);
+    busy = false;
+  }, 3500);
+}
+function desert(){
+  if(busy || !currentSide) return;
+  currentSide = null;
+  applyTheme(null); setPanelsUI(null);
+  $('#dossier').hidden = true;
+  $('#disyuntiva').scrollIntoView({behavior:'smooth'});
+  toast('Has vuelto a la neutralidad del Estado. La sala te observa.');
+}
+ $('#btnL').addEventListener('click', e=> chooseSide('left', e));
+ $('#btnR').addEventListener('click', e=> chooseSide('right', e));
+ $('#desertL').addEventListener('click', desert);
+ $('#desertR').addEventListener('click', desert);
+
+// ensayo de color al sobrevolar un bando
+ $('#panelL').addEventListener('mouseenter', ()=> ash.setPreview('left'));
+ $('#panelL').addEventListener('mouseleave', ()=> ash.setPreview(null));
+ $('#panelR').addEventListener('mouseenter', ()=> ash.setPreview('right'));
+ $('#panelR').addEventListener('mouseleave', ()=> ash.setPreview(null));
+
+/* ---------- reveals ---------- */
+const revealObs = new IntersectionObserver(ents=>{
+  ents.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); revealObs.unobserve(en.target); } });
+},{threshold:.14});
+ $$('.reveal').forEach(el=> revealObs.observe(el));
+
+/* ---------- nav scrolled ---------- */
+addEventListener('scroll', ()=> $('#nav').classList.toggle('scrolled', scrollY > 40), {passive:true});
+
+/* ---------- parallax: recortes de prensa + fantasma 2026 ---------- */
+let gx=0, gy=0, cgx=0, cgy=0;
+addEventListener('mousemove', e=>{
+  gx = e.clientX/innerWidth - .5; gy = e.clientY/innerHeight - .5;
+  const glow = $('#cursorGlow');
+  glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px';
+});
+(function parallaxLoop(){
+  cgx += (gx-cgx)*.06; cgy += (gy-cgy)*.06;
+  const g = $('#ghost');
+  g.style.transform = `translateX(calc(-50% + ${cgx*-34}px)) translateY(${cgy*-20}px)`;
+  $$('.clip').forEach(c=>{
+    const px = +c.dataset.px || 1;
+    c.style.transform = `rotate(${c.style.getPropertyValue('--rot')||'0deg'}) translate(${cgx*14*px}px, ${cgy*11*px}px)`;
+  });
+  requestAnimationFrame(parallaxLoop);
+})();
+
+/* ---------- transmisión sonora procedural (WebAudio) ---------- */
+(function(){
+  let ctx=null, master=null, on=false;
+  function build(){
+    ctx = new (window.AudioContext||window.webkitAudioContext)();
+    master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    // rumor grave: ruido marrón filtrado
+    const len = ctx.sampleRate*4, buf = ctx.createBuffer(1,len,ctx.sampleRate), ch = buf.getChannelData(0);
+    let last=0;
+    for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+0.02*w)/1.02; ch[i]=last*3.2; }
+    const noise = ctx.createBufferSource(); noise.buffer=buf; noise.loop=true;
+    const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=190; lp.Q.value=.8;
+    const ng = ctx.createGain(); ng.gain.value=.5;
+    noise.connect(lp); lp.connect(ng); ng.connect(master); noise.start();
+    // respiración del filtro
+    const lfo = ctx.createOscillator(); lfo.frequency.value=.07;
+    const lfoG = ctx.createGain(); lfoG.gain.value=90;
+    lfo.connect(lfoG); lfoG.connect(lp.frequency); lfo.start();
+    // drone con batido lento (dos senos casi iguales)
+    [[54,.16],[54.6,.13]].forEach(([f,g])=>{
+      const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
+      const og=ctx.createGain(); og.gain.value=g;
+      o.connect(og); og.connect(master); o.start();
+    });
+  }
+  $('#soundBtn').addEventListener('click', function(){
+    if(!ctx) build();
+    on = !on;
+    this.classList.toggle('on', on);
+    if(ctx.state==='suspended') ctx.resume();
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.linearRampToValueAtTime(on?.5:0, ctx.currentTime+.8);
+    toast(on ? 'Transmisión abierta — la sala respira.' : 'Transmisión cerrada.');
+  });
+})();
+
+/* ---------- bucle maestro ---------- */
+(function loop(){
+  ash.step();
+  flag.step();
+  requestAnimationFrame(loop);
+})();
+
+/* ---------- iconos ---------- */
+if(window.lucide) lucide.createIcons();
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ADICIÓN — MOTOR DE LOS ANEXOS A · B · C
+     Script nuevo e independiente: observa body[data-theme] con un
+     MutationObserver y re-renderiza las tres secciones nuevas.
+     No toca ni reescribe absolutamente nada del script original.
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+let cur = 'neutral';
+
+/* ---------- reveals propios para contenido re-renderizado ---------- */
+const axObs = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); axObs.unobserve(e.target); } });
+},{threshold:.12});
+function arm(root){
+  root.querySelectorAll('.reveal:not(.in)').forEach(el=>axObs.observe(el));
+  if(window.lucide) lucide.createIcons();
+}
+function setGhost(sel, txt, color){
+  const g = $(sel); if(!g) return;
+  g.textContent = txt;
+  g.style.webkitTextStroke = '1px ' + color;
+  g.style.color = 'transparent';
+}
+function wash(secSel, t){
+  const sec = $(secSel); if(!sec) return;
+  sec.style.background = (t==='neutral') ? 'none'
+    : `linear-gradient(180deg, transparent, ${t==='left'?'rgba(224,64,47,.045)':'rgba(94,139,255,.045)'} 35%, transparent)`;
+}
+
+/* ============================================================
+   ANEXO A · EL TERRENO DEL VOTO — mapa hexagonal de Colombia
+   ============================================================ */
+const SIL = "M105,245 L138,228 L180,210 L215,215 L240,236 L265,238 L302,196 L342,174 L392,157 L425,149 L447,187 L472,167 L516,141 L560,122 L604,89 L633,95 L648,119 L641,151 L612,196 L598,238 L587,287 L566,345 L549,405 L543,471 L553,521 L523,561 L482,599 L452,641 L437,663 L418,646 L404,616 L371,600 L337,607 L303,633 L263,653 L227,641 L197,589 L173,523 L159,453 L147,385 L123,319 L108,283 Z";
+/* puntos de influencia electoral: [x, y, radio, lean(0=der,1=izq)] */
+const INF = [
+  [150,520,150,.90],[225,450,100,.82],[215,330,80,.66],[390,300,85,.64],
+  [280,355,70,.50],[265,255,85,.44],[370,180,95,.24],[560,140,95,.12],
+  [490,230,85,.30],[540,390,120,.26],[300,560,150,.68]
+];
+const hexes = [];
+function leanAt(x,y){
+  let sw=0,s=0;
+  for(const F of INF){ const d2=(x-F[0])**2+(y-F[1])**2; const w=Math.exp(-d2/(F[2]*F[2])); sw+=w*F[3]; s+=w; }
+  return sw/s;
+}
+function deptAt(x,y){
+  if(x>330&&x<435&&y>255&&y<335) return 'BOGOTÁ D.C. · SABANA';
+  if(y<300){
+    if(x>540) return 'LA GUAJIRA';
+    if(x>460) return 'CESAR';
+    if(x>390) return 'MAGDALENA · ATLÁNTICO';
+    if(x>320) return 'BOLÍVAR · SUCRE';
+    if(x>240) return 'CÓRDOBA';
+    if(x>190) return 'ANTIOQUIA';
+    return 'CHOCÓ · URABÁ';
+  }
+  if(y<390){
+    if(x<195) return 'CHOCÓ';
+    if(x<340) return 'ANTIOQUIA · EJE CAFETERO';
+    if(x<470) return y<340 ? 'BOYACÁ · CUNDINAMARCA' : 'TOLIMA · HUILA';
+    if(x<560) return 'SANTANDERES';
+    return 'LLANOS · CASANARE';
+  }
+  if(y<520){
+    if(x<300) return 'VALLE DEL CAUCA · CAUCA';
+    if(x<420) return 'TOLIMA · HUILA';
+    if(x<560) return 'META · LLANOS';
+    return 'VICHADA · GUAVIARE';
+  }
+  if(x<250) return 'NARIÑO';
+  if(x<380) return 'CAQUETÁ · PUTUMAYO';
+  return 'AMAZONÍA · VAUPÉS';
+}
+/* zonas objetivo de cada bando (donde se juega la mayoría) */
+const TGT_L = h => (h.x>195&&h.x<345&&h.y>298&&h.y<405) || (h.y<300&&h.x>320&&h.x<555) || (h.x>228&&h.x<345&&h.y>200&&h.y<300);
+const TGT_R = h => (h.x>195&&h.x<345&&h.y>298&&h.y<405) || (h.x>330&&h.x<470&&h.y>250&&h.y<375) || (h.x>200&&h.x<302&&h.y>360&&h.y<455);
+const HEXCLS = ['aL','aLm','aB','aBm','aU','at','at2'];
+function colorMap(t){
+  hexes.forEach(h=>{
+    let c;
+    if(t==='left'){
+      c = (TGT_L(h) && h.lean>.16 && h.lean<.78) ? 'at'
+        : h.lean>.7 ? 'aL' : h.lean>.45 ? 'aLm' : h.lean>.3 ? 'aU' : 'aBm';
+    } else if(t==='right'){
+      c = (TGT_R(h) && h.lean<.78 && h.lean>.22) ? 'at2'
+        : h.lean<.3 ? 'aB' : h.lean<.55 ? 'aBm' : h.lean<.7 ? 'aU' : 'aLm';
+    } else {
+      c = h.lean>.55 ? 'aL' : h.lean<.45 ? 'aB' : 'aU';
+    }
+    h.el.classList.remove(...HEXCLS);
+    h.el.classList.add(c);
+  });
+}
+/* construir el mosaico una sola vez */
+(function buildMap(){
+  const svg = $('#axMap'); if(!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  // retícula cartográfica
+  const grat = document.createElementNS(NS,'g');
+  let lines = '';
+  for(let x=90;x<=630;x+=90) lines += `<line x1="${x}" y1="16" x2="${x}" y2="712"/>`;
+  for(let y=60;y<=700;y+=90) lines += `<line x1="8" y1="${y}" x2="694" y2="${y}"/>`;
+  grat.innerHTML = `<g stroke="rgba(200,162,74,.07)" stroke-width="1">${lines}</g>`;
+  svg.appendChild(grat);
+  // recorte con la silueta del país
+  const defs = document.createElementNS(NS,'defs');
+  defs.innerHTML = `<clipPath id="axClip"><path d="${SIL}"/></clipPath>`;
+  svg.appendChild(defs);
+  const hg = document.createElementNS(NS,'g');
+  hg.setAttribute('clip-path','url(#axClip)');
+  svg.appendChild(hg);
+  // hexágonos dentro del territorio (test punto-en-polígono vía canvas)
+  const cv = document.createElement('canvas'); cv.width=700; cv.height=720;
+  const ctx = cv.getContext('2d');
+  const P = new Path2D(SIL);
+  const s=17.5, w=Math.sqrt(3)*s, vs=1.5*s, r=s*.93;
+  for(let row=0, y=s; y<735; row++, y+=vs){
+    const off = (row%2) ? w/2 : 0;
+    for(let col=0, x=w/2+off; x<712; col++, x+=w){
+      if(!ctx.isPointInPath(P, x, y)) continue;
+      const pts=[];
+      for(let k=0;k<6;k++){ const a=Math.PI/180*(60*k-90); pts.push((x+r*Math.cos(a)).toFixed(1)+','+(y+r*Math.sin(a)).toFixed(1)); }
+      const el = document.createElementNS(NS,'polygon');
+      el.setAttribute('points', pts.join(' '));
+      el.setAttribute('class','axh');
+      el.style.transitionDelay = (Math.random()*.55).toFixed(2)+'s';
+      el.dataset.h = hexes.length;
+      hg.appendChild(el);
+      hexes.push({ x, y, el, lean: leanAt(x,y)+Math.random()*.14-.07, dept: deptAt(x,y) });
+    }
+  }
+  // contorno, archipiélago, brújula
+  const deco = document.createElementNS(NS,'g');
+  deco.innerHTML = `
+    <path d="${SIL}" fill="none" stroke="var(--accent)" stroke-width="2.2" style="transition:stroke 1s"/>
+    <g font-family="'IBM Plex Mono',monospace">
+      <rect x="20" y="24" width="152" height="60" fill="none" stroke="rgba(200,162,74,.38)" stroke-dasharray="4 4"/>
+      <circle cx="52" cy="47" r="4.6" fill="#7c7259" stroke="rgba(13,11,8,.9)" stroke-width="1" class="axh" data-tip="SAN ANDRÉS — ARCHIPIÉLAGO EN DISPUTA FISCAL"/>
+      <circle cx="76" cy="62" r="4.6" fill="#7c7259" stroke="rgba(13,11,8,.9)" stroke-width="1" class="axh" data-tip="PROVIDENCIA — ARCHIPIÉLAGO EN DISPUTA FISCAL"/>
+      <text x="96" y="44" font-size="7.5" letter-spacing="1.4" fill="rgba(163,152,127,.95)">SAN ANDRÉS ·</text>
+      <text x="96" y="56" font-size="7.5" letter-spacing="1.4" fill="rgba(163,152,127,.95)">PROVIDENCIA</text>
+      <text x="96" y="72" font-size="6.5" letter-spacing="2" fill="rgba(107,99,83,.95)">MAR CARIBE</text>
+      <g transform="translate(638,650)">
+        <circle r="22" fill="none" stroke="rgba(200,162,74,.5)"/>
+        <path d="M0,13 L0,-13 M0,-13 l-4.5,6 M0,-13 l4.5,6" stroke="var(--accent)" stroke-width="1.5" fill="none" style="transition:stroke 1s"/>
+        <text y="-30" text-anchor="middle" font-size="10" letter-spacing="1" fill="var(--accent)" style="transition:fill 1s">N</text>
+      </g>
+      <text x="392" y="690" font-size="7" letter-spacing="1.6" fill="rgba(107,99,83,.95)">TRAPECIO DE LETICIA</text>
+    </g>`;
+  svg.appendChild(deco);
+  // tooltip de comuna
+  const tip = $('#axMapTip');
+  svg.addEventListener('pointermove', e=>{
+    const t = e.target;
+    if(!(t.classList && t.classList.contains('axh'))){ tip.style.display='none'; return; }
+    let html;
+    if(t.dataset.tip){ html = `<b>${t.dataset.tip}</b>`; }
+    else{
+      const h = hexes[+t.dataset.h];
+      if(cur==='neutral'){ const pL=Math.round(20+h.lean*60); html = `<b>${h.dept}</b> — IZQ ${pL}% · DER ${90-pL}%`; }
+      else if(cur==='left'){ const c = h.lean>.7?'ALTA':h.lean>.45?'MEDIA':'POR VOLTEAR'; html = `<b>${h.dept}</b> — CONFIANZA DE BANCADA: ${c}`; }
+      else{ const c = h.lean<.3?'ALTA':h.lean<.55?'MEDIA':'POR VOLTEAR'; html = `<b>${h.dept}</b> — CONFIANZA DE BANCADA: ${c}`; }
+    }
+    tip.innerHTML = html; tip.style.display = 'block';
+    tip.style.left = Math.min(innerWidth-270, e.clientX+16)+'px';
+    tip.style.top = (e.clientY-40)+'px';
+  });
+  svg.addEventListener('pointerleave', ()=> tip.style.display='none');
+  // encendido escalonado
+  new IntersectionObserver((es,ob)=>{
+    es.forEach(en=>{ if(en.isIntersecting){ hexes.forEach(h=>h.el.classList.add('on')); ob.disconnect(); } });
+  },{threshold:.25}).observe($('#axaMapBox'));
+})();
+
+function legendFor(t){
+  if(t==='neutral') return `
+    <span class="hl"><i style="background:#d5382c"></i>BASTIÓN IZQUIERDA</span>
+    <span class="hl"><i style="background:#7c7259"></i>SIN DEFINIR</span>
+    <span class="hl"><i style="background:#4e78e6"></i>BASTIÓN DERECHA</span>`;
+  if(t==='left') return `
+    <span class="hl"><i style="background:#d5382c"></i>BASTIÓN</span>
+    <span class="hl"><i class="axp-dot" style="background:#ff5a40"></i>COMUNA OBJETIVO</span>
+    <span class="hl"><i style="background:#3a5ca0"></i>RESISTENCIA</span>`;
+  return `
+    <span class="hl"><i style="background:#4e78e6"></i>BASTIÓN</span>
+    <span class="hl"><i class="axp-dot" style="background:#8fb2ff"></i>COMUNA OBJETIVO</span>
+    <span class="hl"><i style="background:#93291f"></i>RESISTENCIA</span>`;
+}
+function panelNeutral(){
+  const rows = [['EJE CAFETERO',45,43],['SANTANDERES',41,46],['CARIBE CENTRAL',46,44],['ANTIOQUIA',43,45],['TOLIMA GRANDE',48,41]];
+  return `<h4>CINTURÓN DEL EMPATE</h4>
+  <p class="axp-sub">LAS CINCO COMUNAS QUE DECIDEN — FIRMA CNA·FACTO · 18·03</p>
+  ${rows.map((r,i)=>`<div class="axp reveal" style="--d:${(.04*i).toFixed(2)}s">
+    <div class="axp-head"><b>${r[0]}</b><span>${r[1]} · ${r[2]}</span></div>
+    <div class="dualbar"><span class="dl" style="width:${r[1]}%"></span><span class="dm"></span><span class="dr" style="width:${r[2]}%"></span></div>
+  </div>`).join('')}
+  <div class="axa-foot">Cinco regiones, 38 curules de margen. El empate tiene dirección postal.</div>`;
+}
+function panelSide(side){
+  const tc = side==='left' ? '#d5382c' : '#4e78e6';
+  const bast = side==='left'
+    ? [['PACÍFICO SUR',86],['BOGOTÁ Y SABANA',71],['AMAZONÍA RURAL',68]]
+    : [['CARIBE NORTE',68],['SANTANDERES Y LLANOS',63],['ANTIOQUIA',58]];
+  const tgt = side==='left'
+    ? [['EJE CAFETERO','+9 CURULES'],['CARIBE NORTE','+14 CURULES'],['ANTIOQUIA METROPOLITANA','+11 CURULES']]
+    : [['EJE CAFETERO','+11 CURULES'],['SABANA DE BOGOTÁ','+13 CURULES'],['VALLE URBANO','+10 CURULES']];
+  return `<div style="--tc:${tc}">
+  <h4 style="color:${tc}">LA RUTA AL 137</h4>
+  <p class="axp-sub">${side==='left'?'ORDEN DE PRIORIDADES DE LA COMANDANCIA':'ORDEN DE PRIORIDADES DEL ESTADO MAYOR'}</p>
+  ${bast.map((b,i)=>`<div class="axp reveal" style="--d:${(.04*i).toFixed(2)}s">
+    <div class="axp-head"><b>${b[0]}</b><span>BASTIÓN · ${b[1]}%</span></div>
+    <div class="solo-bar"><i style="--w:${b[1]}%; --tc:${tc}"></i></div>
+  </div>`).join('')}
+  <p class="axp-sub" style="margin-top:22px">COMUNAS OBJETIVO — DONDE SE GANA LA MAYORÍA</p>
+  ${tgt.map(t=>`<div class="axp-target reveal"><span>${t[0]}</span><em>${t[1]}</em></div>`).join('')}
+  <div class="axa-foot">${side==='left'?'Faltan 34 curules. El mapa ya dijo dónde viven.':'Faltan 34 curules. El orden tiene ruta trazada.'}</div></div>`;
+}
+function renderA(t){
+  cur = t;
+  const K = {
+    neutral:'ANEXO A · CARTOGRAFÍA ELECTORAL — INSTITUTO GEOGRÁFICO DE CRISIS',
+    left:'ANEXO A · MAPA DE CAMPAÑA — CUARTEL GENERAL LA ESPERANZA',
+    right:'ANEXO A · TEATRO DE OPERACIONES — PUESTO DE MANDO HORIZONTE'
+  }[t];
+  const T = { neutral:'El terreno del voto', left:'La geografía de la esperanza', right:'El mapa del orden' }[t];
+  const S = {
+    neutral:'<span class="desktop-only">El país no vota uniforme: vota por geografías que se contradicen. Pasa el cursor sobre el plano — cada celda es una comuna con memoria, rabia y fila en las urnas.</span><span class="mobile-only">Colombia vota por geografías divididas. Explora el mapa de comunas.</span>',
+    left:'<span class="desktop-only">En rojo vivo, los bastiones que no se negocian. En destello, las comunas de la ruta: donde el Pacto debe crecer para cercar las 137 curules. La resistencia azul retrocede, pero no calla.</span><span class="mobile-only">Bastiones seguros en rojo. Comunas objetivo en destello para ganar.</span>',
+    right:'<span class="desktop-only">En azul profundo, los departamentos sellados. En destello, las comunas que el Frente debe voltear para blindar la mayoría. El relicario rojo resiste en el suroccidente.</span><span class="mobile-only">Bastiones azules y comunas a voltear en destello.</span>'
+  }[t];
+  const C = {
+    neutral:'PLANO N.º 3 — INTENCIÓN DE VOTO PROYECTADA POR COMUNA · PROYECCIÓN CÓNICA DEL DEBATE · ESCALA APROX. 1:4.000.000 · REVISADO 18·03·2026 · ARCHIVO DE LA SECRETARÍA',
+    left:'PLANO DE GUERRA N.º 3 — RUTA AL 137 · COMUNAS OBJETIVO EN DESTELLO · CIRCULACIÓN RESTRINGIDA A LA BANCADA · 21·03·2026',
+    right:'TEATRO DE OPERACIONES N.º 3 — OBJETIVOS DE VOLTEO EN DESTELLO · CIRCULACIÓN DEL ESTADO MAYOR · 21·03·2026'
+  }[t];
+  $('#axaKicker').textContent = K;
+  $('#axaTitle').innerHTML = '<em>A.</em> ' + T;
+  $('#axaSub').innerHTML = S;
+  $('#axaCaption').textContent = C;
+  $('#axaPanel').innerHTML = (t==='neutral') ? panelNeutral() : panelSide(t);
+  $('#axaLegend').innerHTML = legendFor(t);
+  colorMap(t);
+  wash('#anexoA', t);
+  arm($('#anexoA'));
+}
+
+/* ============================================================
+   ANEXO B · EL PULSO DE LA CALLE
+   ============================================================ */
+const vnote = (q,c,pin,rot)=>`<div class="ax-vnote" style="--rot:${rot}deg;--pin:${pin}"><q>${q}</q><cite>${c}</cite></div>`;
+const mural = (q,c,rot)=>`<div class="axb-mural reveal" style="--rot:${rot}deg"><q>${q}</q><cite>${c}</cite></div>`;
+const plaque = (q,c,d)=>`<div class="axb-plaque reveal" style="--d:${d}s"><q>${q}</q><cite>${c}</cite></div>`;
+function renderB(t){
+  cur = t;
+  const body = $('#axbBody');
+  let html = '';
+  if(t==='neutral'){
+    html = `
+    <p class="kicker reveal">ANEXO B · PULSO DE CALLE — SONDEO CUALITATIVO NACIONAL · 2.400 ENTREVISTAS · 32 DEPARTAMENTOS</p>
+    <h2 class="sec-title reveal" style="--d:.08s"><em>B.</em> El país habla a la vez</h2>
+    <div class="rule reveal" style="--d:.12s"></div>
+    <p class="sec-sub reveal" style="--d:.08s"><span class="desktop-only">La misma calle, dos vocabularios. La firma CNA·Facto clavó el micrófono durante tres semanas: esto fue lo que volvió. Ninguna de las dos mitades reconoce vivir en el mismo país que la otra.</span><span class="mobile-only">Sondeos cualitativos reflejan dos visiones irreconciliables del país.</span></p>
+    <div class="axb-split">
+      <div class="axb-wall axb-wl reveal" style="--d:.06s">
+        <div class="axb-wall-head"><b>EL GRITO</b><span>VOCES DE LA IZQUIERDA</span></div>
+        ${vnote('«Cuatro años preguntándonos cuándo llega el cambio. Que no nos lo roben en la puerta.»','DORA M., 58 · COCINERA DE COMEDOR · BUENAVENTURA','#a41e22',-1.4)}
+        ${vnote('«La paz no es un papel firmado: es la escuela que por fin se levantó en mi vereda.»','MAESTRA RURAL · NORTE DEL CAUCA','#a41e22',1)}
+        ${vnote('«Si nos quitan la reforma agraria, nos quitan la siembra que empezamos.»','YEIMY R., 22 · ESTUDIANTE AGROAMBIENTAL · CAQUETÁ','#a41e22',-.8)}
+      </div>
+      <div class="axb-seam reveal" style="--d:.12s">
+        <span class="axb-scale"><i data-lucide="scale"></i></span>
+        <span class="axb-tie">47 / 47</span>
+        <span class="axb-reading">EMPATE TÉCNICO · 6% SIN RESPUESTA</span>
+      </div>
+      <div class="axb-wall axb-wr reveal" style="--d:.16s">
+        <div class="axb-wall-head"><b>EL CLAMOR</b><span>VOCES DE LA DERECHA</span></div>
+        ${vnote('«Yo no pongo la otra mejilla: pido autoridad. Es lo mínimo.»','ALFONSO B., 49 · TENDERO · BOSA, BOGOTÁ','#1e4bb8',1.2)}
+        ${vnote('«La empresa no aguanta otro impuesto: o se muda o se muere.»','INDUSTRIAL TEXTIL · MEDELLÍN','#1e4bb8',-1)}
+        ${vnote('«Quiero que mis hijos vuelvan solos del colegio. Nada más pido.»','MADRE CABEZA DE FAMILIA · BARRANQUILLA','#1e4bb8',.7)}
+      </div>
+    </div>`;
+  } else if(t==='left'){
+    let flags = '';
+    for(let i=0;i<16;i++){
+      flags += `<span class="bflag${i%4===2?' gold':''}" style="left:${(2+i*6.3).toFixed(1)}%;--dl:${(i%7*.45).toFixed(2)}s"></span>`;
+    }
+    html = `
+    <p class="kicker reveal">ANEXO B · DESPACHO DE CALLE — CUARTEL GENERAL LA ESPERANZA</p>
+    <h2 class="sec-title reveal" style="--d:.08s"><em>B.</em> La marcha no se cuenta: se pisa</h2>
+    <div class="rule reveal" style="--d:.12s"></div>
+    <p class="sec-sub reveal" style="--d:.08s"><span class="desktop-only">La calle dejó de ser termómetro y se volvió argumento. Tres semanas de territorio recuperado, contadas desde abajo, con las botas todavía sucias.</span><span class="mobile-only">La marcha como principal argumento político y movilización.</span></p>
+    <div class="axb-rope reveal" aria-hidden="true">${flags}</div>
+    <div class="axb-chant reveal" style="--d:.08s" aria-label="Consigna de la marcha">
+      <div class="ch-track">
+        <span>«¡LA ESPERANZA NO SE RINDE!» · «¡LA CALLE ES DE LA GENTE!» ·&nbsp;</span>
+        <span>«¡LA ESPERANZA NO SE RINDE!» · «¡LA CALLE ES DE LA GENTE!» ·&nbsp;</span>
+      </div>
+    </div>
+    <div class="axb-murals">
+      ${mural('«Vinimos caminando desde el Cauca con la plata del pasaje y la fe completa. No volvemos con las manos vacías.»','LORENA Q., 41 · LIDERESA COMUNAL · CAUCA',-1.2)}
+      ${mural('«Es la primera vez que voto, y no me mueve el miedo: me mueve el orgullo.»','YEISON T., 19 · ESTUDIANTE · QUIBDÓ',.9)}
+      ${mural('«El café que cultivamos merece un país a la altura.»','CAFICULTOR · PUEBLO RICO, RISARALDA',-.6)}
+    </div>
+    <div class="axb-cloth reveal" style="--d:.1s">
+      <q>«Si el cambio se detiene, la calle lo empuja.»</q>
+      <cite>MANIFIESTO DE LA MARCHA GRANDE · PLAZA DE BOLÍVAR · 26·05·2026</cite>
+    </div>
+    <div class="axb-stats reveal" style="--d:.08s">
+      <div class="st"><b>1.200.000</b><span>PERSONAS EN CALLES</span></div>
+      <div class="st"><b>38</b><span>CARAVANAS SIMULTÁNEAS</span></div>
+      <div class="st"><b>214</b><span>VEREDAS VISITADAS</span></div>
+    </div>`;
+  } else {
+    html = `
+    <p class="kicker reveal">ANEXO B · SALÓN DE ACOGIDA — PUESTO DE MANDO HORIZONTE</p>
+    <h2 class="sec-title reveal" style="--d:.08s"><em>B.</em> El país firma su compromiso</h2>
+    <div class="rule reveal" style="--d:.12s"></div>
+    <p class="sec-sub reveal" style="--d:.08s"><span class="desktop-only">La última milla no se grita: se firma. Conversatorios cerrados, apretón de manos y un acta que ya circula por 21 departamentos.</span><span class="mobile-only">Última milla basada en alianzas y pactos firmados en privado.</span></p>
+    <div class="axb-standards reveal" style="--d:.06s" aria-hidden="true">
+      <div class="std"><span>ORDEN</span></div>
+      <div class="std"><span>LIBERTAD</span></div>
+      <div class="std"><span>PROSPERIDAD</span></div>
+    </div>
+    <div class="axb-plaques">
+      ${plaque('«Puse mi empresa en riesgo durante cuatro años. Ahora pongo mi voto.»','EMPRESARIO TEXTIL · MEDELLÍN',.04)}
+      ${plaque('«Basta de experimentos: el país necesita relevo y descanso.»','PENSIONADO DEL MAGISTERIO · BUCARAMANGA',.08)}
+      ${plaque('«La Constitución no es un borrador que se reescribe cada verano.»','ABOGADA CONSTITUCIONALISTA · BOGOTÁ',.12)}
+    </div>
+    <div class="axb-contract reveal" style="--d:.1s">
+      <div class="ct-head"><b>COMPROMISO PAÍS</b><span>ACTA N.º 001 — BORRADOR VIGENTE</span></div>
+      <ol>
+        <li>Seguridad con resultados medidos mes a mes, publicados en tablero abierto.</li>
+        <li>Respeto pleno a la propiedad, a la inversión y al mérito como única fila.</li>
+        <li>Un Estado esbelto, auditable en vivo, sin experimentos constitucionales.</li>
+      </ol>
+      <div class="axb-sig">
+        <div class="sigf"><div class="line sig-ink">El Horizonte</div><small>COMANDO DE CAMPAÑA — FIRMADO</small></div>
+        <div class="sigf"><div class="line"></div><small>FIRMA DEL ADHERENTE — EN BLANCO</small></div>
+      </div>
+      <span class="stamp">COMPROMISO PAÍS</span>
+    </div>
+    <div class="axb-stats reveal" style="--d:.08s">
+      <div class="st"><b>21</b><span>DEPARTAMENTOS SELLADOS</span></div>
+      <div class="st"><b>214.000</b><span>ADHERENTES NUEVOS</span></div>
+      <div class="st"><b>92%</b><span>RETENCIÓN DE BANCADA</span></div>
+    </div>`;
+  }
+  body.innerHTML = html;
+  setGhost('#axbGhost', t==='neutral'?'VOCES':(t==='left'?'ESPERANZA':'ORDEN'),
+    t==='neutral'?'rgba(200,162,74,.13)':(t==='left'?'rgba(224,64,47,.14)':'rgba(94,139,255,.14)'));
+  wash('#anexoB', t);
+  arm(body);
+}
+
+/* ============================================================
+   ANEXO C · LA SEMANA DECISIVA — sala de situación
+   ============================================================ */
+const blip = (x,y,c,txt,fade)=>`<span class="blip${fade?' fading':''}" style="--x:${x}%;--y:${y}%;--bc:${c};--bd:${(1.1+Math.random()).toFixed(2)}s">${txt}</span>`;
+const day = (date,sub,inner,gold)=>`<li class="tl-day${gold?' gold':''} reveal"><span class="tl-date">${date}${sub?`<small>${sub}</small>`:''}</span>${inner}</li>`;
+const duo = (l,r)=>`<div class="tl-duo">
+  <div class="tl-card" style="--tc:#d5382c"><b>${l[0]}</b><p>${l[1]}</p></div>
+  <div class="tl-card" style="--tc:#4e78e6"><b>${r[0]}</b><p>${r[1]}</p></div>
+</div>`;
+const goldCard = (t,p)=>`<div class="tl-card" style="--tc:#c8a24a"><b>${t}</b><p>${p}</p></div>`;
+const sc = (tm,t,p,ch,tc)=>`<div class="tl-card" style="--tc:${tc}"><b><span class="tm">${tm}</span>${t}</b><p>${p}</p><span class="chip">${ch}</span></div>`;
+const fin = (a,b)=>`<div class="tl-final reveal"><div class="fin-t">${a}</div><div class="fin-h">${b}</div><span class="stamp">DÍA D</span></div>`;
+function monitor(cap, blips, gL, gV, gC, gW){
+  return `<div class="axc-monitor reveal" style="--d:.1s">
+    <div class="axc-mon-head"><span>PARTE N.º 7 — SEMANA 25 → 31 · MAYO</span><span class="live-mini"><span class="live-dot"></span>RADAR ACTIVO</span></div>
+    <div class="axc-radar">
+      <span class="ax-sweep"></span>
+      ${blips}
+    </div>
+    <p class="axc-radar-cap">${cap}</p>
+    <div class="axc-gauge" style="--gc:${gC}">
+      <div class="g-head"><span>${gL}</span><b>${gV}</b></div>
+      <div class="g-track"><i style="--w:${gW}%"></i></div>
+    </div>
+  </div>`;
+}
+function renderC(t){
+  cur = t;
+  const body = $('#axcBody');
+  let html = '';
+  if(t==='neutral'){
+    html = `
+    <p class="kicker reveal">ANEXO C · SALA DE SITUACIÓN — REGISTRO CONJUNTO DE CAMPAÑAS</p>
+    <h2 class="sec-title reveal" style="--d:.08s"><em>C.</em> La semana decisiva</h2>
+    <div class="rule reveal" style="--d:.12s"></div>
+    <p class="sec-sub reveal" style="--d:.08s"><span class="desktop-only">Del lunes 25 al domingo 31 de mayo: dos campamentos, un solo país y siete días de reloj. El radar mezcla ecos de los dos lados; la cronología los confronta.</span><span class="mobile-only">Siete días decisivos de campaña registrados por el radar de crisis.</span></p>
+    <div class="axc-grid">
+      ${monitor('MONITOREO MIXTO — ECOS DE AMBOS CAMPAMENTOS',
+        blip(26,40,'#d5382c','MARCHAS') + blip(68,36,'#4e78e6','GREMIOS') + blip(47,26,'#c8a24a','ENCUESTA') + blip(58,64,'#c8a24a','RUMOR') + blip(76,52,'#c8a24a','BOT'),
+        'TENSIÓN NACIONAL','ELEVADA — 72%','#c8a24a',72)}
+      <div class="axc-col">
+        <ol class="axc-tl">
+          ${day('LUN 25','SEMANA FINAL', duo(
+            ['CARAVANA DEL SUROCCIDENTE','14 municipios en 36 horas: el Pacto sube a buscar el voto que ya no baja de la montaña.'],
+            ['PAUSA GREMIAL EN MEDELLÍN','El Frente cierra su última milla con los industriales: compromiso de empleo y disciplina fiscal.']))}
+          ${day('MAR 26','', duo(
+            ['LA MARCHA GRANDE','Convocatoria nacional a la Plaza de Bolívar: la coalición apuesta todo al volumen.'],
+            ['ADHESIÓN DEL AGRO DEL NORTE','Cuarenta mil productores firman por el orden: el campo cambia de humor.']))}
+          ${day('MIÉ 27','CHOQUE', goldCard('EL DEBATE ÚNICO','Noventa minutos en vivo, una sola noche, cuarenta y un millones de ojos. Ningún campamento ha ganado nunca un debate que no empezó ganando la semana.'), true)}
+          ${day('JUE 28','CHOQUE', goldCard('FILTRACIÓN — EL EXPEDIENTE ANDINO','El documento cae en manos de EL FARO. Los dos cuarteles silencian los teléfonos a la misma hora.'), true)}
+          ${day('VIE 29','', duo(
+            ['OPERATIVO URNAS','62 mil acompañantes en 9 mil puestos de votación: la confianza también se organiza.'],
+            ['AUDITORÍA DE TESTIGOS','48 mil testigos notarizados y 12 mil en reserva: la vigilancia se firma.']))}
+          ${day('SÁB 30','VEDA', goldCard('VEDA ELECTORAL','El país sostiene la respiración. En los dos campamentos alguien duerme, por última vez, tranquilo.'), true)}
+        </ol>
+        ${fin('DOMINGO 31 — <em>Primera Vuelta</em>','08:00 ABREN LAS URNAS · 14:00 CIERRAN · 20:00 EL PAÍS SE CONOCE A SÍ MISMO. DESPUÉS DE ESO, ESTE COMITÉ.')}
+      </div>
+    </div>
+    <p class="axc-note reveal">Registro compilado por la Secretaría Académica a partir de los partes de ambos campamentos. Ninguno reconoce la versión del otro.</p>`;
+  } else if(t==='left'){
+    const tc = '#d5382c';
+    html = `
+    <p class="kicker reveal">ANEXO C · ORDEN DEL DÍA — CUARTEL GENERAL LA ESPERANZA</p>
+    <h2 class="sec-title reveal" style="--d:.08s"><em>C.</em> Siete días para no perder el mundo</h2>
+    <div class="rule reveal" style="--d:.12s"></div>
+    <p class="sec-sub reveal" style="--d:.08s"><span class="desktop-only">La elección no se gana el domingo: se gana entre semana, municipio a municipio, mientras el otro lado duerme. Orden del día de la comandancia, con el estado de cada operativo.</span><span class="mobile-only">Plan de semana final municipio a municipio, el estado de cada operativo.</span></p>
+    <div class="axc-grid">
+      ${monitor('MONITOREO PROPIO — ECOS DE LA MARCHA',
+        blip(38,34,'#ff5a40','PLAZA LLENA') + blip(24,56,'#ff5a40','CARAVANAS') + blip(70,32,'#4e78e6','GREMIOS',true) + blip(60,68,'#c8a24a','RUMOR') + blip(78,48,'#c8a24a','BOT'),
+        'ACOSO INSTITUCIONAL PERCIBIDO','CRÍTICO — 81%','#d5382c',81)}
+      <div class="axc-col">
+        <ol class="axc-tl">
+          ${day('LUN 25','05:40', sc('05:40','OPERATIVO ALBA','Caravana del suroccidente: 14 municipios en 36 horas, con la banda sonora puesta por las JAC.','EN RUTA',tc))}
+          ${day('MAR 26','09:00', sc('09:00','LA MARCHA GRANDE','Un millón de manos, una sola plaza. La convocatoria es el mensaje.','CONFIRMADO',tc))}
+          ${day('MAR 26','21:30', sc('21:30','RETÉN DE PRENSA','La marcha se cuenta sola, pero la contamos igual: consigna única, vocería única.','RESERVADO',tc))}
+          ${day('MIÉ 27','20:00', sc('20:00','EL DEBATE ÚNICO','Directiva de vocería: no hablar de ellos; hablar de la gente. Cada ataque propio es un voto regalado.','ENSAYO GENERAL',tc))}
+          ${day('JUE 28','06:00', sc('06:00','EXPEDIENTE ANDINO','Comité jurídico en sesión permanente. Tutelas redactadas, campanas listas.','EN ALERTA',tc))}
+          ${day('VIE 29','14:00', sc('14:00','OPERATIVO URNAS','62 mil acompañantes desplegados en 9 mil puestos. La confianza también se organiza.','DESPLIEGUE',tc))}
+          ${day('SÁB 30','VEDA', sc('—','VEDA','Descanso de campaña, no de convicción. Guardia mínima en los 32 departamentos.','GUARDIA MÍNIMA',tc))}
+        </ol>
+        ${fin('DOMINGO 31 — <em>A votar, a custodiar, a respirar</em>','08:00 A VOTAR · 14:00 A CUSTODIAR EL ESCRUTINIO · 20:00 A RESPIRAR. LO DEMÁS ES LA HISTORIA QUE ESCRIBA ESTE COMITÉ.')}
+      </div>
+    </div>
+    <p class="axc-note reveal">Orden del día de circulación interna de bancada. La filtración de este documento es, en sí misma, una jugada de crisis.</p>`;
+  } else {
+    const tc = '#4e78e6';
+    html = `
+    <p class="kicker reveal">ANEXO C · ORDEN DEL DÍA — PUESTO DE MANDO HORIZONTE</p>
+    <h2 class="sec-title reveal" style="--d:.08s"><em>C.</em> Siete días para devolverle el país</h2>
+    <div class="rule reveal" style="--d:.12s"></div>
+    <p class="sec-sub reveal" style="--d:.08s"><span class="desktop-only">La última milla no se improvisa: se audita. Orden del día del estado mayor, con el estado de cada frente de batalla.</span><span class="mobile-only">Plan estricto de última milla. Ejecución milimétrica de cada frente de batalla.</span></p>
+    <div class="axc-grid">
+      ${monitor('MONITOREO PROPIO — ECOS DEL MERCADO',
+        blip(66,32,'#7da6ff','BOLSA AL ALZA') + blip(36,58,'#7da6ff','ADHESIONES') + blip(24,42,'#d5382c','MARCHAS',true) + blip(58,66,'#c8a24a','RUMOR') + blip(76,50,'#c8a24a','BOT'),
+        'RIESGO DE FRAUDE NARRADO','CRÍTICO — 79%','#4e78e6',79)}
+      <div class="axc-col">
+        <ol class="axc-tl">
+          ${day('LUN 25','05:30', sc('05:30','FRENTE GREMIAL','Pausa de última milla en 11 ciudades: logística, pauta y 40 mil voluntarios con chaleco.','EN EJECUCIÓN',tc))}
+          ${day('MAR 26','11:00', sc('11:00','ADHESIÓN DEL AGRO','Cuarenta mil productores del norte firman el compromiso. El campo urbano cambia de humor.','CONFIRMADO',tc))}
+          ${day('MIÉ 27','20:00', sc('20:00','EL DEBATE ÚNICO','Directiva de podio: la seguridad no se debate, se demuestra. Cifras al aire, adjetivos al cesto.','ENSAYO GENERAL',tc))}
+          ${day('JUE 28','06:00', sc('06:00','EXPEDIENTE ANDINO','Respuesta coordinada a la filtración: impugnaciones impresas y vocería en cadena.','EN ALERTA',tc))}
+          ${day('VIE 29','14:00', sc('14:00','AUDITORÍA DE TESTIGOS','48 mil notarizados, 12 mil en reserva. La vigilancia también se firma.','DESPLIEGUE',tc))}
+          ${day('SÁB 30','VEDA', sc('—','VEDA','Jornada de unidad y gratitud con las comunidades. Silencio de campaña, disciplina intacta.','GUARDIA MÍNIMA',tc))}
+        </ol>
+        ${fin('DOMINGO 31 — <em>El Horizonte</em>','08:00 A VOTAR · 15:00 A VIGILAR EL ESCRUTINIO · 20:00 EL HORIZONTE. LO DEMÁS ES LA HISTORIA QUE ESCRIBA ESTE COMITÉ.')}
+      </div>
+    </div>
+    <p class="axc-note reveal">Orden del día del estado mayor. Copia única: quien lea esto ya firmó algo.</p>`;
+  }
+  body.innerHTML = html;
+  setGhost('#axcGhost','31·05', t==='neutral'?'rgba(200,162,74,.13)':(t==='left'?'rgba(224,64,47,.14)':'rgba(94,139,255,.14)'));
+  wash('#anexoC', t);
+  arm(body);
+}
+
+/* ---------- render inicial + escucha del bando ---------- */
+function renderAll(t){ renderA(t||'neutral'); renderB(t||'neutral'); renderC(t||'neutral'); }
+renderAll(document.body.dataset.theme || 'neutral');
+new MutationObserver(ms=>{
+  ms.forEach(m=>{
+    if(m.attributeName === 'data-theme'){
+      renderAll(document.body.dataset.theme || 'neutral');
+    }
+  });
+}).observe(document.body, { attributes:true, attributeFilter:['data-theme'] });
+})();
+</script>
+<!-- ════════════════ FIN DE LA ADICIÓN — MOTOR ════════════════ -->
+
+<!-- ══════════════════════════════════════════════════════════════
+     ADICIÓN — SELECTOR DE BANDO FLOTANTE
+     El botón dual: dos mitades (roja / azul) siempre visibles,
+     como en el video. Al pulsar una mitad reusa el motor original
+     (mediante eventos) y toda la sala cambia de bando: colores,
+     cenizas, bandera, ticker, dossier y anexos A · B · C.
+     No modifica, no elimina, no reemplaza nada del código previo.
+     ══════════════════════════════════════════════════════════════ -->
+<div id="factionSwitch" class="fs-boot" data-side="neutral" role="group" aria-label="Selector de bando — Crisis Bicameral Electoral">
+  <span class="fs-label"><i></i>Toma de partido<i></i></span>
+  <div class="fs-body">
+    <button class="fs-half fs-l" id="fsL" type="button">
+      <span class="fs-bar"></span>
+      <i data-lucide="flame" class="fs-ic"></i>
+      <span class="fs-txt"><b>BANDO IZQUIERDA</b><small>Pacto por la Transformación</small></span>
+      <span class="fs-state" hidden>● ALIANZA ACTIVA</span>
+      <span class="fs-sweep"></span>
+    </button>
+    <span class="fs-vs" aria-hidden="true">v.</span>
+    <button class="fs-half fs-r" id="fsR" type="button">
+      <span class="fs-bar"></span>
+      <i data-lucide="shield" class="fs-ic"></i>
+      <span class="fs-txt"><b>BANDO DERECHA</b><small>Frente Horizonte</small></span>
+      <span class="fs-state" hidden>● ALIANZA ACTIVA</span>
+      <span class="fs-sweep"></span>
+    </button>
+  </div>
+  <button class="fs-desert" id="fsDesert" type="button" hidden>Volver a la neutralidad del Estado</button>
+</div>
+
+<script>
+(function(){
+'use strict';
+const fsEl = document.getElementById('factionSwitch');
+const fsL = document.getElementById('fsL');
+const fsR = document.getElementById('fsR');
+const fsDesert = document.getElementById('fsDesert');
+const btnL = document.getElementById('btnL');
+const btnR = document.getElementById('btnR');
+const desertL = document.getElementById('desertL');
+const desertR = document.getElementById('desertR');
+const panelL = document.getElementById('panelL');
+const panelR = document.getElementById('panelR');
+
+/* ---------- disparar el motor original sin tocarlo ----------
+   Lanza el clic al botón grande del bando correspondiente con las
+   coordenadas reales del clic, para que el telón circular del
+   overlay se abra exactamente desde donde pulsaste el selector. */
+function fire(side, ev){
+  const target = side==='left' ? btnL : btnR;
+  const x = (ev && ev.clientX) || innerWidth/2;
+  const y = (ev && ev.clientY) || innerHeight/2;
+  target.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true, clientX:x, clientY:y}));
+}
+fsL.addEventListener('click', e=> fire('left', e));
+fsR.addEventListener('click', e=> fire('right', e));
+
+/* ---------- ensayo de cenizas al sobrevolar ----------
+   Reusa los listeners mouseenter/mouseleave de los paneles de la
+   disyuntiva: las cenizas de toda la sala ensayan el color del
+   bando mientras decides. */
+fsL.addEventListener('mouseenter', ()=> panelL.dispatchEvent(new Event('mouseenter')));
+fsL.addEventListener('mouseleave', ()=> panelL.dispatchEvent(new Event('mouseleave')));
+fsR.addEventListener('mouseenter', ()=> panelR.dispatchEvent(new Event('mouseenter')));
+fsR.addEventListener('mouseleave', ()=> panelR.dispatchEvent(new Event('mouseleave')));
+
+/* ---------- deserción desde el selector ----------
+   Dispara el botón de deserción del bando activo (los originales
+   #desertL / #desertR, que ya existen y gestionan todo). */
+fsDesert.addEventListener('click', ()=>{
+  const t = document.body.dataset.theme;
+  const target = t==='left' ? desertL : (t==='right' ? desertR : null);
+  if(target) target.click();
+});
+
+/* ---------- atajos de teclado (útil para presentar en el comité) ----------
+   1 → bando izquierda · 2 → bando derecha · 0 → neutralidad */
+addEventListener('keydown', e=>{
+  const tg = e.target && e.target.tagName;
+  if(tg==='INPUT' || tg==='TEXTAREA') return;
+  if(e.key==='1'){ const r=fsL.getBoundingClientRect(); fire('left',{clientX:r.left+r.width/2, clientY:r.top+r.height/2}); }
+  else if(e.key==='2'){ const r=fsR.getBoundingClientRect(); fire('right',{clientX:r.left+r.width/2, clientY:r.top+r.height/2}); }
+  else if(e.key==='0' && document.body.dataset.theme!=='neutral'){ fsDesert.click(); }
+});
+
+/* ---------- sincronía total con el motor ----------
+   Observa body[data-theme]: cuando el bando cambia (desde los
+   botones grandes, desde el selector, desde el dossier o
+   desiertando), el selector refleja el estado al instante. */
+function sync(){
+  const t = document.body.dataset.theme || 'neutral';
+  fsEl.dataset.side = t;
+  fsL.classList.toggle('active', t==='left');
+  fsR.classList.toggle('active', t==='right');
+  fsL.querySelector('.fs-state').hidden = t!=='left';
+  fsR.querySelector('.fs-state').hidden = t!=='right';
+  fsDesert.hidden = t==='neutral';
+}
+sync();
+new MutationObserver(sync).observe(document.body, {attributes:true, attributeFilter:['data-theme']});
+
+/* ---------- cortesía escénica ----------
+   Se oculta durante la ceremonia del telón (body.lock) y esquiva
+   al toast subiéndose cuando este aparece. */
+new MutationObserver(()=>{
+  fsEl.classList.toggle('fs-hide', document.body.classList.contains('lock'));
+}).observe(document.body, {attributes:true, attributeFilter:['class']});
+
+const toastEl = document.getElementById('toast');
+if(toastEl){
+  new MutationObserver(()=>{
+    fsEl.classList.toggle('fs-lift', toastEl.classList.contains('show'));
+  }).observe(toastEl, {attributes:true, attributeFilter:['class']});
+}
+
+/* ---------- entrada escénica tras el hero ---------- */
+setTimeout(()=> fsEl.classList.remove('fs-boot'), 2400);
+
+if(window.lucide) lucide.createIcons();
+})();
+</script>
+<!-- ════════════════ FIN DE LA ADICIÓN — SELECTOR ════════════════ -->
+<!-- ====================================================================== -->
+<!-- COMPONENTE: MESAS DIRECTIVAS (CRISIS) -->
+<!-- ====================================================================== -->
+
+<style>
+    /* ═══ CSS MESAS DIRECTIVAS Y TESTIMONIOS CIRCULARES ═══ */
+    .mesas-container { width: 100%; max-width: 56rem; padding: 2rem 1rem; margin: 0 auto; }
+    .mesas-grid { display: grid; gap: 3rem; }
+    .mesas-image-wrapper { position: relative; width: 100%; height: 24rem; perspective: 1000px; }
+    .mesas-image { position: absolute; width: 100%; height: 100%; object-fit: cover; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+    .mesas-content { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; }
+    .mesas-name { font-weight: bold; margin-bottom: 0.25rem; }
+    .mesas-designation { margin-bottom: 1.5rem; }
+    .mesas-quote-container { overflow-y: auto; padding-right: 1rem; max-height: 250px; margin-bottom: 1.5rem; scroll-behavior: smooth; }
+    .mesas-quote { line-height: 1.75; white-space: pre-line; }
+    .mesas-quote-container::-webkit-scrollbar { width: 4px; }
+    .mesas-quote-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    .mesas-arrow-buttons { display: flex; gap: 1.5rem; margin-top: auto; }
+    .mesas-arrow-button { width: 2.7rem; height: 2.7rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s; border: none; }
+    @media (max-width: 768px) { .mesas-grid { gap: 2rem; } .mesas-image-wrapper { height: 18rem; } .mesas-quote-container { max-height: 35vh; } }
+    @media (min-width: 768px) { .mesas-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .mesas-quote-container { max-height: 350px; } }
+</style>
+
+<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5"></section>
+
+<script type="text/babel">
+    const { useState, useEffect, useRef, useMemo, useCallback } = React;
+    const { createRoot } = ReactDOM;
+
+    const IconArrowRight = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
+    const IconArrowLeft = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>;
+
+    function calculateGap(width) {
+        const minWidth = 1024; const maxWidth = 1456; const minGap = 60; const maxGap = 86;
+        if (width <= minWidth) return minGap;
+        if (width >= maxWidth) return Math.max(minGap, maxGap + 0.06018 * (width - maxWidth));
+        return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
+    }
+
+    const ComponenteMesas = ({ directivos, autoplay = false, colors = {}, fontSizes = {} }) => {
+        const colorName = colors.name || "#000"; const colorDesignation = colors.designation || "#6b7280";
+        const colorTestimony = colors.testimony || "#4b5563"; const colorArrowBg = colors.arrowBackground || "#141414";
+        const colorArrowFg = colors.arrowForeground || "#f1f1f7"; const colorArrowHoverBg = colors.arrowHoverBackground || "#00a6fb";
+        const fontSizeName = fontSizes.name || "1.5rem"; const fontSizeDesignation = fontSizes.designation || "0.925rem"; const fontSizeQuote = fontSizes.quote || "1.125rem";
+
+        const [activeIndex, setActiveIndex] = useState(0); const [isFading, setIsFading] = useState(false);
+        const [hoverPrev, setHoverPrev] = useState(false); const [hoverNext, setHoverNext] = useState(false);
+        const [containerWidth, setContainerWidth] = useState(1200);
+
+        const imageContainerRef = useRef(null); const autoplayIntervalRef = useRef(null);
+        const directivosLength = useMemo(() => directivos.length, [directivos]);
+        const activeDirectivo = useMemo(() => directivos[activeIndex], [activeIndex, directivos]);
+
+        useEffect(() => {
+            function handleResize() { if (imageContainerRef.current) setContainerWidth(imageContainerRef.current.offsetWidth); }
+            handleResize(); window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        const handleNext = useCallback(() => {
+            setIsFading(true);
+            setTimeout(() => { setActiveIndex((prev) => (prev + 1) % directivosLength); setIsFading(false); }, 300);
+            if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+        }, [directivosLength]);
+        
+        const handlePrev = useCallback(() => {
+            setIsFading(true);
+            setTimeout(() => { setActiveIndex((prev) => (prev - 1 + directivosLength) % directivosLength); setIsFading(false); }, 300);
+            if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+        }, [directivosLength]);
+
+        useEffect(() => {
+            if (autoplay) { autoplayIntervalRef.current = setInterval(() => { handleNext(); }, 15000); }
+            return () => { if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current); };
+        }, [autoplay, handleNext]);
+
+        function getImageStyle(index) {
+            const gap = calculateGap(containerWidth); const maxStickUp = gap * 0.8;
+            const isActive = index === activeIndex; const isLeft = (activeIndex - 1 + directivosLength) % directivosLength === index; const isRight = (activeIndex + 1) % directivosLength === index;
+            if (isActive) return { zIndex: 3, opacity: 1, pointerEvents: "auto", transform: `translateX(0px) translateY(0px) scale(1) rotateY(0deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            if (isLeft) return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            if (isRight) return { zIndex: 2, opacity: 1, pointerEvents: "auto", transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-15deg)`, transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+            return { zIndex: 1, opacity: 0, pointerEvents: "none", transition: "all 0.8s cubic-bezier(.4,2,.3,1)" };
+        }
+
+        return (
+            <div className="mesas-container">
+                <div className="mesas-grid">
+                    <div className="mesas-image-wrapper" ref={imageContainerRef}>
+                        {directivos.map((directivo, index) => (
+                            <img key={directivo.src + index} src={directivo.src} alt={directivo.name} className="mesas-image" style={getImageStyle(index)} />
+                        ))}
+                    </div>
+                    <div className="mesas-content">
+                        <div className={`transition-all duration-300 ease-in-out ${isFading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'} flex flex-col h-full`}>
+                            <h3 className="mesas-name font-space" style={{ color: colorName, fontSize: fontSizeName }}>{activeDirectivo.name}</h3>
+                            <p className="mesas-designation font-sans uppercase tracking-widest text-xs font-semibold" style={{ color: colorDesignation, fontSize: fontSizeDesignation }}>{activeDirectivo.designation}</p>
+                            <div className="mesas-quote-container font-sans font-light">
+                                <p className="mesas-quote" style={{ color: colorTestimony, fontSize: fontSizeQuote }}>{activeDirectivo.quote}</p>
+                            </div>
+                        </div>
+                        <div className="mesas-arrow-buttons">
+                            <button className="mesas-arrow-button" onClick={handlePrev} style={{ backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverPrev(true)} onMouseLeave={() => setHoverPrev(false)}><IconArrowLeft /></button>
+                            <button className="mesas-arrow-button" onClick={handleNext} style={{ backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverNext(true)} onMouseLeave={() => setHoverNext(false)}><IconArrowRight /></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const mesasData = [
+        { 
+            name: "Jose Urribarrí", 
+            designation: "Presidente de Crisis", 
+            src: "/static/mesas/crisis2.jpeg",
+            quote: `¡Hola! Mi nombre es Jose Urribarrí y tengo el placer de ser el presidente de mesa de la cámara de izquierda, en dónde espero que todos estén a la altura del reto académico, politico y moral que este comité exigirá ¡Tengo muchas ganas de verlos!\n\nMD SAIMUN 2022\nMD MSMUN 2022\nMD ALTAMUN 2022\nMD MSMUN 2023\n1H UCATMUN 2023\nMD LUZMUN 2024\nMD EPIMUN 2024\nMejor Comité SAIMUN 2024\nMejor Mesa SVPMUN 2025\nMejor Mesa CLFMUN 2026\nMejor Mesa CABMUN 2026`
+        },
+        { 
+            name: "Raúl Aveledo", 
+            designation: "Vicepresidente de Crisis", 
+            src: "/static/mesas/crisis.jpeg",
+            quote: `Hola. Mí nombre es Raúl Aveledo, en esta ocasión tendré el honor de fungir como su vicepresidente de mesa, velando por mantener el rigor académico de la cámara de la izquierda y, sobretodo, lograr que la exigencia del comité los haga alcanzar la excelencia. Los espero en SVPMUN IV edición.\n\nMD - UFTMUN 2024\nMención verbal - MASMUN 2024\nMD - SVPMUN 2024\nmención verbal - SPMUN 2025\nMención Honorífica - LASAMUN Guaparo 2025\nMD - SPMUN 2026\nMD - MASMUN 2026\nMD y Mejor Nación - RCMUN 2026\nMención Honorífica - BAIMUN 2026\nMención Honorífica - SIMUN 2026 \nCrisis Staff - CLFMUN\nCrisis Staff - LASAMUN\nCrisis Staff y Mejor Mesa - CABMUN`
+        }
+    ];
+
+    const SeccionMesasDirectivas = () => (
+        <div className="w-full relative">
+            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
+                <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block border-l-2 border-white/20 pl-3">Estructura de Autoridad</span>
+                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
+                    Mesas <span className="text-white/70 italic font-instrument-serif tracking-normal">Directivas</span>
+                </h2>
+            </div>
+            <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20">
+                <div className="items-center justify-center relative flex w-full" style={{ maxWidth: "1024px" }}>
+                    <ComponenteMesas directivos={mesasData} autoplay={false} colors={{ name: "#f7f7ff", designation: "#e1e1e1", testimony: "#f1f1f7", arrowBackground: "#141414", arrowForeground: "#f7f7ff", arrowHoverBackground: "#333" }} fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} />
+                </div>
+            </div>
+        </div>
+    );
+
+    const mesasRoot = createRoot(document.getElementById('mesas-directivas-section'));
+    mesasRoot.render(<SeccionMesasDirectivas />);
+</script>
+</body>
+</html>
