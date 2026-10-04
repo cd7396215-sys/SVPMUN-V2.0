@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a href="/i" class="svp-logo">SVPMUN</a>
                 
                 <div class="svp-links desktop-only">
-                    <a href="/i"><span>Inicio</span></a>
+                    <a href="/"><span>Inicio</span></a>
                     <a href="/AG"><span>A. General</span></a>
                     <a href="/Senado"><span>Senado</span></a>
                     <a href="/CORTE"><span>Corte TSJ</span></a>
