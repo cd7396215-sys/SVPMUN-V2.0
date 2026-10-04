@@ -1953,43 +1953,55 @@ footer{
 </footer>
 <script>
   window.addEventListener('load', function() {
+    // --- 1. LÓGICA DE LA PANTALLA DE CARGA ---
     let progreso = 0;
     const porcentajeText = document.getElementById('porcentaje');
     const barraRelleno = document.getElementById('relleno');
     const estadoText = document.getElementById('estado');
     const pantallaCarga = document.getElementById('carga');
 
-    // Creamos un ciclo que se repite cada 30 milisegundos
     const intervalo = setInterval(() => {
-      progreso += Math.floor(Math.random() * 4) + 1; // Sube aleatoriamente entre 1% y 4%
+      progreso += Math.floor(Math.random() * 4) + 1; 
       
       if (progreso >= 100) {
         progreso = 100;
-        clearInterval(intervalo); // Detenemos el conteo
+        clearInterval(intervalo); 
         
-        // Fijamos los valores visuales finales
         porcentajeText.innerText = progreso;
         barraRelleno.style.setProperty('--p', progreso + '%');
         
-        // Cambiamos el texto de abajo
         estadoText.innerText = "Expediente listo";
         estadoText.classList.add('listo');
 
-        // Esperamos un instante antes de ocultar la pantalla
         setTimeout(() => {
           pantallaCarga.classList.add('oculto');
           document.body.classList.remove('bloqueado');
-          
-          // Esto activa las animaciones del texto principal (clase .rh)
           document.body.classList.add('cargada'); 
         }, 800);
         
       } else {
-        // Actualizamos los números y el relleno de la barra en tiempo real
         porcentajeText.innerText = progreso;
         barraRelleno.style.setProperty('--p', progreso + '%');
       }
     }, 30);
+
+    // --- 2. LÓGICA PARA MOSTRAR EL CONTENIDO AL HACER SCROLL ---
+    const observadorScroll = new IntersectionObserver((entradas, observador) => {
+      entradas.forEach(entrada => {
+        // Si el elemento entra en la pantalla del usuario
+        if (entrada.isIntersecting) {
+          entrada.target.classList.add('visible');
+          // Dejamos de observarlo para que la animación solo ocurra la primera vez
+          observador.unobserve(entrada.target); 
+        }
+      });
+    }, {
+      threshold: 0.15 // Se activa cuando el 15% del elemento ya es visible
+    });
+
+    // Buscamos todos los elementos ocultos y los ponemos bajo observación
+    const elementosOcultos = document.querySelectorAll('.reveal');
+    elementosOcultos.forEach(el => observadorScroll.observe(el));
   });
 </script>
 </body>
