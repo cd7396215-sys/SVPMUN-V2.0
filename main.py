@@ -12,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 app.mount("/staff", StaticFiles(directory=os.path.join(BASE_DIR, "staff")), name="staff")
 
-@app.get("/i")
+@app.get("/")
 async def serve_index():
     # Usar BASE_DIR para asegurar que siempre encuentre el HTML
     html_path = os.path.join(BASE_DIR, "index.html")
