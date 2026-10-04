@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navbarHTML = `
         <div id="svpmun-global-nav">
             <nav class="svp-nav-glass">
-                <a href="/i" class="svp-logo">SVPMUN</a>
+                <a href="/" class="svp-logo">SVPMUN</a>
                 
                 <div class="svp-links desktop-only">
                     <a href="/"><span>Inicio</span></a>
