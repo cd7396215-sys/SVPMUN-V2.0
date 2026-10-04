@@ -1951,6 +1951,20 @@ footer{
     Desarrollado para la delegación del Modelo de Naciones Unidas San Vicente de Paul (SVPMUN) — Barquisimeto, Venezuela.
   </div>
 </footer>
-
+<script>
+  window.addEventListener('load', function() {
+    // Simulamos un tiempo de carga de 1.5 segundos para que se vea la animación
+    setTimeout(() => {
+      // 1. Oculta la pantalla de carga negra
+      document.getElementById('carga').classList.add('oculto');
+      
+      // 2. Desbloquea la página para que puedas hacer scroll
+      document.body.classList.remove('bloqueado');
+      
+      // 3. Activa las animaciones de aparición del contenido
+      document.body.classList.add('cargada');
+    }, 1500); 
+  });
+</script>
 </body>
 </html>
