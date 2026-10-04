@@ -795,6 +795,78 @@
             </section>
         );
 
+        // ═══ COMPONENTE EXTRA: SECCIÓN DE CONTACTO / DESARROLLO WEB ═══
+const HireMeSection = () => {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleContactClick = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        
+        // Animación de carga antes de redirigir a WhatsApp
+        setTimeout(() => {
+            // El código 58 es de Venezuela para tu número 04125620158
+            window.open('https://wa.me/584125620158?text=Hola,%20estoy%20interesado%20en%20crear%20una%20p%C3%A1gina%20web%20para%20mi%20delegaci%C3%B3n.', '_blank');
+            setIsLoading(false);
+        }, 1500);
+    };
+
+    return (
+        <section className="bg-transparent relative w-full overflow-hidden flex flex-col items-center border-t border-white/5 py-20 md:py-32 z-10">
+            {/* Blur azul de fondo (Transición suave) */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] md:w-[45vw] h-[80vw] md:h-[45vw] bg-[#06338b]/30 rounded-full blur-[140px] pointer-events-none -z-10 mix-blend-screen"></div>
+            
+            <div className="max-w-4xl mx-auto px-4 md:px-6 text-center relative z-10">
+                <span className="font-space uppercase tracking-[0.2em] md:tracking-[0.3em] text-white/50 text-[0.65rem] sm:text-xs font-semibold mb-6 block">
+                    Expansión Digital
+                </span>
+                
+                <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-instrument-serif text-white leading-[1.1] mb-6 drop-shadow-xl">
+                    ¿Tu delegación necesita <br className="hidden md:block" />
+                    una página <span className="italic text-white/70">como esta</span>?
+                </h2>
+                
+                <p className="text-sm md:text-base text-white/60 mb-10 max-w-xl mx-auto font-sans font-light leading-relaxed">
+                    Eleva el prestigio de tu Modelo de Naciones Unidas con una plataforma inmersiva, rápida y con un diseño de alto impacto.
+                </p>
+                
+                {/* Botón interactivo con estado de carga e inversión de colores */}
+                <button 
+                    onClick={handleContactClick}
+                    disabled={isLoading}
+                    className={`
+                        relative overflow-hidden inline-flex items-center justify-center gap-3 
+                        px-8 py-4 rounded-full font-space text-xs md:text-sm font-bold uppercase tracking-[0.15em]
+                        transition-all duration-500 ease-out group border border-white
+                        ${isLoading ? 'bg-white text-black' : 'bg-transparent text-white hover:text-black'}
+                    `}
+                >
+                    {isLoading ? (
+                        <span className="flex items-center gap-3 z-10 relative">
+                            <svg className="animate-spin h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Conectando...
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-2 z-10 relative transition-colors duration-300">
+                            Contactar Desarrollador
+                            <IconArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                        </span>
+                    )}
+                    
+                    {/* Efecto de llenado blanco de abajo hacia arriba */}
+                    <div className="absolute inset-0 bg-white translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0"></div>
+                </button>
+
+                <p className="mt-8 font-space text-[0.65rem] text-white/30 uppercase tracking-widest">
+                    Línea Directa: 0412-5620158
+                </p>
+            </div>
+        </section>
+    );
+};
         // ═══ ENSAMBLADOR MAESTRO ═══
         const AppDemoMaster = () => {
             return (
@@ -827,6 +899,7 @@
                                 </div>
                             </section>
                             <CircularTestimonialsDemo />
+                            <HireMeSection />
                         </div>
                     </div>
                 </main>
