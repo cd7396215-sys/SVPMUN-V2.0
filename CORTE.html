@@ -1953,17 +1953,43 @@ footer{
 </footer>
 <script>
   window.addEventListener('load', function() {
-    // Simulamos un tiempo de carga de 1.5 segundos para que se vea la animación
-    setTimeout(() => {
-      // 1. Oculta la pantalla de carga negra
-      document.getElementById('carga').classList.add('oculto');
+    let progreso = 0;
+    const porcentajeText = document.getElementById('porcentaje');
+    const barraRelleno = document.getElementById('relleno');
+    const estadoText = document.getElementById('estado');
+    const pantallaCarga = document.getElementById('carga');
+
+    // Creamos un ciclo que se repite cada 30 milisegundos
+    const intervalo = setInterval(() => {
+      progreso += Math.floor(Math.random() * 4) + 1; // Sube aleatoriamente entre 1% y 4%
       
-      // 2. Desbloquea la página para que puedas hacer scroll
-      document.body.classList.remove('bloqueado');
-      
-      // 3. Activa las animaciones de aparición del contenido
-      document.body.classList.add('cargada');
-    }, 1500); 
+      if (progreso >= 100) {
+        progreso = 100;
+        clearInterval(intervalo); // Detenemos el conteo
+        
+        // Fijamos los valores visuales finales
+        porcentajeText.innerText = progreso;
+        barraRelleno.style.setProperty('--p', progreso + '%');
+        
+        // Cambiamos el texto de abajo
+        estadoText.innerText = "Expediente listo";
+        estadoText.classList.add('listo');
+
+        // Esperamos un instante antes de ocultar la pantalla
+        setTimeout(() => {
+          pantallaCarga.classList.add('oculto');
+          document.body.classList.remove('bloqueado');
+          
+          // Esto activa las animaciones del texto principal (clase .rh)
+          document.body.classList.add('cargada'); 
+        }, 800);
+        
+      } else {
+        // Actualizamos los números y el relleno de la barra en tiempo real
+        porcentajeText.innerText = progreso;
+        barraRelleno.style.setProperty('--p', progreso + '%');
+      }
+    }, 30);
   });
 </script>
 </body>
