@@ -1828,7 +1828,174 @@ function toast(msg){
 }
 })();
 </script>
+<section id="cta-guia-ag">
+  <style>
+    /* Estilos encapsulados exclusivamente para esta sección */
+    #cta-guia-ag {
+      position: relative;
+      width: 100%;
+      padding: 5rem 1.5rem;
+      background-color: #0f172a; /* Carbón azulado profundo */
+      border-top: 1px solid rgba(200, 152, 83, 0.4);
+      border-bottom: 1px solid rgba(200, 152, 83, 0.4);
+      margin: 3rem 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      box-sizing: border-box;
+    }
 
+    #cta-guia-ag::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f8fafc' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .cta-ag-container {
+      position: relative;
+      z-index: 10;
+      max-w: 800px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-ag-tag {
+      font-family: 'Archivo', sans-serif;
+      color: #c89853; /* Bronce diplomático */
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .cta-ag-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: #f8fafc; /* Marfil */
+      font-weight: 700;
+      margin: 0 0 1.5rem 0;
+      line-height: 1.2;
+    }
+
+    .cta-ag-title span {
+      color: #418fde; /* Celeste ONU */
+      font-style: italic;
+    }
+
+    .cta-ag-desc {
+      font-family: 'Archivo', sans-serif;
+      color: #cbd5e1;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      max-width: 650px;
+      margin: 0 0 2.5rem 0;
+      font-weight: 300;
+    }
+
+    .cta-ag-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 1rem 2.5rem;
+      background-color: #c89853;
+      color: #0f172a;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: none;
+    }
+
+    .cta-ag-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(200, 152, 83, 0.4);
+      background-color: #d4a96a;
+    }
+
+    .cta-ag-btn svg {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .cta-ag-btn:hover svg {
+      transform: translateY(-2px);
+    }
+
+    /* Efecto de onda al hacer clic (Manejado por el script) */
+    .cta-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(0);
+      animation: ripple-anim 0.6s linear;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-anim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  </style>
+
+  <div class="cta-ag-container">
+    <div class="cta-ag-tag">Documento Oficial • SVPMUN 2026</div>
+    
+    <h2 class="cta-ag-title">
+      El estado de la <span>diplomacia multilateral</span>
+    </h2>
+    
+    <p class="cta-ag-desc">
+      Explora las dimensiones del desgaste institucional, la parálisis política y el déficit financiero. Accede al análisis completo y prepárate para el debate en la Asamblea General.
+    </p>
+    
+    <a href="AG.pdf" target="_blank" rel="noopener noreferrer" class="cta-ag-btn" id="btn-descarga-ag">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      LEER GUÍA ACADÉMICA
+    </a>
+  </div>
+
+  <script>
+    // Script aislado para manejar interacciones visuales del botón sin depender de librerías externas
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btn-descarga-ag');
+      
+      if(btn) {
+        btn.addEventListener('click', function(e) {
+          // Crea el efecto visual de "onda" al hacer clic
+          let ripple = document.createElement('span');
+          ripple.classList.add('cta-ripple');
+          this.appendChild(ripple);
+          
+          let x = e.clientX - e.target.getBoundingClientRect().left;
+          let y = e.clientY - e.target.getBoundingClientRect().top;
+          
+          ripple.style.left = `${x}px`;
+          ripple.style.top = `${y}px`;
+          
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      }
+    });
+  </script>
+</section>
 <!-- ====================================================================== -->
 <!-- COMPONENTE: MESAS DIRECTIVAS (Extraído y optimizado para textos largos) -->
 <!-- ====================================================================== -->
