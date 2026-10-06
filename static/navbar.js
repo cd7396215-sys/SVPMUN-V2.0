@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <!-- Menú a Pantalla Completa Móvil -->
             <div class="svp-pantalla-movil" id="svpMobileMenu">
                 <div class="svp-movil-contenido">
-                    <a href="/i" style="--delay: 0.1s">Inicio</a>
+                    <a href="/" style="--delay: 0.1s">Inicio</a>
                     <a href="/AG" style="--delay: 0.15s">Asamblea General</a>
                     <a href="/Senado" style="--delay: 0.2s">Senado de España</a>
                     <a href="/CORTE" style="--delay: 0.25s">Corte TSJ</a>

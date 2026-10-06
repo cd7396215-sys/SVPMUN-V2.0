@@ -357,7 +357,7 @@ span.desktop-only { display: inline; }
 <!-- ============ HEADER ============ -->
 <header class="head" id="head">
   <div class="wrap head-in">
-    <a class="brand" href="/i" aria-label="Volver al inicio de SVPMUN">
+    <a class="brand" href="/" aria-label="Volver al inicio de SVPMUN">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path fill="#211D16" d="M12 4.6C10.6 3.4 8.9 5 7.2 4.4 5.6 3.9 3.9 5 4.3 6.7 2.7 7.3 2.5 9.4 3.8 10.5 2.7 11.9 3.4 13.9 5.2 14.3 4.5 15.9 6 17.6 7.7 17.1 8.6 18.6 10.6 19 11.9 17.7L12 17.2Z"/>
         <path fill="#211D16" transform="scale(-1 1) translate(-24 0)" d="M12 4.6C10.6 3.4 8.9 5 7.2 4.4 5.6 3.9 3.9 5 4.3 6.7 2.7 7.3 2.5 9.4 3.8 10.5 2.7 11.9 3.4 13.9 5.2 14.3 4.5 15.9 6 17.6 7.7 17.1 8.6 18.6 10.6 19 11.9 17.7L12 17.2Z"/>
@@ -1209,7 +1209,7 @@ secIds.forEach(id => { const s = document.getElementById(id); if (s) navIO.obser
     // 2. Simular latencia de red (1.5s) para efecto dramático antes de abrir el PDF
     setTimeout(() => {
       // Abre el PDF en una pestaña nueva siguiendo la ruta raíz exacta indicada
-      window.open('/PDF/apa.pdf', '_blank');
+      window.open('/pdf/apa.pdf', '_blank');
       
       // Restaurar el botón a su estado original al regresar
       btn.classList.remove('is-loading');
