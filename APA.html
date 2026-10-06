@@ -1015,6 +1015,82 @@ secIds.forEach(id => { const s = document.getElementById(id); if (s) navIO.obser
  $('#year').textContent = 'SVPMUN ' + new Date().getFullYear();
 </script>
 
+
+<!-- ========================================== -->
+<!-- COMPUESTO 1: GUÍA ACADÉMICA - APA          -->
+<!-- ========================================== -->
+<div id="compuesto-guia-apa">
+  <style>
+    #compuesto-guia-apa { font-family: 'Inter', system-ui, sans-serif; width: 100%; display: flex; justify-content: center; padding: 20px; box-sizing: border-box; }
+    #compuesto-guia-apa .guia-card { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: 2.5rem 2rem; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.15); background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); text-decoration: none; width: 100%; max-width: 350px; cursor: pointer; text-align: center; }
+    #compuesto-guia-apa .guia-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; transition: color 0.5s ease; color: white; }
+    #compuesto-guia-apa .guia-title { font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; margin: 15px 0; font-size: 1.1rem; }
+    #compuesto-guia-apa .guia-subtitle { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; display: flex; align-items: center; gap: 8px; transition: opacity 0.5s ease; }
+    #compuesto-guia-apa .guia-fill { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: white; transform: translateY(101%); transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); z-index: 0; }
+    #compuesto-guia-apa .guia-card:hover .guia-fill { transform: translateY(0); }
+    #compuesto-guia-apa .guia-card:hover .guia-content { color: black; }
+    #compuesto-guia-apa .guia-card:hover .guia-subtitle { opacity: 1; color: rgba(0, 0, 0, 0.8); }
+    #compuesto-guia-apa .arrow-icon { transition: transform 0.3s ease; }
+    #compuesto-guia-apa .guia-card:hover .arrow-icon { transform: translateX(5px); }
+  </style>
+
+  <section class="guia-section">
+    <a href="PDF/APA - GUIA ACADEMICA.pdf" target="_blank" rel="noopener noreferrer" class="guia-card" id="btn-apa">
+      <div class="guia-content">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        <h3 class="guia-title">A P A</h3>
+        <span class="guia-subtitle">Leer Documento
+          <svg class="arrow-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12Aquí tienes los seis compuestos. Cada uno es 100% independiente: el CSS está aislado por el ID principal para que no haya conflictos si los colocas todos en la misma página, y los scripts apuntan a botones específicos. 
+
+Solo necesitas reemplazar la URL en el `window.location.href` de cada script por la ruta real de tus archivos.
+
+
+<div id="compuesto-apa">
+  <style>
+    #compuesto-apa .guia-card {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      max-width: 300px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    #compuesto-apa .guia-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    #compuesto-apa .guia-titulo {
+      font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0 0 0.5rem 0;
+    }
+    #compuesto-apa .guia-desc {
+      font-size: 0.875rem; color: #4b5563; margin: 0 0 1.25rem 0; line-height: 1.4;
+    }
+    #compuesto-apa .guia-btn {
+      background-color: #2563eb; color: #ffffff; border: none; border-radius: 0.5rem;
+      padding: 0.625rem 1.25rem; font-weight: 600; cursor: pointer; width: 100%;
+      transition: background-color 0.2s;
+    }
+    #compuesto-apa .guia-btn:hover { background-color: #1d4ed8; }
+  </style>
+
+  <section class="guia-card">
+    <h3 class="guia-titulo">Normas APA</h3>
+    <p class="guia-desc">Aprende el formato oficial y las reglas de citación para tus documentos.</p>
+    <button id="btn-apa" class="guia-btn">Abrir Guía</button>
+  </section>
+
+  <script>
+    document.getElementById('btn-apa').addEventListener('click', function() {
+      window.location.href = '/guias/apa.pdf';
+    });
+  </script>
+</div>
 <!-- ====================================================================== -->
 <!-- COMPONENTE: MESAS DIRECTIVAS (APA) -->
 <!-- ====================================================================== -->
