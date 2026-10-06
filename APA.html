@@ -1014,7 +1014,213 @@ secIds.forEach(id => { const s = document.getElementById(id); if (s) navIO.obser
 
  $('#year').textContent = 'SVPMUN ' + new Date().getFullYear();
 </script>
+<!-- ======================================================= -->
+<!-- CTA GUÍA ACADÉMICA - COMITÉ APA (COMPUESTO UNIFICADO)   -->
+<!-- ======================================================= -->
+<style>
+  /* Estilos encapsulados para el CTA - Adaptado al tema APA */
+  .cta-apa-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5rem 1rem;
+    background-color: transparent;
+    border-top: 1px solid var(--line);
+    z-index: 10;
+    text-align: center;
+  }
+  @media (min-width: 768px) { .cta-apa-wrapper { padding: 8rem 1.5rem; } }
 
+  /* Difuminado de fondo usando el color Carmín del tema */
+  .cta-apa-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw; height: 80vw;
+    background-color: var(--carmine);
+    border-radius: 50%;
+    filter: blur(140px);
+    pointer-events: none;
+    z-index: -1;
+    mix-blend-mode: multiply;
+    opacity: 0.15;
+  }
+  @media (min-width: 768px) { .cta-apa-glow { width: 45vw; height: 45vw; } }
+
+  .cta-apa-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--carmine);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .cta-apa-title {
+    font-family: var(--serif);
+    color: var(--ink);
+    font-size: 2.25rem;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  @media (min-width: 768px) { .cta-apa-title { font-size: 3.75rem; } }
+  @media (min-width: 1024px) { .cta-apa-title { font-size: 4.5rem; } }
+  
+  .cta-apa-title span.italic {
+    font-style: italic;
+    color: var(--carmine);
+  }
+
+  .cta-apa-desc {
+    font-family: var(--serif);
+    font-size: 0.875rem;
+    color: var(--ink-2);
+    margin-bottom: 2.5rem;
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.62;
+  }
+  @media (min-width: 768px) { .cta-apa-desc { font-size: 1rem; } }
+
+  /* Estructura del botón interactivo */
+  .cta-apa-btn {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: all 0.5s ease-out;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  
+  .cta-apa-btn .btn-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 10;
+    transition: color 0.3s;
+  }
+  
+  /* Relleno de color ascendente en Hover */
+  .cta-apa-btn .btn-fill {
+    position: absolute;
+    inset: 0;
+    background-color: var(--carmine);
+    transform: translateY(101%);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 0;
+  }
+  
+  .cta-apa-btn:hover .btn-fill { transform: translateY(0); }
+  .cta-apa-btn:hover .btn-content { color: var(--paper); }
+  
+  .cta-apa-btn svg.arrow-icon { width: 1rem; height: 1rem; transition: transform 0.3s; }
+  .cta-apa-btn:hover svg.arrow-icon { transform: translateX(4px); }
+
+  /* Estado de Carga (Procesando) */
+  .cta-apa-btn.is-loading {
+    background-color: var(--carmine);
+    border-color: var(--carmine);
+    color: var(--paper);
+    pointer-events: none;
+  }
+  .cta-apa-btn.is-loading .btn-content { color: var(--paper); }
+
+  .cta-apa-footer {
+    margin-top: 2rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--ink-2);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+  }
+  
+  /* Animación del Loader SVG */
+  @keyframes cta-spin { 100% { transform: rotate(360deg); } }
+  .cta-spinner { animation: cta-spin 1s linear infinite; width: 1rem; height: 1rem; }
+</style>
+
+<section class="cta-apa-wrapper">
+  <!-- Efecto de luz difuminada adaptada al comité -->
+  <div class="cta-apa-glow"></div>
+  
+  <div style="position: relative; z-index: 10; width: 100%;">
+    <span class="cta-apa-eyebrow">Documentación Oficial</span>
+    
+    <h2 class="cta-apa-title">
+      Guía Académica <br style="display:none; @media(min-width:768px){display:block;}">
+      <span class="italic">Comité APA</span>
+    </h2>
+    
+    <p class="cta-apa-desc">
+      Descarga el dossier íntegro con los marcos de evaluación psicosocial, directrices clínicas y procedimientos para este comité.
+    </p>
+    
+    <button id="cta-btn-apa" class="cta-apa-btn">
+      <span class="btn-content" id="cta-content-apa">
+        Descargar Guía (PDF)
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </span>
+      <div class="btn-fill"></div>
+    </button>
+
+    <p class="cta-apa-footer">
+      Directorio Raíz: /PDF/apa.pdf
+    </p>
+  </div>
+</section>
+
+<script>
+  // Script embebido para la lógica de carga interactiva y redirección al PDF
+  document.getElementById('cta-btn-apa').addEventListener('click', function(e) {
+    e.preventDefault();
+    const btn = this;
+    const content = document.getElementById('cta-content-apa');
+    
+    // 1. Activar estado de carga
+    btn.classList.add('is-loading');
+    content.innerHTML = `
+      <svg class="cta-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle opacity="0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path opacity="0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Accediendo...
+    `;
+    
+    // 2. Simular latencia de red (1.5s) para efecto dramático antes de abrir el PDF
+    setTimeout(() => {
+      // Abre el PDF en una pestaña nueva siguiendo la ruta raíz exacta indicada
+      window.open('/PDF/apa.pdf', '_blank');
+      
+      // Restaurar el botón a su estado original al regresar
+      btn.classList.remove('is-loading');
+      content.innerHTML = `
+        Descargar Guía (PDF)
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      `;
+    }, 1500);
+  });
+</script>
+<!-- ======================================================= -->
 <!-- ====================================================================== -->
 <!-- COMPONENTE: MESAS DIRECTIVAS (APA) -->
 <!-- ====================================================================== -->
@@ -1132,13 +1338,13 @@ secIds.forEach(id => { const s = document.getElementById(id); if (s) navIO.obser
         { 
             name: "Presidenta de Mesa", 
             designation: "Presidente de APA", 
-            src: "/static/mesas/APA",
+            src: "/static/mesas/APA.jpeg",
             quote: `Participación en Modelos de Naciones Unidas desde 2023\n\nMejor Delegación Comisión Europea - SPMUN 2024 \n\nMejor Delegación Unidad de Análisis de Conducta del FBI - UFTMUN 2024\n\nMejor Delegación Comité de Prensa - SPMUN 2025\n\nMención Verbal Consejo de Seguridad - SAIMUN 2024, Maracaibo\n\nPresidencia de mesa en OMS - SVPMUN 2024\n\nVicepresidencia de mesa en Comité de Prensa - SPMUN 2026\n\nOficial de Conferencias en CEDAW - SVPMUN 2025\n\nCampeona nacional de Patinaje Artístico 2021 y 2023.\n\nParticipación en el Festival Panamericano de Patinaje Artístico 2023 - Antioquia, Colombia\n\nFinalista de la XXII Edición del Programa Nacional Universitario “Promoviendo Líderes Socialmente Responsables” 2026\n\n¡Hola delegados! En primer lugar, es un honor para mi formar parte de la Mesa Directiva de este comité tan interesante y enriquecedor. Sabiendo que vivimos en un mundo dónde la población padeciente de trastornos mentales va en aumento, resulta fundamental guiar nuestro foco atencional a la salud mental y el bienestar psicológico. Estamos emocionados como Mesa Directiva de guiarlos y aprender de ustedes en cada sesión de debate, ¡Gracias por querer participar! El mayor de los éxitos y que el mayor premio sea el conocimiento que adquieran durante todo este proceso. <3`
         },
         { 
             name: "Sara Riera", 
             designation: "Vicepresidente de APA", 
-            src: "/static/mesas/APA2",
+            src: "/static/mesas/APA2.jpeg",
             quote: `Mejor Delegación | UFTMUN 2025\nMejor Delegación | SPMUN 2025\nMejor Delegación | CAMIMUN 2025\nMérito a la Mejor Redacción | RCMUN 2025\nPrimera Mención Honorífica | SPMUN 2024\nPrimera Mención Honorífica | UFTMUN 2024\nPrimera Mención Honorífica | CLFMUN 2026\nMejor Delegación | MASMUN 2024\nPrimera Mención Honorífica | CLFMUN 2026\nSegunda Mención Honorífica | MASMUN 2022\nMASMUN Primera Mención Honorífica. Mejor Mesa Directiva\nPrimera Mención Honorífica | SALTOMUN 2026\n\nSoy Sara Riera y para mí es un verdadero placer fungir como su Vicepresidente de Mesa en esta tan esperada IV edición de SVPMUN. \n\nConfío en que este espacio les permitirá expandir sus conocimientos y superar sus propios límites. Aunque el primer paso siempre representa el mayor desafío, es el más crucial en su crecimiento, y ustedes ya han comenzado ese camino. \n\n¡Muchos éxitos!`
         }
     ];
