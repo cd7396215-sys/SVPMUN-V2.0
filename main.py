@@ -11,6 +11,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Montar carpetas estáticas
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 app.mount("/staff", StaticFiles(directory=os.path.join(BASE_DIR, "staff")), name="staff")
+app.mount("/pdf", StaticFiles(directory=os.path.join(BASE_DIR, "pdf")), name="pdf")
+
 
 @app.get("/")
 async def serve_index():
