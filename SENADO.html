@@ -177,7 +177,7 @@ body.loaded header.nav { transform: translateY(0); }
 .crest3d .spin { animation: spin3d 14s linear infinite; transform-style: preserve-3d; }
 @keyframes spin3d { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
 
-/* ===== 2. BANNER CITA ===== */
+/* ===== BANNER CITA ===== */
 .band { height: 6px; width: 100%; display: flex; }
 .band i { flex: 1; }
 .band .r { background: var(--rojo); }
@@ -206,7 +206,7 @@ body.loaded header.nav { transform: translateY(0); }
   text-transform: uppercase; font-style: normal; font-weight: 600;
 }
 
-/* ===== 3. ANÁLISIS / FACTORES ===== */
+/* ===== ANÁLISIS / FACTORES ===== */
 .analysis-section { background: var(--beige); padding: 100px 6vw; }
 .analysis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; }
 .analysis-card {
@@ -304,8 +304,6 @@ footer .flag-strip { margin: 0 auto 14px; height: 30px; width: 50px; }
 /* =========================================
    ADAPTACIONES RESPONSIVE / MÓVILES
    ========================================= */
-
-/* Tablets */
 @media (max-width: 1024px) {
   .analysis-grid { grid-template-columns: 1fr; }
   .chrono-item { grid-template-columns: 54px 1fr; row-gap: 10px; padding: 30px 10px; }
@@ -324,31 +322,25 @@ footer .flag-strip { margin: 0 auto 14px; height: 30px; width: 50px; }
   .closing-watermark { font-size: 60vw; }
 }
 
-/* Teléfonos Inteligentes (Mobile) */
 @media (max-width: 768px) {
-  /* Espaciados Generales */
   section, .analysis-section, .timeline-section { padding: 60px 5vw; }
   .section-header { margin-bottom: 40px; }
   .section-title { font-size: 2rem; }
-  .ornament-corner { display: none; } /* Ocultar esquinas ornamentales que estorban texto en móvil */
+  .ornament-corner { display: none; }
 
-  /* Hero */
   .hero { padding: 120px 6vw 60px; }
   .hero h1 { font-size: 2.8rem; max-width: 100%; }
   .hero .sub { max-width: 100%; font-size: 1rem; margin-top: 20px; }
   .cta { flex-direction: column; width: 100%; }
   .btn { width: 100%; text-align: center; padding: 16px 20px; }
 
-  /* Banner Cita */
   .banner-section { height: auto; padding: 80px 5vw; }
   .banner-content blockquote { font-size: 1.3rem; line-height: 1.6; }
   .banner-content i { font-size: 28px; }
 
-  /* Análisis (Cards) */
   .analysis-card { padding: 30px 20px; }
   .analysis-card .card-icon { width: 45px; height: 45px; }
 
-  /* Escenario */
   .scenario { min-height: auto; }
   .scenario-content { padding: 100px 5vw 30px; }
   .scenario-title { font-size: 2.3rem; }
@@ -356,7 +348,6 @@ footer .flag-strip { margin: 0 auto 14px; height: 30px; width: 50px; }
   .scenario-text h3 { font-size: 1.4rem; }
   .scenario-quote p { font-size: 1rem; }
 
-  /* Línea de tiempo (Timeline) */
   .chrono-track { padding-left: 0; }
   .chrono-item {
     grid-template-columns: 45px 1fr; 
@@ -370,12 +361,11 @@ footer .flag-strip { margin: 0 auto 14px; height: 30px; width: 50px; }
   .chrono-body h4 { font-size: 16px; margin-bottom: 6px; }
   .chrono-body p { font-size: 13px; line-height: 1.6; }
 
-  /* Cierre (Closing) */
   .closing { padding: 80px 5vw; }
   .closing-title { font-size: 2.2rem; }
   .closing-lead { font-size: 1rem; margin-bottom: 30px; }
   .closing-cta { flex-direction: column; width: 100%; }
-  .closing-watermark { display: none; } /* Ocultar para evitar solapamientos feos */
+  .closing-watermark { display: none; }
 }
 </style>
 </head>
@@ -578,6 +568,9 @@ footer .flag-strip { margin: 0 auto 14px; height: 30px; width: 50px; }
   </div>
 </section>
 
+<!-- ============ MESAS DIRECTIVAS Y GUÍA ACADÉMICA (SECCIÓN REACT) ============ -->
+<section id="mesas-directivas-section" class="bg-transparent pt-16 pb-16 md:pb-20 px-6 relative"></section>
+
 <!-- ============ CIERRE FINAL ============ -->
 <section class="closing reveal">
   <div class="closing-watermark">SENADO</div>
@@ -678,7 +671,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 </script>
 
 <!-- ====================================================================== -->
-<!-- COMPONENTE: MESAS DIRECTIVAS (SENADO) -->
+<!-- COMPONENTE: GUÍA ACADÉMICA Y MESAS DIRECTIVAS -->
 <!-- ====================================================================== -->
 
 <style>
@@ -693,7 +686,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     .mesas-quote-container { overflow-y: auto; padding-right: 1rem; max-height: 250px; margin-bottom: 1.5rem; scroll-behavior: smooth; }
     .mesas-quote { line-height: 1.75; white-space: pre-line; }
     
-    /* SCROLLBAR ADAPTADO AL TEMA CLARO */
     .mesas-quote-container::-webkit-scrollbar { width: 4px; }
     .mesas-quote-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
     .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
@@ -704,19 +696,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     @media (max-width: 768px) { .mesas-grid { gap: 2rem; } .mesas-image-wrapper { height: 18rem; } .mesas-quote-container { max-height: 35vh; } }
     @media (min-width: 768px) { .mesas-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .mesas-quote-container { max-height: 350px; } }
 </style>
-
-<!-- ===== GUÍA ACADÉMICA ===== -->
-<section class="guia-academica" style="padding: 60px 6vw 20px; text-align: center; background: var(--beige);">
-  <div class="reveal">
-    <h2 class="section-title" style="font-size: clamp(24px, 4vw, 36px); margin-bottom: 15px;">Guía <span class="red">Académica</span></h2>
-    <p style="color: #666; font-weight: 300; max-width: 600px; margin: 0 auto 30px;">Recurso oficial estructurado por la Mesa Directiva para facilitar tu estudio y preparación para el comité.</p>
-    <a href="/pdf/Senado.pdf" target="_blank" class="btn btn-primary" style="display: inline-flex; justify-content: center;">
-      <i class="fas fa-file-pdf"></i> Leer Guía Académica
-    </a>
-  </div>
-</section>
-
-<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative"></section>
 
 <script type="text/babel">
     const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -820,8 +799,34 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     ];
 
     const SeccionMesasDirectivas = () => (
-        <div className="w-full relative reveal show">
-            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
+        <div className="w-full relative max-w-7xl mx-auto">
+            {/* ===== SECCIÓN MINIMALISTA GUÍA ACADÉMICA ===== */}
+            <div className="mb-20 bg-white border border-black/10 rounded-2xl p-8 md:p-10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-[#C8102E]">
+                <div className="text-left max-w-2xl">
+                    <span className="text-[#C8102E] text-xs uppercase tracking-widest font-bold block mb-2">
+                        <i className="fas fa-[#C8102E] fa-book-open mr-2"></i>Documentación Oficial
+                    </span>
+                    <h3 className="text-2xl md:text-3xl font-bold text-[#111111] uppercase tracking-wide mb-2">
+                        Guía <span className="text-[#C8102E]">Académica</span>
+                    </h3>
+                    <p className="text-gray-600 text-sm font-light leading-relaxed">
+                        Accede al documento base preparado por la Mesa Directiva con el contexto teórico, legal y las directrices de trabajo para tus intervenciones en el comité.
+                    </p>
+                </div>
+                <div className="w-full md:w-auto flex-shrink-0">
+                    <a 
+                        href="/pdf/Senado.pdf" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="btn btn-primary w-full md:w-auto text-center font-semibold text-sm tracking-wider uppercase"
+                    >
+                        <i className="fas fa-file-pdf text-lg mr-2"></i> Descargar Guía PDF
+                    </a>
+                </div>
+            </div>
+
+            {/* ===== MESAS DIRECTIVAS ===== */}
+            <div className="mb-12 text-center md:text-left relative z-10">
                 <span className="font-space uppercase tracking-[0.2em] text-[#C8102E] text-xs font-semibold mb-4 block border-l-2 border-[#C8102E] pl-3">Estructura de Autoridad</span>
                 <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-[#111111]">
                     Mesas <span className="text-[#C8102E] italic font-instrument-serif tracking-normal">Directivas</span>
