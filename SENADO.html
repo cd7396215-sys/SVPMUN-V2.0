@@ -692,17 +692,31 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     .mesas-designation { margin-bottom: 1.5rem; }
     .mesas-quote-container { overflow-y: auto; padding-right: 1rem; max-height: 250px; margin-bottom: 1.5rem; scroll-behavior: smooth; }
     .mesas-quote { line-height: 1.75; white-space: pre-line; }
+    
+    /* SCROLLBAR ADAPTADO AL TEMA CLARO */
     .mesas-quote-container::-webkit-scrollbar { width: 4px; }
-    .mesas-quote-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
-    .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-    .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    .mesas-quote-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.4); }
+    
     .mesas-arrow-buttons { display: flex; gap: 1.5rem; margin-top: auto; }
     .mesas-arrow-button { width: 2.7rem; height: 2.7rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s; border: none; }
     @media (max-width: 768px) { .mesas-grid { gap: 2rem; } .mesas-image-wrapper { height: 18rem; } .mesas-quote-container { max-height: 35vh; } }
     @media (min-width: 768px) { .mesas-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .mesas-quote-container { max-height: 350px; } }
 </style>
 
-<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5"></section>
+<!-- ===== GUÍA ACADÉMICA ===== -->
+<section class="guia-academica" style="padding: 60px 6vw 20px; text-align: center; background: var(--beige);">
+  <div class="reveal">
+    <h2 class="section-title" style="font-size: clamp(24px, 4vw, 36px); margin-bottom: 15px;">Guía <span class="red">Académica</span></h2>
+    <p style="color: #666; font-weight: 300; max-width: 600px; margin: 0 auto 30px;">Recurso oficial estructurado por la Mesa Directiva para facilitar tu estudio y preparación para el comité.</p>
+    <a href="/pdf/Senado.pdf" target="_blank" class="btn btn-primary" style="display: inline-flex; justify-content: center;">
+      <i class="fas fa-file-pdf"></i> Leer Guía Académica
+    </a>
+  </div>
+</section>
+
+<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative"></section>
 
 <script type="text/babel">
     const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -781,8 +795,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                             </div>
                         </div>
                         <div className="mesas-arrow-buttons">
-                            <button className="mesas-arrow-button" onClick={handlePrev} style={{ backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverPrev(true)} onMouseLeave={() => setHoverPrev(false)}><IconArrowLeft /></button>
-                            <button className="mesas-arrow-button" onClick={handleNext} style={{ backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverNext(true)} onMouseLeave={() => setHoverNext(false)}><IconArrowRight /></button>
+                            <button className="mesas-arrow-button shadow-md" onClick={handlePrev} style={{ backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverPrev(true)} onMouseLeave={() => setHoverPrev(false)}><IconArrowLeft /></button>
+                            <button className="mesas-arrow-button shadow-md" onClick={handleNext} style={{ backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg, color: colorArrowFg }} onMouseEnter={() => setHoverNext(true)} onMouseLeave={() => setHoverNext(false)}><IconArrowRight /></button>
                         </div>
                     </div>
                 </div>
@@ -806,16 +820,28 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     ];
 
     const SeccionMesasDirectivas = () => (
-        <div className="w-full relative">
+        <div className="w-full relative reveal show">
             <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
-                <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block border-l-2 border-white/20 pl-3">Estructura de Autoridad</span>
-                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
-                    Mesas <span className="text-white/70 italic font-instrument-serif tracking-normal">Directivas</span>
+                <span className="font-space uppercase tracking-[0.2em] text-[#C8102E] text-xs font-semibold mb-4 block border-l-2 border-[#C8102E] pl-3">Estructura de Autoridad</span>
+                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-[#111111]">
+                    Mesas <span className="text-[#C8102E] italic font-instrument-serif tracking-normal">Directivas</span>
                 </h2>
             </div>
-            <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20">
+            <div className="bg-white p-4 md:p-16 rounded-xl border border-black/5 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-xl z-20">
                 <div className="items-center justify-center relative flex w-full" style={{ maxWidth: "1024px" }}>
-                    <ComponenteMesas directivos={mesasData} autoplay={false} colors={{ name: "#f7f7ff", designation: "#e1e1e1", testimony: "#f1f1f7", arrowBackground: "#141414", arrowForeground: "#f7f7ff", arrowHoverBackground: "#333" }} fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} />
+                    <ComponenteMesas 
+                        directivos={mesasData} 
+                        autoplay={false} 
+                        colors={{ 
+                            name: "#111111", 
+                            designation: "#C8102E", 
+                            testimony: "#666666", 
+                            arrowBackground: "#F5F0E8", 
+                            arrowForeground: "#111111", 
+                            arrowHoverBackground: "#FCBF49" 
+                        }} 
+                        fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} 
+                    />
                 </div>
             </div>
         </div>
