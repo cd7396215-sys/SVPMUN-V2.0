@@ -6,16 +6,7 @@
     <title>THE GLOBAL CHRONICLE | Reporte NSA JFK 1964</title>
     <!-- Google Fonts: Sans Serif Geométricas e imponentes -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Carga de React y ReactDOM -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-
-<!-- Carga de Babel para interpretar JSX -->
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-<!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
-<script src="https://cdn.tailwindcss.com"></script>
-
+    
 <!-- Carga de React y ReactDOM -->
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -25,6 +16,7 @@
 
 <!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
 <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         /* === VARIABLES & BASE === */
         :root {
@@ -553,8 +545,126 @@
         }
     }
 </script>
+
 <!-- ====================================================================== -->
-<!-- COMPONENTE: MESAS DIRECTIVAS (INVESTIGACIÓN) -->
+<!-- COMPONENTE: GUIA ACADEMICA MINIMALISTA-->
+<!-- ====================================================================== -->
+<style>
+    .academic-section {
+        background-color: transparent;
+        color: var(--ink-black);
+        padding: 4rem 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+        font-family: 'Montserrat', sans-serif;
+        position: relative;
+        z-index: 50; 
+        box-sizing: border-box;
+        width: 100vw;
+        max-width: 100%;
+    }
+    .academic-container {
+        max-width: 800px;
+        background-color: var(--paper-bg);
+        border: 3px solid var(--paper-border);
+        padding: 40px;
+        box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+        position: relative;
+    }
+    .academic-container::before {
+        content: 'TOP SECRET';
+        position: absolute;
+        top: -15px;
+        left: 20px;
+        background: var(--paper-bg);
+        padding: 0 10px;
+        font-family: 'Oswald', sans-serif;
+        font-weight: bold;
+        color: var(--alert-red);
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+    }
+    .academic-title {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 900;
+        font-size: 3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+        color: var(--ink-black);
+        border-bottom: 2px dashed var(--paper-border);
+        padding-bottom: 10px;
+    }
+    .academic-text {
+        font-family: monospace;
+        font-size: 1.15rem;
+        line-height: 1.7;
+        color: #333;
+        margin-bottom: 2.5rem;
+    }
+    .academic-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Oswald', sans-serif;
+        text-decoration: none;
+        color: var(--paper-bg);
+        border: 2px solid var(--ink-black);
+        padding: 1rem 2.5rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: var(--ink-black);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        animation: pulse-border-dark 2s infinite;
+    }
+    .academic-btn::before {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: var(--alert-red);
+        z-index: 1;
+        transition: left 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+    }
+    .academic-btn span {
+        position: relative;
+        z-index: 2;
+        transition: color 0.3s ease;
+    }
+    .academic-btn:hover {
+        animation: none;
+        border-color: var(--alert-red);
+    }
+    .academic-btn:hover::before {
+        left: 0;
+    }
+    @keyframes pulse-border-dark {
+        0% { box-shadow: 0 0 0 0 rgba(17,17,17,0.3); }
+        70% { box-shadow: 0 0 0 15px rgba(17,17,17,0); }
+        100% { box-shadow: 0 0 0 0 rgba(17,17,17,0); }
+    }
+</style>
+<section class="academic-section">
+    <div class="academic-container">
+        <h2 class="academic-title">Guía Académica</h2>
+        <p class="academic-text">
+            > ARCHIVO DESCLASIFICADO: EL DOSSIER DE PREPARACIÓN DELEGADA.<br>
+            > Contiene los parámetros operativos, el contexto histórico confidencial y las normativas de inteligencia necesarias para intervenir en esta comisión.
+        </p>
+        <a href="pdf/Investigacion.pdf" class="academic-btn"><span>Extraer Documento</span></a>
+    </div>
+</section>
+
+<!-- ====================================================================== -->
+<!-- COMPONENTE: MESAS DIRECTIVAS (INVESTIGACIÓN - ADAPTADA A COLORES) -->
 <!-- ====================================================================== -->
 
 <style>
@@ -564,21 +674,22 @@
     .mesas-image-wrapper { position: relative; width: 100%; height: 24rem; perspective: 1000px; }
     .mesas-image { position: absolute; width: 100%; height: 100%; object-fit: cover; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
     .mesas-content { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; }
-    .mesas-name { font-weight: bold; margin-bottom: 0.25rem; }
+    .mesas-name { font-weight: bold; margin-bottom: 0.25rem; text-transform: uppercase; }
     .mesas-designation { margin-bottom: 1.5rem; }
     .mesas-quote-container { overflow-y: auto; padding-right: 1rem; max-height: 250px; margin-bottom: 1.5rem; scroll-behavior: smooth; }
     .mesas-quote { line-height: 1.75; white-space: pre-line; }
-    .mesas-quote-container::-webkit-scrollbar { width: 4px; }
-    .mesas-quote-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
-    .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-    .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    /* Ajuste de scrollbar para temas claros */
+    .mesas-quote-container::-webkit-scrollbar { width: 5px; }
+    .mesas-quote-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 10px; }
+    .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); }
     .mesas-arrow-buttons { display: flex; gap: 1.5rem; margin-top: auto; }
     .mesas-arrow-button { width: 2.7rem; height: 2.7rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s; border: none; }
     @media (max-width: 768px) { .mesas-grid { gap: 2rem; } .mesas-image-wrapper { height: 18rem; } .mesas-quote-container { max-height: 35vh; } }
     @media (min-width: 768px) { .mesas-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .mesas-quote-container { max-height: 350px; } }
 </style>
 
-<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5"></section>
+<section id="mesas-directivas-section" class="bg-transparent pt-6 pb-16 md:pb-20 px-6 relative"></section>
 
 <script type="text/babel">
     const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -650,9 +761,9 @@
                     </div>
                     <div className="mesas-content">
                         <div className={`transition-all duration-300 ease-in-out ${isFading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'} flex flex-col h-full`}>
-                            <h3 className="mesas-name font-space" style={{ color: colorName, fontSize: fontSizeName }}>{activeDirectivo.name}</h3>
-                            <p className="mesas-designation font-sans uppercase tracking-widest text-xs font-semibold" style={{ color: colorDesignation, fontSize: fontSizeDesignation }}>{activeDirectivo.designation}</p>
-                            <div className="mesas-quote-container font-sans font-light">
+                            <h3 className="mesas-name" style={{ color: colorName, fontSize: fontSizeName, fontFamily: "'Oswald', sans-serif" }}>{activeDirectivo.name}</h3>
+                            <p className="mesas-designation uppercase tracking-widest text-xs font-semibold" style={{ color: colorDesignation, fontSize: fontSizeDesignation, fontFamily: "'Montserrat', sans-serif" }}>{activeDirectivo.designation}</p>
+                            <div className="mesas-quote-container font-light" style={{fontFamily: "'Montserrat', sans-serif"}}>
                                 <p className="mesas-quote" style={{ color: colorTestimony, fontSize: fontSizeQuote }}>{activeDirectivo.quote}</p>
                             </div>
                         </div>
@@ -682,16 +793,16 @@
     ];
 
     const SeccionMesasDirectivas = () => (
-        <div className="w-full relative">
-            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
-                <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block border-l-2 border-white/20 pl-3">Estructura de Autoridad</span>
-                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
-                    Mesas <span className="text-white/70 italic font-instrument-serif tracking-normal">Directivas</span>
+        <div className="w-full relative newspaper-container" style={{boxShadow:"none", padding:"0", background:"transparent", margin:"0 auto"}}>
+            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10 px-4 md:px-0">
+                <span className="uppercase tracking-[0.2em] text-[#333333] text-sm font-bold mb-4 block border-l-4 border-[#8b0000] pl-3" style={{fontFamily: "'Oswald', sans-serif"}}>Estructura de Autoridad</span>
+                <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-tighter text-[#111111]" style={{fontFamily: "'Oswald', sans-serif"}}>
+                    Mesas <span className="italic tracking-normal" style={{color: "#8b0000"}}>Directivas</span>
                 </h2>
             </div>
-            <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20">
+            <div className="p-4 md:p-16 rounded-xl border-2 border-dashed border-[#333333] min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-lg z-20 mx-4 md:mx-0 overflow-x-hidden" style={{backgroundColor: "#d1ccbe", maxWidth: "calc(100vw - 2rem)"}}>
                 <div className="items-center justify-center relative flex w-full" style={{ maxWidth: "1024px" }}>
-                    <ComponenteMesas directivos={mesasData} autoplay={false} colors={{ name: "#f7f7ff", designation: "#e1e1e1", testimony: "#f1f1f7", arrowBackground: "#141414", arrowForeground: "#f7f7ff", arrowHoverBackground: "#333" }} fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} />
+                    <ComponenteMesas directivos={mesasData} autoplay={false} colors={{ name: "#111111", designation: "#8b0000", testimony: "#222222", arrowBackground: "#111111", arrowForeground: "#ece5d3", arrowHoverBackground: "#8b0000" }} fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} />
                 </div>
             </div>
         </div>
