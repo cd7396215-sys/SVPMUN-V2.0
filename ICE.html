@@ -617,17 +617,17 @@
             <!-- CONTENIDO RESUMIDO PARA TELÉFONO -->
             <div class="mobile-only">
                 <p>
-                    <strong>DOSSIER RESUMIDO:</strong> I.C.E. ha iniciado protocolos que exceden los límites constitucionales bajo la <strong>OPERACIÓN OMEGA BORDER</strong>. Las fronteras soberanas han quedado anuladas unilateralmente.
+                    <strong>DOSSIER SUMMARY:</strong> I.C.E. has initiated protocols exceeding constitutional limits under <strong>OPERATION OMEGA BORDER</strong>. Sovereign borders have been unilaterally nullified.
                 </p>
                 <br>
                 <table class="table-data">
                     <thead>
-                        <tr><th>TARGET</th><th>AMENAZA</th><th>ESTADO</th></tr>
+                        <tr><th>TARGET</th><th>THREAT</th><th>STATUS</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>#844-A</td><td>APEX RED</td><td>TERMINADO</td></tr>
-                        <tr><td>#921-X</td><td>CRITICAL</td><td>PENDIENTE</td></tr>
-                        <tr><td>DELEGATE Y</td><td>ORANGE 3</td><td>VIGILANCIA</td></tr>
+                        <tr><td>#844-A</td><td>APEX RED</td><td>TERMINATED</td></tr>
+                        <tr><td>#921-X</td><td>CRITICAL</td><td>PENDING</td></tr>
+                        <tr><td>DELEGATE Y</td><td>ORANGE 3</td><td>SURVEILLANCE</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -636,7 +636,42 @@
         <!-- Photos & Intel area -->
         <section class="evidence-board" style="max-width: 1000px; box-sizing: border-box; overflow-x: hidden;">
             <div class="polaroid">
-                <img src="https://images.unsplash.com/photo-1596706900216-7fc8eb6b29f9?q=80&w=2670&auto=format&fit=crop" alt="intel photo surveillance">
+                <!-- ANIMACIÓN CSS / SVG DE VIGILANCIA PARA REEMPLAZAR LA IMAGEN ROTA -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" style="width: 100%; height: auto; background: #0a0a0a; display: block; border-radius: 4px;">
+                    <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <rect width="20" height="20" fill="none" stroke="#22aa22" stroke-width="0.5" stroke-opacity="0.2"/>
+                        </pattern>
+                        <linearGradient id="scanline" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#22aa22" stop-opacity="0" />
+                            <stop offset="50%" stop-color="#22aa22" stop-opacity="0.4" />
+                            <stop offset="100%" stop-color="#22aa22" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                    <circle cx="200" cy="150" r="90" fill="none" stroke="#22aa22" stroke-width="1.5" stroke-opacity="0.5"/>
+                    <circle cx="200" cy="150" r="130" fill="none" stroke="#22aa22" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+                    <path d="M 200 10 L 200 290 M 10 150 L 390 150" stroke="#22aa22" stroke-width="0.5" stroke-opacity="0.4"/>
+                    
+                    <g>
+                        <path d="M 200 150 L 200 60 A 90 90 0 0 1 290 150 Z" fill="#22aa22" fill-opacity="0.3">
+                            <animateTransform attributeName="transform" type="rotate" from="0 200 150" to="360 200 150" dur="4s" repeatCount="indefinite" />
+                        </path>
+                    </g>
+                    <circle cx="250" cy="100" r="4" fill="#22aa22">
+                        <animate attributeName="opacity" values="0;1;0" dur="4s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="140" cy="200" r="3" fill="#ff2222">
+                        <animate attributeName="opacity" values="0;1;0" dur="4s" begin="2s" repeatCount="indefinite" />
+                    </circle>
+                    
+                    <rect width="100%" height="30" fill="url(#scanline)">
+                        <animate attributeName="y" values="-30;300" dur="2.5s" repeatCount="indefinite" />
+                    </rect>
+                    
+                    <text x="10" y="20" fill="#22aa22" font-family="monospace" font-size="12">SYS.TRACKING_</text>
+                    <text x="10" y="285" fill="#22aa22" font-family="monospace" font-size="12">LIVE FEED</text>
+                </svg>
             </div>
             
             <div style="padding: 1rem;">
@@ -647,7 +682,7 @@
                 </p>
                 <!-- Texto corto Teléfono -->
                 <p class="mobile-only" style="font-size: 0.85rem; font-family: var(--font-mono); margin-top: 0.5rem;">
-                    Brecha detectada en 33°14'N. Sensores desplegados. Monitoreo constante activo. <span class="censored">Vigilancia 24/7.</span>
+                    Breach detected at 33°14'N. Sensors deployed. Constant monitoring active. <span class="censored">24/7 Surveillance.</span>
                 </p>
             </div>
 
@@ -773,6 +808,104 @@
     wrapper.style.setProperty('--mouseX', window.innerWidth / 2 + 'px');
     wrapper.style.setProperty('--offsetY', '300px');
 </script>
+
+<!-- ====================================================================== -->
+<!-- COMPONENTE: GUIA ACADEMICA -->
+<!-- ====================================================================== -->
+<style>
+    .academic-section {
+        background-color: #000;
+        color: #fff;
+        padding: 5rem 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+        font-family: var(--font-geo);
+        position: relative;
+        z-index: 50; 
+        box-sizing: border-box;
+        width: 100vw;
+        max-width: 100%;
+        border-top: 1px solid #1a1a1a;
+    }
+    .academic-container {
+        max-width: 700px;
+    }
+    .academic-title {
+        font-weight: 900;
+        font-size: 2.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        margin-bottom: 1rem;
+        color: #fff;
+    }
+    .academic-text {
+        font-family: var(--font-mono);
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #a3a3a3;
+        margin-bottom: 2.5rem;
+    }
+    .academic-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-mono);
+        text-decoration: none;
+        color: #000;
+        border: 2px solid #fff;
+        padding: 1rem 2.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: #fff;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        animation: pulse-border 2s infinite;
+    }
+    .academic-btn::before {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: #000;
+        z-index: 1;
+        transition: left 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+    }
+    .academic-btn span {
+        position: relative;
+        z-index: 2;
+        transition: color 0.3s ease;
+    }
+    .academic-btn:hover span {
+        color: #fff;
+    }
+    .academic-btn:hover {
+        animation: none;
+    }
+    .academic-btn:hover::before {
+        left: 0;
+    }
+    @keyframes pulse-border {
+        0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+        70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+        100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+</style>
+<section class="academic-section">
+    <div class="academic-container">
+        <h2 class="academic-title">Academic Guide</h2>
+        <p class="academic-text">
+            The definitive dossier provided by the Board of Directors. It contains all essential guidelines, procedures, and intelligence required for delegates to master the topics of this United Nations committee.
+        </p>
+        <a href="pdf/ice.pdf" class="academic-btn"><span>Access Guide</span></a>
+    </div>
+</section>
 
 <!-- ====================================================================== -->
 <!-- COMPONENTE: MESAS DIRECTIVAS (ICE) -->
