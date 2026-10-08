@@ -39,9 +39,10 @@
 
     body, html {
         width: 100%;
+        max-width: 100vw;
         min-height: 100vh;
         background-color: var(--bg-color);
-        overflow-x: hidden;
+        overflow-x: hidden !important; /* Bloqueo obligatorio contra desbordamientos para solo permitir vista vertical */
         font-family: var(--font-geo);
         scroll-behavior: smooth;
     }
@@ -65,11 +66,14 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        padding: 0 1.5rem; /* Obliga al loader a centrarse conteniendo la lectura hacia el marco en teléfonos */
+        box-sizing: border-box;
         font-family: var(--font-mono);
         transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     #loader .log-text {
+        width: 100%;
         font-size: 0.9rem;
         max-width: 600px;
         text-align: left;
@@ -84,10 +88,12 @@
         text-transform: uppercase;
         letter-spacing: 0.5rem;
         animation: flicker 0.1s infinite alternate;
+        text-align: center;
     }
 
     #loader .bar {
-        width: 300px;
+        width: 100%;
+        max-width: 300px; /* Previene anclajes infinitos desordenados fuera de pantalla móvil */
         height: 4px;
         background: #222;
         margin-top: 1rem;
@@ -160,7 +166,7 @@
         
         -webkit-mask-composite: source-over;
         mask-composite: add;
-        overflow: hidden;
+        overflow-x: hidden !important; /* Antiscroll Horizontal Asegurado en el Máscara Principal*/
     }
 
     /* Estado completamente iluminado en computadora (Activado por la cuerda) */
@@ -181,6 +187,7 @@
         flex-direction: column;
         gap: 5rem;
         align-items: center;
+        max-width: 100vw;
     }
 
     /* === TYPOGRAPHY & ELEMENTS === */
@@ -413,6 +420,26 @@
 
     /* === PERSPECTIVA Y AJUSTES PARA TELÉFONO (MÓVIL) === */
     @media (max-width: 768px) {
+        
+        /* Ajuste estructural anti-desbordamiento total */
+        html, body {
+            overflow-x: hidden !important; 
+            max-width: 100vw;
+            width: 100%;
+        }
+
+        #loader { padding: 0 1rem; }
+        #loader h2 { 
+            font-size: 16vw !important; /* Ajuste adaptativo 100% para evitar fuga por tamaños de letra gigantescos */
+            letter-spacing: 0.2rem !important; 
+            margin: 1.5rem 0 !important; 
+        }
+        #loader .log-text { 
+            font-size: 0.75rem !important;
+            margin-bottom: 1rem !important; 
+            min-height: 80px !important;
+        }
+
         /* Ocultar la cuerda en teléfonos */
         #lamp-cord {
             display: none !important;
@@ -424,6 +451,11 @@
             mask-image: none !important;
             min-height: auto !important;
             padding: 2rem 4vw !important;
+        }
+
+        /* Ocultar artefactos absolutos flotantes enormes (provocaban Scroll Horizontal residual en navegadores como Safari) */
+        .decor-drone, .fingerprint, .torn, .barcode {
+            display: none !important;
         }
 
         /* Alternar información resumida/larga */
@@ -460,11 +492,14 @@
             letter-spacing: 2px !important;
             padding: 6px !important;
             margin: 10px 0 !important;
+            width: 100%; 
+            word-wrap: break-word; /* Protección interna limitrofica extra */
         }
 
         p {
             font-size: 0.95rem !important;
             line-height: 1.4 !important;
+            word-break: break-word; 
         }
 
         p::first-letter {
@@ -476,6 +511,7 @@
             gap: 1.5rem !important;
             border-left: 6px solid var(--ink) !important;
             padding-left: 1rem !important;
+            max-width: 100%; /* Resguardo local en CSS Board Mobile */
         }
 
         .polaroid {
@@ -483,24 +519,25 @@
             margin-top: 0 !important;
         }
 
-        /* Ocultar papeles rotos dispersos para evitar desorden visual en móvil */
-        .torn {
-            display: none !important;
-        }
-
+        /* Prevenir que el despliegue nativo de tabla separe bordes si texto colisiona - Usa desbordamiento interior x */
         .table-data {
+            display: block; 
+            overflow-x: auto; 
+            max-width: 100%;
             font-size: 0.7rem !important;
             margin-bottom: 1rem !important;
         }
 
         .table-data th, .table-data td {
             padding: 0.4rem !important;
+            white-space: nowrap; 
         }
 
         .end-marker {
             margin-top: 3rem !important;
             font-size: 1.2rem !important;
             padding: 1rem !important;
+            word-break: break-word;
         }
     }
 </style>
@@ -514,7 +551,7 @@
     <div class="cord-handle"></div>
 </div>
 
-<!-- OBLIGATORY LOADING SCREEN -->
+<!-- OBLIGATORY LOADING SCREEN CONTENIDO MODIFICADO PARA RE-ESCALADO ESTRICTO MOVIL (FLEX FIX)-->
 <div id="loader">
     <div class="log-text" id="log-text"></div>
     <h2>SYSTEM...</h2>
@@ -543,7 +580,7 @@
             <h1 title="ICE">ICE</h1>
         </header>
 
-        <div style="width: 100%; max-width: 1000px; background: rgba(255,255,255,0.6); padding: 2rem; outline: 3px dashed black;">
+        <div style="width: 100%; max-width: 1000px; background: rgba(255,255,255,0.6); padding: 2rem; outline: 3px dashed black; box-sizing: border-box;">
             <div class="meta-data">
                 <div>ORG: HOMELAND SEC <br> CMTE: DIR. SUB-ALPHA<br> AUTH: HIGH SECURITY</div>
                 <div>CLASS: EYES ONLY <br> SUBJ: BORDER SOVEREIGNTY <br> DT: <span class="censored">12-NOV-XXXX</span></div>
@@ -597,7 +634,7 @@
         </div>
 
         <!-- Photos & Intel area -->
-        <section class="evidence-board" style="max-width: 1000px;">
+        <section class="evidence-board" style="max-width: 1000px; box-sizing: border-box; overflow-x: hidden;">
             <div class="polaroid">
                 <img src="https://images.unsplash.com/photo-1596706900216-7fc8eb6b29f9?q=80&w=2670&auto=format&fit=crop" alt="intel photo surveillance">
             </div>
@@ -614,7 +651,7 @@
                 </p>
             </div>
 
-            <div style="padding: 1.5rem; background: var(--ink); color: var(--doc-bg); border-radius: 10px; font-family: var(--font-mono);">
+            <div style="padding: 1.5rem; background: var(--ink); color: var(--doc-bg); border-radius: 10px; font-family: var(--font-mono); box-sizing: border-box; max-width: 100%; word-break: break-word;">
                 <h3 style="color:white; border-bottom: 2px dashed #666; padding-bottom:10px;">SEIZED COMMUNIQUE</h3>
                 <div style="margin-top: 15px; line-height: 1.8; font-size: 0.85rem;">
                     > REQUESTING ASSET EXTRACTION<br>
@@ -630,8 +667,10 @@
             </div>
         </section>
         
-        <div style="width: 100%; max-width: 900px; padding: 1.5rem; text-align:center; font-family: var(--font-mono); line-height: 1.3;">
-            #########################################<br>
+        <div style="width: 100%; max-width: 900px; padding: 1.5rem; text-align:center; font-family: var(--font-mono); line-height: 1.3; box-sizing: border-box;">
+            <span style="display:inline-block; max-width: 100%; word-break: break-all; white-space: normal;">
+                #########################################
+            </span><br>
             01001001 01000011 01000101 <br>
             <br>
             <span class="desktop-only">
@@ -646,7 +685,9 @@
             </span>
             <br>
             <span style="font-size: 3rem;">&#x2620;</span><br>
-            #########################################
+            <span style="display:inline-block; max-width: 100%; word-break: break-all; white-space: normal;">
+                #########################################
+            </span>
         </div>
 
         <div class="end-marker">
@@ -739,7 +780,7 @@
 
 <style>
     /* ═══ CSS MESAS DIRECTIVAS Y TESTIMONIOS CIRCULARES ═══ */
-    .mesas-container { width: 100%; max-width: 56rem; padding: 2rem 1rem; margin: 0 auto; }
+    .mesas-container { width: 100%; max-width: 56rem; padding: 2rem 1rem; margin: 0 auto; box-sizing: border-box;}
     .mesas-grid { display: grid; gap: 3rem; }
     .mesas-image-wrapper { position: relative; width: 100%; height: 24rem; perspective: 1000px; }
     .mesas-image { position: absolute; width: 100%; height: 100%; object-fit: cover; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
@@ -754,11 +795,13 @@
     .mesas-quote-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
     .mesas-arrow-buttons { display: flex; gap: 1.5rem; margin-top: auto; }
     .mesas-arrow-button { width: 2.7rem; height: 2.7rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s; border: none; }
-    @media (max-width: 768px) { .mesas-grid { gap: 2rem; } .mesas-image-wrapper { height: 18rem; } .mesas-quote-container { max-height: 35vh; } }
+    
+    /* Repotenciamos las correcciones anti scroll local acá tambien por si React rompe el flow lateral en telefonos */
+    @media (max-width: 768px) { .mesas-grid { gap: 2rem; max-width: 100vw; overflow-x: hidden; } .mesas-image-wrapper { height: 18rem; max-width: 100%; } .mesas-quote-container { max-height: 35vh; } }
     @media (min-width: 768px) { .mesas-grid { grid-template-columns: 1fr 1fr; gap: 5rem; } .mesas-quote-container { max-height: 350px; } }
 </style>
 
-<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5"></section>
+<section id="mesas-directivas-section" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5" style="box-sizing:border-box; width: 100vw; max-width:100%;"></section>
 
 <script type="text/babel">
     const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -862,15 +905,15 @@
     ];
 
     const SeccionMesasDirectivas = () => (
-        <div className="w-full relative">
-            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10">
+        <div className="w-full relative" style={{boxSizing:"border-box", maxWidth:"100%"}}>
+            <div className="max-w-7xl mx-auto mb-12 text-center md:text-left relative z-10 px-4 md:px-0">
                 <span className="font-space uppercase tracking-[0.2em] text-white/40 text-xs font-semibold mb-4 block border-l-2 border-white/20 pl-3">Estructura de Autoridad</span>
-                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white">
+                <h2 className="text-4xl md:text-5xl font-space font-bold uppercase tracking-tighter text-white break-words w-full">
                     Mesas <span className="text-white/70 italic font-instrument-serif tracking-normal">Directivas</span>
                 </h2>
             </div>
-            <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20">
-                <div className="items-center justify-center relative flex w-full" style={{ maxWidth: "1024px" }}>
+            <div className="bg-[#060507] p-4 md:p-16 rounded-xl border border-white/10 min-h-[300px] flex flex-wrap gap-6 items-center justify-center relative shadow-2xl z-20 mx-4 md:mx-0 overflow-x-hidden" style={{maxWidth: "calc(100vw - 2rem)"}}>
+                <div className="items-center justify-center relative flex w-full overflow-hidden" style={{ maxWidth: "1024px", boxSizing: "border-box" }}>
                     <ComponenteMesas directivos={mesasData} autoplay={false} colors={{ name: "#f7f7ff", designation: "#e1e1e1", testimony: "#f1f1f7", arrowBackground: "#141414", arrowForeground: "#f7f7ff", arrowHoverBackground: "#333" }} fontSizes={{ name: "28px", designation: "14px", quote: "16px" }} />
                 </div>
             </div>
