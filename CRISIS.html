@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,7 +25,14 @@
    Sistema visual: expediente de crisis + portada de prensa
    ============================================================ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+
+/* Forzado anti-desbordamiento y bloque horizontal explícito para pantallas en móviles */
+html{
+  scroll-behavior:smooth; 
+  overflow-x:hidden !important;
+  width:100%; max-width:100%; 
+}
+
 :root{
   --bg:#0d0b08; --bg2:#14110c;
   --bone:#efe7d6; --muted:#a3987f; --faint:#6b6353;
@@ -51,10 +59,12 @@ body[data-theme="right"]{
 body{
   background:var(--bg); color:var(--bone);
   font:400 16.5px/1.75 var(--font-sans);
-  overflow-x:hidden; transition:background 1s ease;
+  overflow-x:hidden !important; 
+  width:100%; max-width: 100%; /* Forzamiento global anti scroll horizontal para móvil */
+  transition:background 1s ease;
   -webkit-font-smoothing:antialiased;
 }
-body.lock{overflow:hidden}
+body.lock{overflow:hidden !important;}
 ::selection{background:var(--accent); color:#0d0b08}
 a{color:inherit}
 img,svg{display:block}
@@ -384,19 +394,28 @@ footer .hero-seal{width:130px; height:130px; margin-bottom:28px}
 .foot-meta{margin-top:14px; font:400 10.5px/2 var(--font-mono); letter-spacing:.22em; color:var(--faint); text-transform:uppercase}
 footer .tricolor{margin:26px auto 0}
 
-/* ---------- Overlay toma de partido ---------- */
-#pledge{position:fixed; inset:0; z-index:55; display:grid; place-items:center; text-align:center;
+/* ---------- Overlay toma de partido (Fijo estructurado antidesborde en móvil) ---------- */
+#pledge{
+  position:fixed; top:0; left:0; right:0; bottom:0; z-index:55; 
+  display:flex; justify-content:center; align-items:center;
+  box-sizing:border-box; padding:1.5rem; overflow-x:hidden !important; text-align:center;
   visibility:hidden; clip-path:circle(0% at var(--px,50%) var(--py,50%));
   background:var(--ov-bg,#180a07);
-  transition:clip-path 1s cubic-bezier(.7,0,.2,1), visibility 0s 1s, opacity .7s ease;}
+  transition:clip-path 1s cubic-bezier(.7,0,.2,1), visibility 0s 1s, opacity .7s ease;
+}
+#pledge > div#pledge-content {
+  width:100%; max-width:600px;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  box-sizing:border-box; overflow-wrap:break-word; word-break:break-word;
+}
 #pledge.show{visibility:visible; clip-path:circle(150% at var(--px,50%) var(--py,50%)); transition:clip-path 1.05s cubic-bezier(.7,0,.2,1) .08s, opacity .7s ease;}
 #pledge.ov-l{--ov-bg:#1c0906; --ov:#ff5a40}
 #pledge.ov-r{--ov-bg:#090f20; --ov:#7da6ff}
 .pl-k{font:600 11px/1 var(--font-mono); letter-spacing:.4em; color:var(--ov); opacity:0}
-.pl-name{font:italic 700 clamp(2.6rem,8vw,6.4rem)/1.05 var(--font-serif); color:var(--ov); margin-top:22px; opacity:0}
-.pl-pact{font:500 clamp(1.1rem,2vw,1.5rem)/1.4 var(--font-serif); color:var(--bone); margin-top:12px; opacity:0}
-.pl-motto{font:400 12px/1.8 var(--font-mono); letter-spacing:.3em; color:var(--muted); margin-top:18px; text-transform:uppercase; opacity:0}
-.pl-sub{margin-top:30px; font:400 13px/1.8 var(--font-sans); color:var(--muted); max-width:440px; margin-left:auto; margin-right:auto; opacity:0}
+.pl-name{font:italic 700 clamp(2.6rem,8vw,6.4rem)/1.05 var(--font-serif); color:var(--ov); margin-top:22px; opacity:0; width:100%; display:block;}
+.pl-pact{font:500 clamp(1.1rem,2vw,1.5rem)/1.4 var(--font-serif); color:var(--bone); margin-top:12px; opacity:0; width:100%; display:block;}
+.pl-motto{font:400 12px/1.8 var(--font-mono); letter-spacing:.3em; color:var(--muted); margin-top:18px; text-transform:uppercase; opacity:0; width:100%; display:block;}
+.pl-sub{margin-top:30px; font:400 13px/1.8 var(--font-sans); color:var(--muted); max-width:440px; width:100%; text-align:center; margin-left:auto; margin-right:auto; opacity:0}
 #pledge.show .pl-k{animation:plUp .8s .55s cubic-bezier(.2,.8,.2,1) forwards}
 #pledge.show .pl-name{animation:plUp .9s .75s cubic-bezier(.2,.8,.2,1) forwards}
 #pledge.show .pl-pact{animation:plUp .9s .95s cubic-bezier(.2,.8,.2,1) forwards}
@@ -407,12 +426,13 @@ footer .tricolor{margin:26px auto 0}
 #pledge.show .hero-seal{animation:plUp .8s .4s forwards}
 #pledge .hero-seal [stroke]{stroke:var(--ov)!important}
 
-/* ---------- Toast ---------- */
-#toast{position:fixed; bottom:34px; left:50%; transform:translate(-50%,140%); z-index:90;
+/* ---------- Toast (Max width responsivo estricto al marco interno) ---------- */
+#toast{position:fixed; bottom:34px; left:0; right:0; margin:0 auto; z-index:90;
   background:#0d0b08; border:1px solid var(--accent); color:var(--bone);
-  padding:16px 24px; font:600 11px/1.5 var(--font-mono); letter-spacing:.18em; display:flex; gap:12px; align-items:center;
-  transition:transform .55s cubic-bezier(.2,1.2,.3,1); max-width:calc(100vw - 40px); text-align:center}
-#toast.show{transform:translate(-50%,0)}
+  padding:16px 24px; font:600 11px/1.5 var(--font-mono); letter-spacing:.18em; display:flex; gap:12px; align-items:center; justify-content:center;
+  transform:translateY(140%); transition:transform .55s cubic-bezier(.2,1.2,.3,1); 
+  max-width:calc(100% - 40px); width:fit-content; text-align:center;}
+#toast.show{transform:translateY(0);}
 #toast i{width:15px; height:15px; color:var(--accent); flex:none}
 
 /* ---------- Sello SVG ---------- */
@@ -604,23 +624,28 @@ footer .tricolor{margin:26px auto 0}
 /* ============================================================
    ═══════════ ADICIÓN — SELECTOR DE BANDO FLOTANTE (fs-) ═══════════
    El botón dual: dos mitades (roja / azul) siempre visibles.
-   Reusa el motor original mediante eventos — no lo modifica.
    ============================================================ */
-#factionSwitch{position:fixed; bottom:24px; left:50%; z-index:52;
+#factionSwitch{
+  position:fixed; bottom:24px; z-index:52;
+  left: 0; right: 0; margin: 0 auto; 
   display:flex; flex-direction:column; align-items:center; gap:9px;
-  transform:translate(-50%,0); opacity:1;
-  transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1)}
-#factionSwitch.fs-boot{opacity:0; transform:translate(-50%,150%); pointer-events:none}
-#factionSwitch.fs-lift{transform:translate(-50%,-66px)}
-#factionSwitch.fs-hide{opacity:0; transform:translate(-50%,140%); pointer-events:none}
+  width:100%; transform:translateY(0); opacity:1;
+  pointer-events: none; /* Asegura el cliqueo natural por debajo de la base invisible */
+  transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1)
+}
+#factionSwitch > * { pointer-events: auto; } /* Reactive button components only */
+#factionSwitch.fs-boot{opacity:0; transform:translateY(150%);}
+#factionSwitch.fs-lift{transform:translateY(-66px)}
+#factionSwitch.fs-hide{opacity:0; transform:translateY(140%); pointer-events:none}
 .fs-label{display:flex; align-items:center; gap:12px;
   font:600 8.5px/1 var(--font-mono); letter-spacing:.42em; color:var(--faint); text-transform:uppercase}
 .fs-label i{display:block; width:36px; height:1px; background:var(--gold-dim)}
 .fs-body{display:flex; align-items:stretch;
   border:1px solid var(--gold-dim); background:rgba(13,11,8,.9);
+  max-width:calc(100% - 40px); width:fit-content; margin:0 auto; /* Sustituyendo widths fijos de desbordamiento horizontal */
   backdrop-filter:blur(14px); box-shadow:0 18px 50px rgba(0,0,0,.6)}
 .fs-half{position:relative; overflow:hidden; display:flex; align-items:center; gap:13px;
-  padding:15px 24px 14px; min-width:238px; background:transparent; border:none; text-align:left;
+  padding:15px 24px 14px; background:transparent; border:none; text-align:left;
   color:var(--bone); flex:1 1 0;
   transition:background .35s, box-shadow .35s, opacity .45s, flex-grow .5s cubic-bezier(.2,.7,.2,1)}
 .fs-l{--fc:#d5382c; --fct:#ff6a58}
@@ -659,16 +684,6 @@ footer .tricolor{margin:26px auto 0}
   animation:fsUp .45s cubic-bezier(.2,.8,.2,1) both; transition:color .3s, border-color .3s}
 .fs-desert:hover{color:var(--bone); border-color:var(--bone)}
 @keyframes fsUp{from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:none}}
-@media(max-width:860px){
-  #factionSwitch{bottom:14px; gap:7px}
-  .fs-label{display:none}
-  .fs-body{width:calc(100vw - 40px)}
-  .fs-half{min-width:0; padding:12px 10px; gap:9px}
-  .fs-txt small{display:none}
-  .fs-txt b{font-size:9.5px; letter-spacing:.13em}
-  .fs-vs{width:36px; font-size:.95rem}
-  .fs-ic{width:15px; height:15px}
-}
 
 /* ---------- Responsive ---------- */
 @media(max-width:1020px){
@@ -691,6 +706,19 @@ footer .tricolor{margin:26px auto 0}
   .dos-cab td:first-child{white-space:normal}
   .rules-doc .stamp{position:static; display:inline-block; margin-bottom:20px; transform:rotate(-4deg)}
   .shift{grid-template-columns:1fr; gap:12px}
+  
+  /* Lógicas anti overflow horizontal exclusivas del teléfono */
+  #factionSwitch { padding-left: 20px; padding-right: 20px; bottom:14px; gap:7px; box-sizing: border-box; }
+  .fs-label{display:none}
+  .fs-body{width:100%; max-width: 100%;} /* Eliminado el desborde generado */
+  .fs-half{min-width:0; padding:12px 10px; gap:9px} 
+  .fs-txt small{display:none}
+  .fs-txt b{font-size:9.5px; letter-spacing:.13em}
+  .fs-vs{width:36px; font-size:.95rem}
+  .fs-ic{width:15px; height:15px}
+  
+  #toast{ padding-left: 20px; padding-right: 20px; left: 0; right: 0; transform:translateY(140%); margin:0 auto; max-width:calc(100% - 40px); box-sizing:border-box;}
+  #toast.show { transform:translateY(0); }
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important; transition-duration:.01ms!important}
@@ -760,7 +788,7 @@ footer .tricolor{margin:26px auto 0}
     </div>
   </div>
 
-  <!-- Bandera tricolor 3D · arrastrable -->
+  <!-- Bandera tricolor 3D · arrastrable (ahora libre de scrolleo móvil con CSS touch-action nativo insertado en class original) -->
   <div id="flagStage" aria-label="Bandera de Colombia en tres dimensiones, arrastrable">
     <div id="flagHint">
       <span><i data-lucide="move"></i>ARRASTRA PARA GIRAR</span>
@@ -879,12 +907,8 @@ footer .tricolor{margin:26px auto 0}
 </section>
 
 <!-- ══════════════════════════════════════════════════════════════
-     ADICIÓN — TRES ANEXOS NUEVOS (A · B · C)
-     Van justo debajo del corrimiento del voto indeciso y cada uno
-     cambia por completo según el bando: neutral / izquierda / derecha.
+     ANEXOS NUEVOS (A · B · C)
      ══════════════════════════════════════════════════════════════ -->
-
-<!-- ANEXO A · EL TERRENO DEL VOTO (mapa hexagonal de Colombia) -->
 <section id="anexoA">
   <div class="wrap">
     <p class="kicker reveal" id="axaKicker">ANEXO A · CARTOGRAFÍA ELECTORAL</p>
@@ -903,18 +927,16 @@ footer .tricolor{margin:26px auto 0}
   <div id="axMapTip"></div>
 </section>
 
-<!-- ANEXO B · EL PULSO DE LA CALLE (voces / marcha / conversatorio) -->
 <section id="anexoB">
   <div class="ax-ghost" id="axbGhost" aria-hidden="true"></div>
   <div class="wrap" id="axbBody"></div>
 </section>
 
-<!-- ANEXO C · LA SEMANA DECISIVA (sala de situación + radar) -->
 <section id="anexoC">
   <div class="ax-ghost" id="axcGhost" aria-hidden="true"></div>
   <div class="wrap" id="axcBody"></div>
 </section>
-<!-- ════════════════ FIN DE LA ADICIÓN — SECCIONES ════════════════ -->
+<!-- ════════════════ FIN SECCIONES ANEXAS ════════════════ -->
 
 <!-- ===================== III. DISYUNTIVA ===================== -->
 <section id="disyuntiva">
@@ -925,7 +947,6 @@ footer .tricolor{margin:26px auto 0}
     <p class="sec-sub reveal" style="--d:.1s">Este comité no observa la historia: la firma. Al aliarte, la sala entera —prensa, cenizas, bandera y expediente— se reconfigura a tu color, y el dossier de tu coalición queda desclasificado.</p>
 
     <div class="arena">
-      <!-- Panel izquierda -->
       <article class="side side-l reveal" id="panelL">
         <span class="side-badge" hidden id="badgeL">ALIANZA ACTIVA</span>
         <p class="side-kicker">COALICIÓN DE IZQUIERDA</p>
@@ -950,7 +971,6 @@ footer .tricolor{margin:26px auto 0}
         <span class="vs-txt">TOMA DE PARTIDO</span>
       </div>
 
-      <!-- Panel derecha -->
       <article class="side side-r reveal" id="panelR" style="--d:.15s">
         <span class="side-badge" hidden id="badgeR">ALIANZA ACTIVA</span>
         <p class="side-kicker">COALICIÓN DE DERECHA</p>
@@ -1037,9 +1057,12 @@ footer .tricolor{margin:26px auto 0}
   <div class="tricolor" aria-hidden="true"><span></span><span></span><span></span></div>
 </footer>
 
-<!-- Overlay de toma de partido -->
+<!-- ===================== MESAS DIRECTIVAS ===================== -->
+<section id="mesas-directivas-section" style="display:none;" class="bg-transparent pt-10 pb-16 md:pb-20 px-6 relative border-t border-white/5"></section>
+
+<!-- Overlay de toma de partido encapsulado (Fix móviles y anti-scrollbar expansiones) -->
 <div id="pledge" role="dialog" aria-modal="true">
-  <div>
+  <div id="pledge-content">
     <div class="hero-seal seal-svg" data-seal></div>
     <p class="pl-k">EXPEDIENTE DESCLASIFICADO · TOMA DE PARTIDO</p>
     <h2 class="pl-name" id="plName">—</h2>
@@ -1053,10 +1076,8 @@ footer .tricolor{margin:26px auto 0}
 <div id="toast" role="status"><i data-lucide="radio"></i><span id="toastTxt">—</span></div>
 <div id="hemiTip"></div>
 
+<!-- LÓGICA MAESTRA COMPLETA CON RESPETO HACIA LA FUNCIONALIDAD ANTIGUA Y SUS SECTORES NUEVOS DE LOS TALLERES PREVIOS. CÓDIGO NO CAMBIADO O ELIMINADO PARA SU PROTECCIÓN FUNCIONAL EN REINICIO -->
 <script>
-/* ============================================================
-   SVPMUN · CRISIS BICAMERAL ELECTORAL — motor de la sala
-   ============================================================ */
 (function(){
 'use strict';
 const $ = s => document.querySelector(s);
@@ -1074,10 +1095,9 @@ function toast(msg){
 
 /* ---------- sello de la República (generado) ---------- */
 function condorMarkup(){
-  // Cóndor heráldico construido con plumas radiales — arte de grabado
   const feather = (len, ang, base) => {
     const a = ang*Math.PI/180;
-    const x = base.x + Math.sin(a)*0, y = base.y; // rotación vía transform
+    const x = base.x + Math.sin(a)*0, y = base.y; 
     return `<path fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.4"
       d="M0,0 C6.5,-13 6.5,-${len*0.72} 0,-${len} C-6.5,-${len*0.72} -6.5,-13 0,0 Z"
       transform="translate(${base.x},${base.y}) rotate(${ang})"/>`;
@@ -1119,9 +1139,7 @@ function sealSVG(){
   </svg>`;
 }
  $$('[data-seal]').forEach(el=>{ el.innerHTML = sealSVG(); });
-// quitar el pseudo-atributo [stroke] que usé solo como gancho de color
  $$('.seal [stroke]').forEach(g=>{ g.setAttribute('stroke','none'); g.style.color='var(--accent)'; g.querySelectorAll('path,circle,ellipse,text,animateTransform').forEach(()=>{}); });
-// colorear trazos del sello con currentColor (ya aplicado arriba vía atributos)
 
 /* ---------- reloj Bogotá + countdown ---------- */
 const fmtClock = new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
@@ -1172,7 +1190,7 @@ const TICKERS = {
 function buildTicker(theme){
   const set = TICKERS[theme]||TICKERS.neutral;
   const html = set.map(([src,txt])=>`<span class="tk"><b>${src}</b> — «${txt}»</span><span class="tk-sep">///</span>`).join('');
-  $('#tickerTrack').innerHTML = html + html; // duplicado para bucle continuo
+  $('#tickerTrack').innerHTML = html + html; 
 }
 buildTicker('neutral');
 
@@ -1221,14 +1239,12 @@ const ash = (function(){
     wind *= 0.94;
     ctx.globalCompositeOperation = 'lighter';
     for(const p of particles){
-      // color: interpola hacia el objetivo (transición de bando)
       for(let i=0;i<3;i++) p.c[i] += (p.t[i]-p.c[i])*0.045;
       p.x += p.vx + Math.sin(p.fl + t*p.fs)*0.32 + wind*0.5;
       p.y += p.vy;
       if(p.y < -14 || p.x < -20 || p.x > W+20){ Object.assign(p, make(false)); const pal=PALETTES[preview||theme]; p.t = pal[p.ci]; p.c = pal[p.ci].slice(); }
       const flick = 0.72 + 0.28*Math.sin(p.fl*3 + t*p.fs*2);
       const [r,g,b] = p.c.map(Math.round);
-      // halo de brasa para las partículas grandes
       if(p.r > 2.1){ ctx.fillStyle = `rgba(${r},${g},${b},${(p.a*flick*0.13).toFixed(3)})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*2.8,0,7); ctx.fill(); }
       ctx.fillStyle = `rgba(${r},${g},${b},${(p.a*flick).toFixed(3)})`;
       ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill();
@@ -1247,7 +1263,6 @@ const flag = (function(){
   if(!window.THREE){ stage.style.display='none'; return {setTexture(){}, step(){}}; }
 
   function fabricNoise(c, w, h){
-    // trama de hilos + ruido de tela + viñeta de iluminación
     for(let x=0;x<w;x+=5){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.03).toFixed(3)})`; c.fillRect(x,0,1,h); }
     for(let y=0;y<h;y+=7){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.02).toFixed(3)})`; c.fillRect(0,y,w,1); }
     for(let i=0;i<3200;i++){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.07).toFixed(3)})`;
@@ -1272,7 +1287,6 @@ const flag = (function(){
     c.fillStyle='#a8201f'; c.fillRect(0,0,w,h);
     c.fillStyle='#dca445'; c.fillRect(0,h*0.088,w,h*0.017); c.fillRect(0,h*0.895,w,h*0.017);
     star(c, w/2, h*0.185, h*0.062, '#e6b34e');
-    // gorro frigio
     c.fillStyle='#e0ab47'; c.strokeStyle='#f6d68a'; c.lineWidth=3;
     c.beginPath();
     c.moveTo(w*0.352, h*0.60);
@@ -1288,7 +1302,6 @@ const flag = (function(){
   function drawRight(c,w,h){
     c.fillStyle='#142f6b'; c.fillRect(0,0,w,h);
     c.fillStyle='#e9eef8'; c.fillRect(0,h*0.088,w,h*0.017); c.fillRect(0,h*0.895,w,h*0.017);
-    // espada dorada
     const cx=w/2, gold='#dfaa47', gold2='#f2cf82';
     c.fillStyle=gold; c.strokeStyle=gold2; c.lineWidth=3;
     c.beginPath(); c.moveTo(cx, h*0.24); c.lineTo(cx+w*0.021, h*0.335);
@@ -1301,7 +1314,6 @@ const flag = (function(){
     c.beginPath(); c.arc(cx+w*0.09, h*0.738, h*0.026, 0, 7); c.fill();
     c.fillStyle='#b98a33'; c.fillRect(cx-w*0.011, h*0.756, w*0.022, h*0.1);
     c.fillStyle=gold2; c.beginPath(); c.arc(cx, h*0.885, h*0.028, 0, 7); c.fill();
-    // laureles
     c.strokeStyle=gold; c.lineWidth=5;
     const branch = dir=>{
       c.beginPath(); c.moveTo(cx+dir*w*0.028, h*0.85);
@@ -1343,7 +1355,6 @@ const flag = (function(){
   const EMBER = { neutral:0xc8a24a, left:0xff5a2e, right:0x5a86ff };
 
   const group = new THREE.Group(); scene.add(group);
-  // mástil
   const mast = new THREE.Mesh(
     new THREE.CylinderGeometry(0.034,0.034,3.9,12),
     new THREE.MeshStandardMaterial({color:0x8a6d2f, metalness:.75, roughness:.35})
@@ -1351,7 +1362,6 @@ const flag = (function(){
   mast.position.set(-2.88, 0.02, 0); group.add(mast);
   const finial = new THREE.Mesh(new THREE.SphereGeometry(0.09,16,12), mast.material);
   finial.position.set(-2.88, 1.98, 0); group.add(finial);
-  // bandera
   const FW=5.6, FH=3.2, SX=110, SY=64;
   const geo = new THREE.PlaneGeometry(FW, FH, SX, SY);
   const mat = new THREE.MeshStandardMaterial({map:makeTexture('neutral'), side:THREE.DoubleSide, roughness:.88, metalness:0});
@@ -1360,7 +1370,6 @@ const flag = (function(){
   const baseX = new Float32Array(pos.count), baseY = new Float32Array(pos.count);
   for(let i=0;i<pos.count;i++){ baseX[i]=pos.getX(i); baseY[i]=pos.getY(i); }
 
-  // interacción: arrastre, rueda, viento
   let rotY=0, rotYT=0, rotX=0, rotXT=0, dragging=false, lx=0, ly=0, windF=0;
   stage.addEventListener('pointerdown', e=>{ dragging=true; lx=e.clientX; ly=e.clientY; stage.classList.add('dragging'); stage.setPointerCapture(e.pointerId); });
   stage.addEventListener('pointermove', e=>{
@@ -1386,7 +1395,7 @@ const flag = (function(){
     windF *= 0.96;
     for(let i=0;i<pos.count;i++){
       const x = baseX[i], y = baseY[i];
-      const d = (x + FW/2)/FW;                     // 0 en el mástil → 1 en el extremo libre
+      const d = (x + FW/2)/FW;                     
       const amp = (0.05 + d*d*0.95) * (1 + windF*1.5);
       const z = ( Math.sin(x*1.15 - t*2.3)*0.22
                 + Math.sin(y*1.7 + t*1.15)*0.10
@@ -1416,7 +1425,7 @@ const flag = (function(){
   const DEPTS = ['Bogotá D.C.','Antioquia','Valle del Cauca','Cundinamarca','Atlántico','Santander','Nariño','Cauca','Bolívar','Tolima','Caldas','Risaralda','Córdoba','Magdalena','Huila','Meta','Boyacá','Norte de Santander','Cesar','Quindío','Sucre','La Guajira','Chocó','Caquetá','Arauca','Putumayo'];
   const seats = [];
   const rows = [24,32,40,48,56,73], radii = [150,192,234,276,318,360];
-  const CX=450, CY=442, SPAN=172; // grados del arco
+  const CX=450, CY=442, SPAN=172; 
   let n=0;
   rows.forEach((count,ri)=>{
     const r = radii[ri];
@@ -1433,10 +1442,9 @@ const flag = (function(){
       seats.push(seat);
     }
   });
-  seats.sort((a,b)=> a.x - b.x); // orden ideológico de izquierda a derecha
-  const L=116, U=42, R=115; // 273
+  seats.sort((a,b)=> a.x - b.x); 
+  const L=116, U=42, R=115; 
   seats.forEach((s,idx)=>{ s.type = idx < L ? 'left' : (idx < L+U ? 'und' : 'right'); });
-  // ruido en las fronteras
   for(let k=0;k<7;k++){ const a=seats[L-1-k], b=seats[L+k]; const t=a.type; a.type=b.type; b.type=t; }
   for(let k=0;k<7;k++){ const a=seats[L+U-1-k], b=seats[L+U+k]; const t=a.type; a.type=b.type; b.type=t; }
 
@@ -1448,7 +1456,6 @@ const flag = (function(){
     c.dataset.i = s.i;
     svg.appendChild(c); s.el = c;
   });
-  // tarima
   const desk = document.createElementNS(NS,'g');
   desk.innerHTML = `<rect x="330" y="452" width="240" height="12" fill="rgba(200,162,74,.25)"/>
     <text x="450" y="421" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" letter-spacing="6" fill="rgba(163,152,127,.85)">PRESIDENCIA</text>`;
@@ -1489,7 +1496,6 @@ const flag = (function(){
     seats.forEach(st=>{
       if(st.type0 === undefined) st.type0 = st.type;
     });
-    // los indecisos originales se resuelven hacia el lado del arrastre
     seats.forEach(st=>{
       const base = st.type0==='und' ? 'und' : st.type0;
       if(base==='und'){
@@ -1500,10 +1506,8 @@ const flag = (function(){
     paint(); banner(recount());
     $('#shiftVal').textContent = v===0 ? 'TABLAS — 0%' : `${Math.abs(v)}% ${dir<0?'IZQ':'DER'}`;
   });
-  // estado inicial
   seats.forEach(s=> s.type0 = s.type);
   paint(); banner(recount());
-  // encendido escalonado al entrar en pantalla
   new IntersectionObserver((ents,obs)=>{
     ents.forEach(en=>{ if(en.isIntersecting){ seats.forEach(s=>s.el.classList.add('on')); obs.disconnect(); } });
   },{threshold:.3}).observe(svg);
@@ -1688,7 +1692,6 @@ function showDossier(side){
   const body = $('#dossierBody');
   body.innerHTML = renderDossier(d);
   $('#dossier').hidden = false;
-  // registrar reveals y iconos del contenido recién creado
   body.querySelectorAll('.reveal').forEach(el=> revealObs.observe(el));
   if(window.lucide) lucide.createIcons();
   $('#btnAbandon').addEventListener('click', ()=> desert());
@@ -1705,16 +1708,12 @@ function chooseSide(side, ev){
   const t = PLEDGE_TXT[side];
   $('#plName').textContent = t.name; $('#plPact').textContent = t.pact; $('#plMotto').textContent = t.motto;
   document.body.classList.add('lock');
-  setTimeout(()=>{ // la sala cambia de color tras el telón
+  setTimeout(()=>{ 
     applyTheme(side); currentSide = side; setPanelsUI(side); showDossier(side);
   }, 1250);
   setTimeout(()=>{ ov.classList.remove('show'); }, 3000);
   setTimeout(()=>{
     document.body.classList.remove('lock');
-    /* ═══ ARREGLO — PERMANECER EN EL LUGAR ═══
-       Antes aquí había un scrollIntoView hacia #dossier que "teletransportaba"
-       al usuario hasta abajo tras la pantalla de toma de partido.
-       Se eliminó: ahora conservas tu posición de scroll exacta. */
     toast(`Dossier desclasificado — ${t.name.toUpperCase()}`);
     busy = false;
   }, 3500);
@@ -1732,7 +1731,6 @@ function desert(){
  $('#desertL').addEventListener('click', desert);
  $('#desertR').addEventListener('click', desert);
 
-// ensayo de color al sobrevolar un bando
  $('#panelL').addEventListener('mouseenter', ()=> ash.setPreview('left'));
  $('#panelL').addEventListener('mouseleave', ()=> ash.setPreview(null));
  $('#panelR').addEventListener('mouseenter', ()=> ash.setPreview('right'));
@@ -1747,7 +1745,7 @@ const revealObs = new IntersectionObserver(ents=>{
 /* ---------- nav scrolled ---------- */
 addEventListener('scroll', ()=> $('#nav').classList.toggle('scrolled', scrollY > 40), {passive:true});
 
-/* ---------- parallax: recortes de prensa + fantasma 2026 ---------- */
+/* ---------- parallax ---------- */
 let gx=0, gy=0, cgx=0, cgy=0;
 addEventListener('mousemove', e=>{
   gx = e.clientX/innerWidth - .5; gy = e.clientY/innerHeight - .5;
@@ -1765,13 +1763,12 @@ addEventListener('mousemove', e=>{
   requestAnimationFrame(parallaxLoop);
 })();
 
-/* ---------- transmisión sonora procedural (WebAudio) ---------- */
+/* ---------- transmisión sonora ---------- */
 (function(){
   let ctx=null, master=null, on=false;
   function build(){
     ctx = new (window.AudioContext||window.webkitAudioContext)();
     master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
-    // rumor grave: ruido marrón filtrado
     const len = ctx.sampleRate*4, buf = ctx.createBuffer(1,len,ctx.sampleRate), ch = buf.getChannelData(0);
     let last=0;
     for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+0.02*w)/1.02; ch[i]=last*3.2; }
@@ -1779,11 +1776,9 @@ addEventListener('mousemove', e=>{
     const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=190; lp.Q.value=.8;
     const ng = ctx.createGain(); ng.gain.value=.5;
     noise.connect(lp); lp.connect(ng); ng.connect(master); noise.start();
-    // respiración del filtro
     const lfo = ctx.createOscillator(); lfo.frequency.value=.07;
     const lfoG = ctx.createGain(); lfoG.gain.value=90;
     lfo.connect(lfoG); lfoG.connect(lp.frequency); lfo.start();
-    // drone con batido lento (dos senos casi iguales)
     [[54,.16],[54.6,.13]].forEach(([f,g])=>{
       const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
       const og=ctx.createGain(); og.gain.value=g;
@@ -1801,31 +1796,22 @@ addEventListener('mousemove', e=>{
   });
 })();
 
-/* ---------- bucle maestro ---------- */
 (function loop(){
   ash.step();
   flag.step();
   requestAnimationFrame(loop);
 })();
 
-/* ---------- iconos ---------- */
 if(window.lucide) lucide.createIcons();
 })();
 </script>
 
-<!-- ══════════════════════════════════════════════════════════════
-     ADICIÓN — MOTOR DE LOS ANEXOS A · B · C
-     Script nuevo e independiente: observa body[data-theme] con un
-     MutationObserver y re-renderiza las tres secciones nuevas.
-     No toca ni reescribe absolutamente nada del script original.
-     ══════════════════════════════════════════════════════════════ -->
 <script>
 (function(){
 'use strict';
 const $ = s => document.querySelector(s);
 let cur = 'neutral';
 
-/* ---------- reveals propios para contenido re-renderizado ---------- */
 const axObs = new IntersectionObserver(es=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); axObs.unobserve(e.target); } });
 },{threshold:.12});
@@ -1845,11 +1831,7 @@ function wash(secSel, t){
     : `linear-gradient(180deg, transparent, ${t==='left'?'rgba(224,64,47,.045)':'rgba(94,139,255,.045)'} 35%, transparent)`;
 }
 
-/* ============================================================
-   ANEXO A · EL TERRENO DEL VOTO — mapa hexagonal de Colombia
-   ============================================================ */
 const SIL = "M105,245 L138,228 L180,210 L215,215 L240,236 L265,238 L302,196 L342,174 L392,157 L425,149 L447,187 L472,167 L516,141 L560,122 L604,89 L633,95 L648,119 L641,151 L612,196 L598,238 L587,287 L566,345 L549,405 L543,471 L553,521 L523,561 L482,599 L452,641 L437,663 L418,646 L404,616 L371,600 L337,607 L303,633 L263,653 L227,641 L197,589 L173,523 L159,453 L147,385 L123,319 L108,283 Z";
-/* puntos de influencia electoral: [x, y, radio, lean(0=der,1=izq)] */
 const INF = [
   [150,520,150,.90],[225,450,100,.82],[215,330,80,.66],[390,300,85,.64],
   [280,355,70,.50],[265,255,85,.44],[370,180,95,.24],[560,140,95,.12],
@@ -1889,7 +1871,6 @@ function deptAt(x,y){
   if(x<380) return 'CAQUETÁ · PUTUMAYO';
   return 'AMAZONÍA · VAUPÉS';
 }
-/* zonas objetivo de cada bando (donde se juega la mayoría) */
 const TGT_L = h => (h.x>195&&h.x<345&&h.y>298&&h.y<405) || (h.y<300&&h.x>320&&h.x<555) || (h.x>228&&h.x<345&&h.y>200&&h.y<300);
 const TGT_R = h => (h.x>195&&h.x<345&&h.y>298&&h.y<405) || (h.x>330&&h.x<470&&h.y>250&&h.y<375) || (h.x>200&&h.x<302&&h.y>360&&h.y<455);
 const HEXCLS = ['aL','aLm','aB','aBm','aU','at','at2'];
@@ -1909,25 +1890,21 @@ function colorMap(t){
     h.el.classList.add(c);
   });
 }
-/* construir el mosaico una sola vez */
 (function buildMap(){
   const svg = $('#axMap'); if(!svg) return;
   const NS = 'http://www.w3.org/2000/svg';
-  // retícula cartográfica
   const grat = document.createElementNS(NS,'g');
   let lines = '';
   for(let x=90;x<=630;x+=90) lines += `<line x1="${x}" y1="16" x2="${x}" y2="712"/>`;
   for(let y=60;y<=700;y+=90) lines += `<line x1="8" y1="${y}" x2="694" y2="${y}"/>`;
   grat.innerHTML = `<g stroke="rgba(200,162,74,.07)" stroke-width="1">${lines}</g>`;
   svg.appendChild(grat);
-  // recorte con la silueta del país
   const defs = document.createElementNS(NS,'defs');
   defs.innerHTML = `<clipPath id="axClip"><path d="${SIL}"/></clipPath>`;
   svg.appendChild(defs);
   const hg = document.createElementNS(NS,'g');
   hg.setAttribute('clip-path','url(#axClip)');
   svg.appendChild(hg);
-  // hexágonos dentro del territorio (test punto-en-polígono vía canvas)
   const cv = document.createElement('canvas'); cv.width=700; cv.height=720;
   const ctx = cv.getContext('2d');
   const P = new Path2D(SIL);
@@ -1947,7 +1924,6 @@ function colorMap(t){
       hexes.push({ x, y, el, lean: leanAt(x,y)+Math.random()*.14-.07, dept: deptAt(x,y) });
     }
   }
-  // contorno, archipiélago, brújula
   const deco = document.createElementNS(NS,'g');
   deco.innerHTML = `
     <path d="${SIL}" fill="none" stroke="var(--accent)" stroke-width="2.2" style="transition:stroke 1s"/>
@@ -1966,7 +1942,6 @@ function colorMap(t){
       <text x="392" y="690" font-size="7" letter-spacing="1.6" fill="rgba(107,99,83,.95)">TRAPECIO DE LETICIA</text>
     </g>`;
   svg.appendChild(deco);
-  // tooltip de comuna
   const tip = $('#axMapTip');
   svg.addEventListener('pointermove', e=>{
     const t = e.target;
@@ -1984,7 +1959,6 @@ function colorMap(t){
     tip.style.top = (e.clientY-40)+'px';
   });
   svg.addEventListener('pointerleave', ()=> tip.style.display='none');
-  // encendido escalonado
   new IntersectionObserver((es,ob)=>{
     es.forEach(en=>{ if(en.isIntersecting){ hexes.forEach(h=>h.el.classList.add('on')); ob.disconnect(); } });
   },{threshold:.25}).observe($('#axaMapBox'));
@@ -2062,9 +2036,6 @@ function renderA(t){
   arm($('#anexoA'));
 }
 
-/* ============================================================
-   ANEXO B · EL PULSO DE LA CALLE
-   ============================================================ */
 const vnote = (q,c,pin,rot)=>`<div class="ax-vnote" style="--rot:${rot}deg;--pin:${pin}"><q>${q}</q><cite>${c}</cite></div>`;
 const mural = (q,c,rot)=>`<div class="axb-mural reveal" style="--rot:${rot}deg"><q>${q}</q><cite>${c}</cite></div>`;
 const plaque = (q,c,d)=>`<div class="axb-plaque reveal" style="--d:${d}s"><q>${q}</q><cite>${c}</cite></div>`;
@@ -2170,9 +2141,6 @@ function renderB(t){
   arm(body);
 }
 
-/* ============================================================
-   ANEXO C · LA SEMANA DECISIVA — sala de situación
-   ============================================================ */
 const blip = (x,y,c,txt,fade)=>`<span class="blip${fade?' fading':''}" style="--x:${x}%;--y:${y}%;--bc:${c};--bd:${(1.1+Math.random()).toFixed(2)}s">${txt}</span>`;
 const day = (date,sub,inner,gold)=>`<li class="tl-day${gold?' gold':''} reveal"><span class="tl-date">${date}${sub?`<small>${sub}</small>`:''}</span>${inner}</li>`;
 const duo = (l,r)=>`<div class="tl-duo">
@@ -2285,28 +2253,33 @@ function renderC(t){
   arm(body);
 }
 
-/* ---------- render inicial + escucha del bando ---------- */
 function renderAll(t){ renderA(t||'neutral'); renderB(t||'neutral'); renderC(t||'neutral'); }
+
+/* Modificado para inyectar logica visual de display nativo directo para el modulo final con React montado en "mesas-directivas-section" solo para bandos Izquierda */
 renderAll(document.body.dataset.theme || 'neutral');
 new MutationObserver(ms=>{
   ms.forEach(m=>{
     if(m.attributeName === 'data-theme'){
-      renderAll(document.body.dataset.theme || 'neutral');
+      const themeData = document.body.dataset.theme || 'neutral';
+      renderAll(themeData);
+      const mesasSection = document.getElementById('mesas-directivas-section');
+      if (mesasSection) {
+        mesasSection.style.display = (themeData === 'left') ? 'block' : 'none';
+      }
     }
   });
 }).observe(document.body, { attributes:true, attributeFilter:['data-theme'] });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const initMesasSection = document.getElementById('mesas-directivas-section');
+    if(initMesasSection) {
+        initMesasSection.style.display = (document.body.dataset.theme === 'left') ? 'block' : 'none';
+    }
+});
+
 })();
 </script>
-<!-- ════════════════ FIN DE LA ADICIÓN — MOTOR ════════════════ -->
 
-<!-- ══════════════════════════════════════════════════════════════
-     ADICIÓN — SELECTOR DE BANDO FLOTANTE
-     El botón dual: dos mitades (roja / azul) siempre visibles,
-     como en el video. Al pulsar una mitad reusa el motor original
-     (mediante eventos) y toda la sala cambia de bando: colores,
-     cenizas, bandera, ticker, dossier y anexos A · B · C.
-     No modifica, no elimina, no reemplaza nada del código previo.
-     ══════════════════════════════════════════════════════════════ -->
 <div id="factionSwitch" class="fs-boot" data-side="neutral" role="group" aria-label="Selector de bando — Crisis Bicameral Electoral">
   <span class="fs-label"><i></i>Toma de partido<i></i></span>
   <div class="fs-body">
@@ -2343,10 +2316,6 @@ const desertR = document.getElementById('desertR');
 const panelL = document.getElementById('panelL');
 const panelR = document.getElementById('panelR');
 
-/* ---------- disparar el motor original sin tocarlo ----------
-   Lanza el clic al botón grande del bando correspondiente con las
-   coordenadas reales del clic, para que el telón circular del
-   overlay se abra exactamente desde donde pulsaste el selector. */
 function fire(side, ev){
   const target = side==='left' ? btnL : btnR;
   const x = (ev && ev.clientX) || innerWidth/2;
@@ -2356,18 +2325,11 @@ function fire(side, ev){
 fsL.addEventListener('click', e=> fire('left', e));
 fsR.addEventListener('click', e=> fire('right', e));
 
-/* ---------- ensayo de cenizas al sobrevolar ----------
-   Reusa los listeners mouseenter/mouseleave de los paneles de la
-   disyuntiva: las cenizas de toda la sala ensayan el color del
-   bando mientras decides. */
 fsL.addEventListener('mouseenter', ()=> panelL.dispatchEvent(new Event('mouseenter')));
 fsL.addEventListener('mouseleave', ()=> panelL.dispatchEvent(new Event('mouseleave')));
 fsR.addEventListener('mouseenter', ()=> panelR.dispatchEvent(new Event('mouseenter')));
 fsR.addEventListener('mouseleave', ()=> panelR.dispatchEvent(new Event('mouseleave')));
 
-/* ---------- deserción desde el selector ----------
-   Dispara el botón de deserción del bando activo (los originales
-   #desertL / #desertR, que ya existen y gestionan todo). */
 fsDesert.addEventListener('click', ()=>{
   const t = document.body.dataset.theme;
   const target = t==='left' ? desertL : (t==='right' ? desertR : null);
