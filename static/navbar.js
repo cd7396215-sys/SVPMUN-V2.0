@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <a href="/ICE" style="--delay: 0.4s">Dirección I.C.E.</a>
                     <a href="/APA" style="--delay: 0.45s">Directorio APA</a>
                     <a href="/Investigacion" style="--delay: 0.5s">Reporte NSA / CIA</a>
+                    <a href="/OMC"><span>OMC</span></a>
                     <button class="svp-btn-cerrar" id="svpCloseBtn" style="--delay: 0.6s">✖ Cerrar Opciones</button>
                 </div>
             </div>

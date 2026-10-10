@@ -1314,7 +1314,150 @@ footer .sep-pie{width:1px;height:26px;background:#28404a}
       </article>
     </div>
   </section>
+<!-- ==================== SECCIÓN: GUÍA ACADÉMICA (COMPUESTO ADAPTABLE) ==================== -->
+<section class="seccion" id="guia-academica" style="background: var(--papel-2);">
+  <div class="sec-cab">
+    <span class="sec-kicker"><span class="led"></span>DOCUMENTACIÓN OFICIAL · REFERENCIA DE ESTUDIO</span>
+    <h2 class="titulo">CONSULTA LA <em>guía académica</em></h2>
+    <p class="sec-sub">Accede al documento oficial con los antecedentes históricos, reglas de procedimiento y directrices de debate para el comité.</p>
+  </div>
 
+  <div class="guia-card-wrap reveal">
+    <div class="guia-card">
+      <div class="guia-sello-tec">DOC_REF // 04-OMC</div>
+      <div class="guia-info">
+        <h3>CARTA DE SITUACIÓN Y GUÍA ACADÉMICA</h3>
+        <p>Texto fundamental para delegados. Revisa el análisis de bloques, los artículos aplicables y las directrices de resolución de diferencias.</p>
+      </div>
+      <a href="pdf/OMC.pdf" target="_blank" class="btn-guia" id="btn-leer-guia">
+        <span>LEER GUÍA EN PDF</span>
+        <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-flecha-der"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ============ ESTILOS COMPONENTE GUÍA ACADÉMICA ============ */
+.guia-card-wrap{
+  margin-top: 3.2rem;
+  max-width: 900px;
+}
+.guia-card{
+  position: relative;
+  background: var(--papel);
+  border: 2.5px solid var(--tinta);
+  padding: 2.4rem 2.8rem;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  box-shadow: 10px 12px 0 rgba(22, 48, 63, 0.12);
+  transition: transform 0.35s cubic-bezier(.2,1.2,.3,1), box-shadow 0.35s;
+}
+.guia-card:hover{
+  transform: translateY(-4px);
+  box-shadow: 13px 17px 0 rgba(22, 48, 63, 0.16);
+}
+.guia-sello-tec{
+  position: absolute;
+  top: -15px;
+  right: 28px;
+  background: var(--rojo);
+  color: var(--crema);
+  font: 500 .58rem var(--mono);
+  letter-spacing: .24em;
+  padding: 3px 11px;
+  transform: rotate(2.5deg);
+  filter: url(#rugo);
+}
+.guia-info{
+  flex: 1;
+}
+.guia-info h3{
+  font: 700 1.4rem/1.15 var(--display);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--tinta);
+  margin-bottom: .45rem;
+}
+.guia-info p{
+  font-size: .96rem;
+  color: var(--tinta-2);
+  line-height: 1.55;
+}
+.btn-guia{
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  background: var(--tinta);
+  color: var(--crema);
+  font: 600 .78rem var(--mono);
+  letter-spacing: .2em;
+  padding: 1rem 1.8rem;
+  border: 2px solid var(--tinta);
+  transition: background .2s, color .2s, transform .2s;
+  flex: none;
+}
+.btn-guia:hover{
+  background: var(--agua);
+  border-color: var(--agua);
+  transform: translateY(-2px);
+}
+.btn-guia svg{
+  stroke: var(--crema);
+  transition: transform .2s;
+}
+.btn-guia:hover svg{
+  transform: translateX(4px);
+}
+@media(max-width: 768px){
+  .guia-card{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.6rem;
+    padding: 1.8rem 1.5rem;
+  }
+  .btn-guia{
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<script>
+(function(){
+  // Integración automática con GSAP ScrollTrigger si está disponible en la página
+  const card = document.querySelector('#guia-acad-sec .guia-card-wrap') || document.querySelector('.guia-card-wrap');
+  if(window.gsap && window.ScrollTrigger && card){
+    gsap.fromTo(card, {y: 40, opacity: 0}, {
+      y: 0, opacity: 1, duration: .9, ease: 'power3.out',
+      scrollTrigger: { trigger: card, start: 'top 88%' }
+    });
+  }
+
+  // Efecto de sonido sutil al hacer clic en el botón de la guía (si el contexto de audio global está activo)
+  const btn = document.getElementById('btn-leer-guia');
+  if(btn){
+    btn.addEventListener('click', () => {
+      try {
+        if(typeof AC === 'function' && AC()){
+          const a = AC(); const t = a.currentTime;
+          const o = a.createOscillator(), g = a.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(440, t);
+          o.frequency.exponentialRampToValueAtTime(880, t + 0.12);
+          g.gain.setValueAtTime(0.04, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          o.connect(g).connect(a.destination);
+          o.start(t); o.stop(t + 0.18);
+        }
+      } catch(_) {}
+    });
+  }
+})();
+</script>
+<!-- ===================================================================================== -->
   <div class="corte" style="--arriba:#efe6d3" aria-hidden="true">
     <svg class="ola-b" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#0d323c" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
     <svg class="ola-a" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#08202a" d="M0,32 Q90,12 180,32 T360,32 T540,32 T720,32 T900,32 T1080,32 T1260,32 T1440,32 L1440,70 L0,70 Z"/></svg>
