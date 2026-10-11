@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVPMUN - Panel de Administración (Fotos)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #09090b; color: #fafafa; font-family: 'Inter', sans-serif; }
+        .font-space { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen p-6 md:p-12 relative overflow-x-hidden">
+    <!-- Blur azul de fondo -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[70vw] h-[40vw] bg-[#00a6fb]/15 rounded-full blur-[160px] pointer-events-none -z-10"></div>
+
+    <header class="max-w-6xl mx-auto flex justify-between items-center border-b border-white/10 pb-6 mb-10">
+        <div>
+            <span class="font-space uppercase tracking-[0.2em] text-[#00a6fb] text-xs font-bold block mb-1">PANEL PRIVADO</span>
+            <h1 class="text-3xl font-space font-bold uppercase tracking-tight">Galería de Delegaciones</h1>
+        </div>
+        <a href="/" class="px-4 py-2 rounded-full border border-white/20 hover:border-white text-xs font-space uppercase tracking-widest transition-colors">Volver al Inicio</a>
+    </header>
+
+    <main class="max-w-6xl mx-auto">
+        <div id="loading" class="text-center py-20 text-white/50 font-space uppercase tracking-widest text-sm">Cargando registros del servidor...</div>
+        <div id="submissions-container" class="space-y-8"></div>
+    </main>
+
+    <script>
+        async function fetchSubmissions() {
+            const container = document.getElementById('submissions-container');
+            const loading = document.getElementById('loading');
+
+            try {
+                const response = await fetch('https://tu-dominio.com/api/admin/photos');
+                if (response.status === 401) {
+                    loading.innerHTML = '<span class="text-red-400">Acceso no autorizado. Inicia sesión con tus credenciales de administrador.</span>';
+                    return;
+                }
+                const data = await response.json();
+                loading.style.display = 'none';
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p class="text-center text-white/40 py-12 font-space">No hay fotos subidas todavía.</p>';
+                    return;
+                }
+
+                container.innerHTML = data.map(item => `
+                    <div class="bg-white/[0.02] border border-white/10 rounded-2xl p-6 backdrop-blur-md">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                            <div>
+                                <span class="text-[0.65rem] font-space uppercase tracking-widest text-[#00a6fb] font-bold">Delegación</span>
+                                <h3 class="text-2xl font-space font-bold uppercase text-white">${item.delegation}</h3>
+                            </div>
+                            <span class="text-xs text-white/40 font-mono">${new Date(item.timestamp * 1000).toLocaleString()}</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            ${item.files.map(file => {
+                                const fileUrl = `https://tu-dominio.com/static-uploads/${item.folder}/${file}`;
+                                return `
+                                    <div class="group relative bg-black/40 border border-white/10 rounded-xl overflow-hidden aspect-square flex flex-col justify-between">
+                                        <img src="${fileUrl}" alt="${file}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
+                                            <span class="text-[0.6rem] text-white/80 truncate">${file}</span>
+                                            <a href="${fileUrl}" download target="_blank" class="self-center px-3 py-1.5 bg-[#00a6fb] text-black font-space text-[0.65rem] font-bold uppercase rounded hover:bg-white transition-colors">
+                                                Descargar
+                                            </a>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error(err);
+                loading.innerHTML = '<span class="text-red-400">Error al conectar con la API del servidor.</span>';
+            }
+        }
+
+        fetchSubmissions();
+    </script>
+</body>
+</html>

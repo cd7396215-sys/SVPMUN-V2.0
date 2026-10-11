@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tilted Grid Hero - Delegaciones</title>
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hero-container {
+      container-type: size;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-4 selection:bg-neutral-800">
+
+  <!-- Contenedor Principal del Hero -->
+  <div 
+    id="tilted-hero" 
+    class="relative overflow-hidden h-[560px] w-full max-w-6xl rounded-xl border border-neutral-800 bg-neutral-950 hero-container shadow-2xl"
+  >
+    <!-- Estilos dinámicos inyectados para las animaciones 3D -->
+    <style id="tgh-dynamic-styles"></style>
+
+    <!-- Banda 3D con máscara de desvanecimiento -->
+    <div 
+      id="tgh-band" 
+      class="pointer-events-none absolute inset-0 transition-opacity duration-700 opacity-0"
+    ></div>
+
+    <!-- Contenido superior (Texto / Call to action) -->
+    <div class="relative z-10 flex h-full flex-col items-center justify-between py-12 text-center pointer-events-none">
+      <div class="px-6">
+        <h1 class="text-balance text-4xl font-medium tracking-tight text-white sm:text-5xl md:text-6xl drop-shadow-md">
+          Nuestras Delegaciones,
+          <br />
+          unidas en un solo espacio.
+        </h1>
+      </div>
+      <p class="max-w-md text-balance px-6 text-sm text-neutral-400">
+        Imágenes que fluyen y se curvan en un carrusel tridimensional continuo.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // --- Array con tus imágenes locales en static/delegaciones/ ---
+    const IMAGES = [
+      { src: "static/delegaciones/1.jpeg", alt: "Delegación 1" },
+      { src: "static/delegaciones/2.jpeg", alt: "Delegación 2" },
+      { src: "static/delegaciones/3.jpeg", alt: "Delegación 3" },
+      { src: "static/delegaciones/4.jpeg", alt: "Delegación 4" },
+      { src: "static/delegaciones/5.jpeg", alt: "Delegación 5" }
+    ];
+
+    // --- Parámetros del Componente ---
+    const SLICES = 16;
+    const CAMERA = 1.6;
+    const MAX_WIDTH = 55;
+    const speed = 4;
+    const tileHeight = 26;
+    const aspectRatio = 16 / 9;
+    const gap = 6;
+    const axis = 56;
+    const curve = 80;
+    const fade = 12;
+
+    const bend = (Math.min(85, Math.max(5, curve)) * Math.PI) / 180;
+
+    function arc(b) {
+      return (CAMERA - 1 + Math.cos(b)) / (2 * CAMERA * Math.sin(b));
+    }
+
+    function measure(width, height) {
+      const h = Math.min((tileHeight / 100) * height, ((MAX_WIDTH / 100) * width) / aspectRatio);
+      const radius = width * arc(bend);
+      if (!(h > 0) || !(radius > 0)) return { columns: 6, sweep: 120, unit: 10, limit: 60 };
+      const deg = (rad) => (rad * 180) / Math.PI;
+      const unit = deg(h / radius);
+      const pitch = (aspectRatio + gap / 100) * unit;
+      const limit = deg(bend) + (aspectRatio * unit) / 2;
+      const columns = Math.min(60, Math.max(2, Math.ceil((2 * limit) / pitch)));
+      const round = (n) => +n.toFixed(4);
+      const sweep = round((columns * pitch) / 2);
+      return {
+        columns,
+        sweep,
+        unit: round(unit),
+        limit: round(Math.min(sweep, limit))
+      };
+    }
+
+    const heroEl = document.getElementById("tilted-hero");
+    const bandEl = document.getElementById("tgh-band");
+    const styleEl = document.getElementById("tgh-dynamic-styles");
+
+    let currentLayout = null;
+    let shownState = {};
+
+    function renderHero() {
+      // Forzar dimensiones seguras si el elemento aún no ha medido el layout en pantalla
+      const width = heroEl.clientWidth || 1200;
+      const height = heroEl.clientHeight || 560;
+      const layout = measure(width, height);
+
+      currentLayout = layout;
+      buildBand(layout);
+    }
+
+    function buildBand({ columns, sweep, limit }) {
+      const r = 100 * arc(bend);
+      const radius = `${+r.toFixed(3)}cqw`;
+      const turn = (deg) => `translateZ(${radius}) rotateY(${+deg.toFixed(4)}deg) translateZ(-${radius})`;
+
+      const hide = +(((sweep - limit) / (2 * sweep || 1)) * 100).toFixed(4);
+      const orbitName = `tgh-orbit-${Math.random().toString(36).substring(2, 7)}`;
+      const tileClassName = `tgh-tile-${Math.random().toString(36).substring(2, 7)}`;
+
+      styleEl.textContent = `
+        @keyframes ${orbitName} {
+          from { transform: ${turn(-sweep)}; }
+          to { transform: ${turn(sweep)}; }
+          0%, ${hide}%, ${100 - hide}%, 100% { visibility: hidden; }
+          ${hide + 0.001}%, ${100 - hide - 0.001}% { visibility: visible; }
+        }
+        @media(prefers-reduced-motion:reduce) {
+          .${tileClassName} { animation-play-state: paused !important; }
+        }
+      `;
+
+      const mask = `linear-gradient(90deg,transparent,#000 ${fade}%,#000 ${100 - fade}%,transparent)`;
+      bandEl.style.perspective = `${+(r * CAMERA).toFixed(3)}cqw`;
+      bandEl.style.perspectiveOrigin = `50% ${axis}%`;
+      bandEl.style.maskImage = mask;
+      bandEl.style.WebkitMaskImage = mask;
+      bandEl.style.opacity = "1";
+
+      bandEl.innerHTML = "";
+
+      const share = aspectRatio / SLICES;
+      const duration = columns * speed;
+      const unit = currentLayout.unit;
+      const u = (n) => `calc(${+n.toFixed(4)} * min(${tileHeight}cqh, ${+(MAX_WIDTH / aspectRatio).toFixed(4)}cqw))`;
+
+      for (let t = 0; t < columns; t++) {
+        const first = columns - 1 - t;
+        const currentImgIndex = (shownState[t] !== undefined ? shownState[t] : first) % Math.max(IMAGES.length, 1);
+        const imgObj = IMAGES[currentImgIndex];
+
+        const tileDiv = document.createElement("div");
+        tileDiv.className = `absolute ${tileClassName}`;
+        tileDiv.style.left = `calc(50% - ${u(aspectRatio / 2)})`;
+        tileDiv.style.top = `calc(${axis}% - ${u(0.5)})`;
+        tileDiv.style.width = u(aspectRatio);
+        tileDiv.style.height = u(1);
+        tileDiv.style.transformStyle = "preserve-3d";
+        tileDiv.style.animation = `${orbitName} ${duration}s linear ${-t * speed}s infinite`;
+
+        tileDiv.addEventListener("animationiteration", (e) => {
+          const lap = Math.round(e.elapsedTime / duration);
+          const nextVal = lap * columns + first;
+          if (shownState[t] !== nextVal) {
+            shownState[t] = nextVal;
+            updateTileImages(tileDiv, nextVal);
+          }
+        });
+
+        for (let k = 0; k < SLICES; k++) {
+          const sliceDiv = document.createElement("div");
+          sliceDiv.className = `absolute top-0 overflow-hidden bg-neutral-900 ${k === 0 ? "rounded-l-lg" : ""} ${k === SLICES - 1 ? "rounded-r-lg" : ""}`;
+          sliceDiv.style.left = u((aspectRatio - share) / 2);
+          sliceDiv.style.width = k === SLICES - 1 ? u(share) : `calc(${u(share)} + 1px)`;
+          sliceDiv.style.height = u(1);
+          sliceDiv.style.transform = turn((aspectRatio / 2 - (k + 0.5) * share) * unit);
+
+          if (imgObj) {
+            const innerImg = document.createElement("img");
+            innerImg.src = imgObj.src;
+            innerImg.alt = k === 0 ? (imgObj.alt ?? "") : "";
+            innerImg.draggable = false;
+            innerImg.className = "absolute top-0 max-w-none object-cover";
+            innerImg.style.left = u(-k * share);
+            innerImg.style.width = u(aspectRatio);
+            innerImg.style.height = u(1);
+            sliceDiv.appendChild(innerImg);
+          }
+          tileDiv.appendChild(sliceDiv);
+        }
+
+        bandEl.appendChild(tileDiv);
+      }
+    }
+
+    function updateTileImages(tileDiv, globalIndex) {
+      const imgIndex = globalIndex % Math.max(IMAGES.length, 1);
+      const imgObj = IMAGES[imgIndex];
+      const imgs = tileDiv.querySelectorAll("img");
+      imgs.forEach((img) => {
+        if (imgObj) img.src = imgObj.src;
+      });
+    }
+
+    // Observar cambios de tamaño
+    const resizeObserver = new ResizeObserver(() => {
+      renderHero();
+    });
+    resizeObserver.observe(heroEl);
+
+    // Ejecutar inicialización inmediata
+    renderHero();
+  </script>
+</body>
+</html>

@@ -4,7 +4,12 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+#Logica nueva
 
+import json
+import shutil
+from fastapi import File, Form, Depends, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 app = FastAPI(title="SVPMUN — Bot")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -20,6 +25,13 @@ async def serve_index():
     html_path = os.path.join(BASE_DIR, "index.html")
     return FileResponse(html_path)
 
+
+
+@app.get("/h")
+async def serve_index():
+    # Usar BASE_DIR para asegurar que siempre encuentre el HTML
+    html_path = os.path.join(BASE_DIR, "h.html")
+    return FileResponse(html_path)
 @app.get("/MI6")
 async def serve_mi6(): # Nombre de función corregido
     html_path = os.path.join(BASE_DIR, "MI6.html")
