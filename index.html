@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');</style>
-    <script type="text/babel" src="static/footer.js"></script>
+    <script type="text/babel" src="static/footer_component.js"></script>
     <!-- Dependencias Core UMD Seguras -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -909,7 +909,7 @@ const HireMeSection = () => {
                             </section>
                             <CircularTestimonialsDemo />
                             <HireMeSection />
-                            <window.SVPMUNfooter/>
+                            {window.SVPMUNFooter ? <window.SVPMUNFooter /> : null}
                         </div>
                     </div>
                 </main>
