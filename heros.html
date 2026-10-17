@@ -1,0 +1,2786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVPMUN 2026 // HERO EXCLUSIVO</title>
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@300;400;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Dependencias REACT, GSAP & TAILWIND -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'brutal': ['"Archivo Black"', 'sans-serif'],
+                        'grotesk': ['"Space Grotesk"', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        ops: {
+                            base: '#030303',
+                            panel: '#0a0a0c',
+                            red: '#cc0000',
+                            brightRed: '#ff1a1a',
+                            text: '#f2f2f2',
+                            ghost: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    },
+                    letterSpacing: {
+                        'ultra-wide': '0.3em',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body, html { margin: 0; padding: 0; background-color: #030303; color: #f2f2f2; overflow-x: hidden; scroll-behavior: smooth; cursor: crosshair; }
+        ::selection { background-color: #cc0000; color: #fff; }
+
+        .film-grain {
+            position: fixed; inset: -200%; pointer-events: none; z-index: 100;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.05; animation: grain-shake 2s steps(2) infinite; mix-blend-mode: overlay;
+        }
+        @keyframes grain-shake { 0% {transform:translate(0,0)} 10% {transform:translate(-5%,-5%)} 20% {transform:translate(-10%,5%)} 30% {transform:translate(5%,-10%)} 40% {transform:translate(-5%,15%)} 50% {transform:translate(-10%,5%)} 60% {transform:translate(15%,0)} 70% {transform:translate(0,10%)} 80% {transform:translate(-15%,0)} 90% {transform:translate(10%,5%)} 100% {transform:translate(5%,0)} }
+
+        .heavy-vignette {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 99;
+            background: radial-gradient(circle at center, transparent 30%, rgba(3, 3, 3, 0.95) 90%, #000 100%);
+        }
+
+        #root { visibility: hidden; opacity: 0; }
+
+        .tactical-redact { background-color: #1a1a1a; color: transparent; transition: all 0.15s cubic-bezier(0.11, 0, 0.5, 0); user-select: none; }
+        .tactical-redact:hover { background-color: #cc0000; color: #fff; box-shadow: 0 0 15px rgba(204, 0, 0, 0.8); cursor: none; text-shadow: 0 0 5px #fff; padding-left: 2px; padding-right: 2px;}
+        
+        .pulse-alert { animation: sirenPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes sirenPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        #brutal-loader {
+            position: fixed; inset: 0; background: #cc0000; z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        #auth-text {
+            font-family: 'Archivo Black', sans-serif; font-size: 8vw; color: white; mix-blend-mode: exclusion;
+            line-height: 0.9; text-align: center; text-transform: uppercase;
+            animation: jitter 0.15s infinite; opacity: 0;
+        }
+        @keyframes jitter {
+            0% { transform: translateX(2px) translateY(1px); }
+            50% { transform: translateX(-2px) translateY(-1px); }
+            100% { transform: translateX(1px) translateY(2px); }
+        }
+
+        .cinematic-img { mix-blend-mode: luminosity; opacity: 0.4; transition: opacity 1.5s ease-out; }
+    </style>
+</head>
+<body>
+    <div class="film-grain"></div>
+    <div class="heavy-vignette"></div>
+
+    <div id="brutal-loader">
+        <h1 id="auth-text">REVISIÓN DE AUTORIZACIÓN<br/>TOP SECRET</h1>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useEffect, useRef } = React;
+        const { createRoot } = ReactDOM;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        const ZeroDarkHero = () => {
+            const parallaxImg = useRef();
+            
+            useEffect(() => {
+                let ctx = gsap.context(() => {
+                    gsap.to(parallaxImg.current, {
+                        scale: 1.15,
+                        ease: "linear",
+                        scrollTrigger: { trigger: parallaxImg.current, start: "top top", end: "bottom top", scrub: 1 }
+                    });
+
+                    const tl = gsap.timeline({delay: 2.1});
+                    tl.fromTo(".herotext", 
+                        { scale: 2, filter: "blur(20px)", opacity: 0 }, 
+                        { scale: 1, filter: "blur(0px)", opacity: 1, stagger: 0.1, duration: 1.2, ease: "power4.out" }
+                    );
+                    tl.fromTo(".divider-line", { scaleX: 0 }, { scaleX: 1, duration: 1.5, ease: "expo.out" }, "-=1");
+
+                    tl.fromTo(".imposing-target",
+                        { autoAlpha: 0, x: 50, skewX: -10, filter: "blur(30px) brightness(0%)" },
+                        { autoAlpha: 1, x: 0, skewX: 0, filter: "blur(0px) brightness(100%)", duration: 1.8, ease: "expo.out" },
+                        "-=1.5"
+                    );
+                });
+                return () => ctx.revert();
+            }, []);
+
+            return (
+                <section className="relative w-full min-h-[100vh] flex flex-col justify-end pb-[10vh] px-6 md:px-16 pt-[20vh] md:pt-[15vh] overflow-hidden">
+                    <img 
+                        ref={parallaxImg}
+                        src="https://images.unsplash.com/photo-1596725852504-f5af7bbcecf6?q=80&w=3000&auto=format&fit=crop" 
+                        alt="War ruins drone footage"
+                        className="absolute top-[-5%] left-[-5%] w-[110%] h-[110%] object-cover cinematic-img blur-[2px] opacity-[0.25]"
+                    />
+                    
+                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-[-1]">
+                        <h1 className="font-brutal text-[25vw] leading-none uppercase text-white transform origin-center text-center w-full">H. Z. B</h1>
+                    </div>
+
+                    <div className="relative z-10 w-full flex flex-col lg:flex-row justify-between lg:items-end gap-10 mt-auto flex-grow max-w-[100%] mx-auto">
+                        
+                        <div className="flex flex-col gap-2 max-w-4xl relative mix-blend-difference w-full lg:w-3/5 xl:max-w-4xl z-[10] shrink-0 pointer-events-auto">
+                            <span className="herotext font-mono text-ops-brightRed tracking-widest text-[10px] md:text-[11px] mb-4 uppercase border-l-[3px] border-ops-brightRed pl-3 pb-0 bg-ops-red/5 p-2 rounded shadow">
+                                Objetivo Localizado // Amenaza Grado Alfa // Oriente Próximo
+                            </span>
+                            
+                            <h1 className="herotext font-brutal uppercase text-6xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.85] text-white tracking-tighter" style={{ textShadow: '0px 20px 60px rgba(0,0,0,1)' }}>
+                                La <span className="text-transparent relative" style={{WebkitTextStroke:'2px white'}}>diplomacia<div className="absolute -left-[10%] top-[40%] h-3 w-[120%] bg-[#cc0000] rotate-[-5deg] mix-blend-color opacity-80" /></span> <br/> fracasó.
+                            </h1>
+                            <div className="divider-line h-[4px] w-full bg-white mt-10 mb-6 origin-left shadow-[0_0_15px_#cc0000]"></div>
+                            
+                            <h3 className="herotext font-grotesk font-semibold text-2xl md:text-3xl lg:text-4xl xl:text-5xl uppercase tracking-tight text-[#f2f2f2] drop-shadow-2xl">
+                                Comité <span className="text-ops-red relative hover:opacity-10 transition">MI6 // MANDO ANTITERRORISTA</span>
+                            </h3>
+                            
+                            <div className="herotext font-mono font-normal mt-4 max-w-2xl text-[0.7rem] sm:text-sm md:text-base leading-relaxed text-[#a0a0a0] bg-[#000000]/70 p-4 border border-[#333] border-l-ops-red border-l-[3px] drop-shadow-2xl backdrop-blur">
+                                <p className="block md:hidden">
+                                    Amenaza <span className="tactical-redact px-1 font-bold">H E Z B O L L A H</span> localizada. La diplomacia convencional fracasó. Tu deber operativo: estructurar e infligir daño <span className="text-ops-brightRed underline font-bold uppercase mx-1">irrecuperable</span> y decisivo. Inicia contención táctica. Cero treguas.
+                                </p>
+                                <p className="hidden md:block">
+                                    Bienvenidos a las entrañas del paramilitarismo moderno. Nos enfrentamos al brazo radical <span className="tactical-redact px-1 font-bold">H E Z B O L L A H</span>: financiamiento encubierto global, asaltos cíclicos sobre frentes ajenos y mercados asimétricos desestabilizadores operados en <span className="tactical-redact px-1 text-white font-bold tracking-widest">sombras</span> civiles. 
+                                    La política convencional dictada en la asamblea superior se debilita. Tu deber operativo: estructurar e infligir daño <span className="text-ops-brightRed underline font-bold uppercase mx-1">irrecuperable</span> y decisivo antes de la crisis total inminente aquí pautada como irrepetible evento final nulo en curso activo de contención de desbordamiento total fatal de occidente por fin anhelado absoluto neutralizado táctico real de exterminio real por siempre sin precedentes a raíz actual extrema grave local total directo táctico actual puro ininterrumpido cero treguas más hoy.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="imposing-target hidden lg:flex w-full lg:w-[45%] xl:w-2/5 flex-col items-center justify-center opacity-0 mt-8 mb-[5vh] z-[5] pointer-events-none absolute right-4 lg:relative flex-grow">
+                             <div className="relative w-full aspect-square max-h-[85vh] max-w-[650px] transform shadow-[-30px_-30px_100px_#000] xl:mt-[-5rem] xl:-right-12" style={{perspective:"2000px"}}>
+                                 <div className="absolute inset-[-5%] border-[10px] border-[#1a1a1a]/40 bg-black/5 blur-[5px] backdrop-blur z-[0] transform rotate-3" style={{borderRadius: "45%"}}></div>
+                                 <div className="absolute inset-0 bg-[#aa0000]/10 blur-[80px] mix-blend-color-dodge rounded-full animate-pulse z-[1]"></div>
+                                 <div className="absolute inset-1/4 rounded-full border-[10px] border-[#cc0000] blur-3xl opacity-50 z-[-2]"></div>
+
+                                 <div className="w-full h-full relative" style={{transform:"rotateX(5deg) rotateY(-15deg)"}}>
+                                     <svg className="w-[125%] h-[125%] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 drop-shadow-[0_0_20px_rgba(204,0,0,1)] z-[10]" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                         <g className="animate-[pulse_1s_infinite_ease-out_reverse]" transform="translate(0,0) scale(1)">
+                                              <path fill="#222" stroke="#ff3333" strokeWidth="0.8" d="M 45 80 L 45 40 L 41 38 L 48 30 L 43 15 L 50 15 L 47 25 L 55 25 L 58 45 Z" className="opacity-70" style={{WebkitFilter:"drop-shadow( 0px 0px 8px #ff1a1a)"}} />
+                                              <path fill="#333" d="M25 80 C 25 75, 45 60, 48 45 L 62 48 C 65 65, 80 75, 85 85 Z" className="opacity-[0.85]"/>
+                                              <path fill="none" stroke="#aa0000" strokeWidth="1" strokeLinecap="square" d="M 28 65 Q 40 70 45 78 M 72 72 C 60 70 58 80 50 90 M 15 30 L 25 40 L 35 30" />
+                                         </g>
+                                     </svg>
+                                     
+                                     <svg viewBox="0 0 100 100" className="w-[100%] h-[100%] z-[20] absolute inset-0 mix-blend-plus-lighter opacity-90 drop-shadow-[0_0_10px_#cc0000] animate-[spin_40s_linear_infinite]" fill="none" stroke="#fff">
+                                         <circle cx="50" cy="50" r="46" strokeWidth="1" stroke="rgba(255,26,26,0.6)" strokeDasharray="3 4 8 2" />
+                                         <circle cx="50" cy="50" r="39" strokeWidth="0.25" stroke="#cc0000" strokeDasharray="1 1" />
+                                         <circle cx="50" cy="50" r="43" strokeWidth="1.5" stroke="#444" strokeDasharray="50 5 15 5" />
+                                         <path stroke="#f1f1f1" strokeWidth="1" d="M6 50 L0 50 M100 50 L94 50" />
+                                         <path stroke="#f1f1f1" strokeWidth="2.5" d="M12 50 L25 50" />
+                                         <path stroke="#f1f1f1" strokeWidth="2.5" d="M75 50 L88 50" />
+                                         <path stroke="#cc0000" strokeWidth="3" d="M50 0 L50 8 M50 12 L50 20" />
+                                         <path stroke="#cc0000" strokeWidth="3" d="M50 100 L50 92 M50 88 L50 80" />
+                                         <rect x="35" y="35" width="30" height="30" stroke="#fff" strokeWidth="0.5" strokeDasharray="10 20" />
+                                     </svg>
+
+                                     <div className="w-[1%] h-[1%] bg-white shadow-[0_0_20px_8px_#ffffff] animate-ping absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-difference z-[50]"></div>
+
+                                     <svg viewBox="0 0 100 100" className="w-[100%] h-[100%] absolute left-0 top-0 z-[15] animate-[spin_10s_ease-in-out_infinite_alternate]" fill="none">
+                                         <circle cx="50" cy="50" r="48.5" stroke="#cc0000" strokeWidth="2.5" strokeDasharray="6 22 2" className="opacity-90" />
+                                         <circle cx="50" cy="50" r="33" stroke="#fff" strokeWidth="0.2" strokeDasharray="500" className="mix-blend-overlay opacity-[0.25]" />
+                                     </svg>
+
+                                     <div className="absolute top-[28%] -left-[30%] font-mono text-[9px] uppercase tracking-ultra-wide flex flex-col items-start gap-1 font-bold z-[40] text-[#111] opacity-[0.95] bg-[#cc0000]/80 p-3 shadow-[0_0_20px_#cc0000] border-l-[6px] border-white backdrop-blur min-w-[280px]">
+                                         <div className="w-full flex justify-between pb-1 border-b-[2px] border-black/40 mb-1 font-brutal text-white text-xs">
+                                              <span>ESTATUS</span>
+                                              <span className="animate-pulse bg-black text-ops-brightRed px-1 drop-shadow-none text-[8px] flex items-center">CONFIRMADO [K.I.A PEND.]</span>
+                                         </div>
+                                         <p>Amenaza detectada HZ // ORÍGEN NO ALINEADO</p>
+                                         <div className="mt-1 font-normal bg-black p-1 pl-2 w-full text-white text-[8px] opacity-70 mt-1 whitespace-nowrap overflow-hidden">
+                                               {'> '} TRACK_SIG... {'>'} LOC_0.8542 ... TARGETING // INICIADO EXPRESO F.
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                                        
+                             <div className="w-[60vw] max-w-[850px] mt-6 flex relative flex-col right-0 pointer-events-none drop-shadow-[0_20px_30px_rgba(204,0,0,0.5)] bg-gradient-to-l from-transparent via-[#cc0000] to-transparent h-[40px] mix-blend-color-dodge lg:-mb-[5vh] justify-center items-center opacity-80 backdrop-blur" style={{transform:"skew(-20deg)"}}>
+                                <h4 className="font-brutal text-2xl uppercase text-[#111] leading-none mb-[-2px]" style={{WebkitTextStroke:"0.2px #fff"}}>ARMAMENTO TOTAL HABILITADO <span className="text-black bg-white inline-block h-6 animate-ping translate-x-2 -skew-x-[20deg] px-2 font-mono drop-shadow-[0_0_15px_#cc0000] opacity-[0.9]"></span></h4>
+                             </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        const App = () => {
+             return (
+                 <main className="w-full flex flex-col justify-start overflow-hidden">
+                     <ZeroDarkHero />
+                 </main>
+             )
+        }
+
+        const loadInitialSiren = () => {
+            if(typeof gsap === "undefined") return;
+
+            const tlLoader = gsap.timeline({
+                onComplete: () => {
+                    const textEl = document.getElementById("auth-text");
+                    textEl.innerHTML = "ACCESO AUTORIZADO // EXTERMINIO INMINENTE HZ";
+                    textEl.style.fontSize = "5vw";
+                    gsap.to(textEl, { 
+                        opacity: 0, scale: 3, filter: 'blur(30px)', color:'#fff', mixBlendMode: 'normal',
+                        duration: 0.6, ease:"power4.in" 
+                    });
+                    
+                    gsap.to("#brutal-loader", {
+                        backgroundColor: '#fff', 
+                        opacity: 0, 
+                        duration: 1.5,
+                        delay: 0.4,
+                        ease: "power2.inOut",
+                        onComplete: () => { 
+                             document.getElementById('brutal-loader').style.display = "none";
+                        }
+                    });
+
+                    const rE = document.getElementById('root');
+                    const rw = createRoot(rE);
+                    rw.render(<App />);
+
+                    gsap.fromTo(rE, 
+                        { autoAlpha: 0 }, 
+                        { autoAlpha: 1, duration: 0.8, ease: "power4.out", delay: 0.6}
+                    );
+                }
+            });
+            
+            tlLoader.to("#auth-text", {opacity: 1, duration: 0.1, delay:0.3})
+                    .to("#brutal-loader", {backgroundColor: '#fff', duration: 0.05, repeat:3, yoyo:true})
+                    .to("#auth-text", {opacity: 0, filter: 'blur(10px)', scale:0.9, duration: 0.5})
+                    .to("#auth-text", {opacity: 1, filter: 'blur(0px)', scale: 1.05, color: '#111', duration: 1.1, ease:"elastic.out(1, 0.4)"})
+                    .to({}, {duration: 0.9}); 
+        };
+
+        if (document.readyState === 'loading') { 
+            document.addEventListener('DOMContentLoaded', loadInitialSiren); 
+        } else { 
+            loadInitialSiren(); 
+        }
+    </script>
+
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVPMUN · Crisis Bicameral Electoral — Colombia 2026 (Hero Exclusivo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<!-- Carga de React y ReactDOM -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<!-- Carga de Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth; 
+  overflow-x:hidden !important;
+  width:100%; max-width:100%; 
+}
+
+:root{
+  --bg:#0d0b08; --bg2:#14110c;
+  --bone:#efe7d6; --muted:#a3987f; --faint:#6b6353;
+  --ink:#161209;
+  --gold:#c8a24a; --gold-dim:rgba(200,162,74,.32);
+  --danger:#a41e22;
+  --accent:#c8a24a; --accent-soft:rgba(200,162,74,.14);
+  --font-serif:'Fraunces',Georgia,serif;
+  --font-sans:'Archivo',Verdana,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+body{
+  background:var(--bg); color:var(--bone);
+  font:400 16.5px/1.75 var(--font-sans);
+  overflow-x:hidden !important; 
+  width:100%; max-width: 100%;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent); color:#0d0b08}
+a{color:inherit}
+img,svg{display:block}
+button{font-family:inherit; cursor:pointer}
+
+/* Capas atmosféricas fijas del Hero */
+#ashes{position:fixed; inset:0; z-index:1; pointer-events:none}
+#grain{position:fixed; inset:-40px; z-index:2; pointer-events:none; opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");}
+body::after{content:''; position:fixed; inset:0; z-index:3; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(0,0,0,.55) 100%);}
+#scanlines{position:fixed; inset:0; z-index:3; pointer-events:none; opacity:.05;
+  background:repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.9) 2px 3px);}
+
+/* Marco de expediente */
+#frame{position:fixed; inset:12px; z-index:60; pointer-events:none; border:1px solid var(--gold-dim);}
+.corner{position:absolute; width:18px; height:18px}
+.corner::before,.corner::after{content:''; position:absolute; background:var(--gold); opacity:.75}
+.corner::before{width:18px; height:1px} .corner::after{width:1px; height:18px}
+.c-tl{top:-1px; left:-1px} .c-tr{top:-1px; right:-1px} .c-bl{bottom:-1px; left:-1px} .c-br{bottom:-1px; right:-1px}
+.c-tr::before,.c-br::before{right:0} .c-bl::after,.c-br::after{bottom:0}
+.c-tr::after{right:0} .c-br::after{right:0; bottom:0} .c-bl::before{bottom:0} .c-br::before{bottom:0; right:0}
+
+/* Tipos y estilos del Hero */
+.kicker{font:600 11px/1 var(--font-mono); letter-spacing:.38em; color:var(--accent); text-transform:uppercase}
+.wrap{width:min(1180px, calc(100% - 48px)); margin:0 auto}
+
+#hero{min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:96px 0 0; position:relative; z-index:10;}
+#ghost{position:absolute; top:6%; left:50%; transform:translateX(-50%); z-index:-1;
+  font:900 clamp(170px,32vw,430px)/1 var(--font-serif); color:transparent;
+  -webkit-text-stroke:1px rgba(200,162,74,.14); letter-spacing:-.02em; user-select:none; pointer-events:none; will-change:transform}
+.hero-inner{text-align:center; position:relative}
+.hero-seal{width:82px; height:82px; margin:0 auto 20px}
+.tricolor{display:flex; height:5px; width:190px; margin:0 auto}
+.tricolor span{flex:1}
+.tricolor span:nth-child(1){background:#fcd116} .tricolor span:nth-child(2){background:#003893} .tricolor span:nth-child(3){background:#ce1126}
+.hero-kicker{margin-top:22px}
+.byline{font:400 10.5px/1.9 var(--font-mono); letter-spacing:.22em; color:var(--faint); margin-top:12px; text-transform:uppercase}
+h1.hero-title{margin-top:26px; font-family:var(--font-serif); font-weight:900; color:var(--bone);
+  font-size:clamp(3.1rem,10.5vw,9.4rem); line-height:.94; letter-spacing:-.022em; text-transform:uppercase}
+h1.hero-title .ln{display:block; overflow:hidden; padding:0 .06em}
+h1.hero-title .ln > span{display:block; transform:translateY(115%); animation:riseUp 1.05s cubic-bezier(.16,.8,.24,1) forwards}
+h1.hero-title .ln:nth-child(1) > span{animation-delay:.15s}
+h1.hero-title .ln:nth-child(2) > span{animation-delay:.3s}
+h1.hero-title .ln:nth-child(3) > span{animation-delay:.45s}
+h1.hero-title .ital{font-style:italic; font-weight:600; color:var(--accent)}
+@keyframes riseUp{to{transform:translateY(0)}}
+.hero-deck{margin-top:28px; font:500 clamp(15px,2vw,20px)/1.5 var(--font-sans); color:var(--muted); letter-spacing:.02em}
+.hero-deck em{font-family:var(--font-serif); font-style:italic; color:var(--bone); font-size:1.15em; padding:0 .1em}
+.hero-meta{margin-top:26px; display:flex; justify-content:center; align-items:center; gap:26px; flex-wrap:wrap}
+.hero-meta .hm{font:500 11px/1 var(--font-mono); letter-spacing:.18em; color:var(--muted); display:flex; gap:8px; align-items:center}
+.hero-meta .hm i{width:13px; height:13px; color:var(--accent)}
+.stamp{display:inline-block; padding:9px 15px; border:2.5px solid var(--danger); color:var(--danger);
+  font:600 11px/1 var(--font-mono); letter-spacing:.3em; transform:rotate(-6deg); border-radius:3px; opacity:.9; animation:stampIn 1s cubic-bezier(.2,1.4,.3,1) 1.1s both}
+@keyframes stampIn{from{opacity:0; transform:rotate(-6deg) scale(2.2)} to{opacity:.9; transform:rotate(-6deg) scale(1)}}
+.hero-cta{margin-top:40px; display:flex; justify-content:center; gap:18px; flex-wrap:wrap}
+.btn{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:12px;
+  padding:17px 30px; font:700 12px/1 var(--font-mono); letter-spacing:.24em; text-transform:uppercase;
+  text-decoration:none; border:1px solid var(--gold-dim); background:transparent; color:var(--bone); border-radius:2px; transition:color .4s, border-color .4s}
+.btn .wipe{position:absolute; inset:0; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .45s cubic-bezier(.7,0,.2,1); z-index:0}
+.btn span, .btn i{position:relative; z-index:1}
+.btn i{width:15px; height:15px}
+.btn:hover .wipe{transform:scaleX(1)}
+.btn:hover{color:#0d0b08; border-color:var(--accent)}
+.btn.solid{border-color:var(--accent); color:#0d0b08}
+.btn.solid .wipe{background:var(--bone)}
+.btn.solid:hover{color:var(--bg)}
+
+/* Bandera 3D */
+#flagStage{position:relative; width:min(980px, calc(100% - 32px)); height:clamp(300px,46vh,520px); margin:52px auto 0;
+  cursor:grab; touch-action:none; border-top:1px solid var(--gold-dim); border-bottom:1px solid var(--gold-dim)}
+#flagStage.dragging{cursor:grabbing}
+#flagStage canvas{width:100%; height:100%; display:block}
+#flagHint{position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:22px;
+  font:500 9.5px/1 var(--font-mono); letter-spacing:.22em; color:var(--faint); pointer-events:none; white-space:nowrap}
+#flagHint span{display:flex; align-items:center; gap:7px}
+#flagHint i{width:12px; height:12px; color:var(--accent)}
+
+/* Ticker de prensa */
+.ticker{position:relative; margin-top:44px; border-top:1px solid var(--gold-dim); border-bottom:1px solid var(--gold-dim);
+  background:rgba(10,8,6,.6); overflow:hidden; height:46px; display:flex; align-items:center}
+.ticker::before{content:'EN VIVO'; position:absolute; left:0; top:0; bottom:0; z-index:2; display:flex; align-items:center; gap:9px;
+  padding:0 18px; background:var(--bg); border-right:1px solid var(--gold-dim);
+  font:700 10px/1 var(--font-mono); letter-spacing:.26em; color:var(--accent)}
+.ticker-track{display:inline-flex; align-items:center; white-space:nowrap; animation:tick 68s linear infinite; padding-left:120px}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+.tk{font:400 13px/1 var(--font-mono); color:var(--bone); letter-spacing:.02em}
+.tk b{color:var(--accent); font-weight:600; letter-spacing:.14em}
+.tk-sep{color:var(--faint); margin:0 26px; font:700 12px/1 var(--font-mono)}
+
+.seal-svg [stroke]{stroke:var(--accent)}
+.seal-svg text{fill:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- Atmosfera -->
+<canvas id="ashes" aria-hidden="true"></canvas>
+<div id="grain" aria-hidden="true"></div>
+<div id="scanlines" aria-hidden="true"></div>
+
+<!-- Marco de expediente -->
+<div id="frame" aria-hidden="true">
+  <span class="corner c-tl"></span><span class="corner c-tr"></span>
+  <span class="corner c-bl"></span><span class="corner c-br"></span>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<header id="hero">
+  <div id="ghost" aria-hidden="true">2026</div>
+  <div class="wrap hero-inner">
+    <div class="hero-seal seal-svg" data-seal></div>
+    <div class="tricolor" aria-hidden="true"><span></span><span></span><span></span></div>
+    <p class="kicker hero-kicker">SVPMUN · Modelo de Naciones Unidas · Comité de Crisis</p>
+    <p class="byline">Edición de crisis · Vol. I — N.º 2026 · Sala de prensa del Congreso · Bogotá D.C.</p>
+    <h1 class="hero-title">
+      <span class="ln"><span>Crisis</span></span>
+      <span class="ln"><span class="ital">Bicameral</span></span>
+      <span class="ln"><span>Electoral</span></span>
+    </h1>
+    <p class="hero-deck">Coalición de Izquierda <em>v.</em> Coalición de Derecha</p>
+    <div class="hero-meta">
+      <span class="hm"><i data-lucide="map-pin"></i>BOGOTÁ D.C. · COLOMBIA</span>
+      <span class="hm"><i data-lucide="calendar"></i>PRIMERA VUELTA — 31 · 05 · 2026</span>
+      <span class="stamp">URGENTE · NIVEL ALTO</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#contexto"><span class="wipe"></span><i data-lucide="newspaper"></i><span>Leer el expediente</span></a>
+      <a class="btn solid" href="#disyuntiva"><span class="wipe"></span><i data-lucide="flag"></i><span>Tomar partido</span></a>
+    </div>
+  </div>
+
+  <!-- Bandera tricolor 3D · arrastrable -->
+  <div id="flagStage" aria-label="Bandera de Colombia en tres dimensiones, arrastrable">
+    <div id="flagHint">
+      <span><i data-lucide="move"></i>ARRASTRA PARA GIRAR</span>
+      <span><i data-lucide="zoom-in"></i>RUEDA PARA ACERCAR</span>
+      <span><i data-lucide="wind"></i>MUEVE EL CURSOR: VIENTO</span>
+    </div>
+  </div>
+
+  <!-- Ticker de prensa -->
+  <div class="ticker" aria-label="Titulares en vivo">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</header>
+
+<script>
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ---------- Sello de la República (generado) ---------- */
+function condorMarkup(){
+  const feather = (len, ang, base) => {
+    const a = ang*Math.PI/180;
+    return `<path fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.4"
+      d="M0,0 C6.5,-13 6.5,-${len*0.72} 0,-${len} C-6.5,-${len*0.72} -6.5,-13 0,0 Z"
+      transform="translate(${base.x},${base.y}) rotate(${ang})"/>`;
+  };
+  let wings = '';
+  const W = [ {a:96,l:34},{a:74,l:45},{a:50,l:54},{a:26,l:58},{a:4,l:55} ];
+  W.forEach(f=>{ wings += feather(f.l, f.a, {x:112,y:86}); wings += feather(f.l, -f.a, {x:88,y:86}); });
+  const tail = [-14,0,14].map(a=>`<path fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1.3"
+     d="M0,0 C5,-10 5,-20 0,-27 C-5,-20 -5,-10 0,0 Z" transform="translate(100,102) rotate(${180+a})"/>`).join('');
+  return `<g>
+    ${wings}
+    <ellipse cx="100" cy="84" rx="12" ry="19" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.4"/>
+    <circle cx="90" cy="61" r="5.4" fill="currentColor" fill-opacity=".22" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M84,59 l-8,3.4 l8,3.6 z" fill="currentColor" fill-opacity=".35"/>
+    <path d="M88,55 c1.6,-3 4,-3 5.4,-.6" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    ${tail}
+    <path d="M64,132 h72" stroke="currentColor" stroke-width="1"/>
+  </g>`;
+}
+function sealSVG(){
+  return `<svg class="seal" viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true">
+    <g stroke="currentColor">
+      <circle cx="100" cy="100" r="95" fill="none" stroke-width="1.6" stroke-opacity=".9"/>
+      <circle cx="100" cy="100" r="87.5" fill="none" stroke-width=".7" stroke-opacity=".6"/>
+      <circle cx="100" cy="100" r="60.5" fill="none" stroke-width=".7" stroke-opacity=".6"/>
+      <g>
+        <path id="sealArc" fill="none" d="M100,21 a79,79 0 1,1 -0.01,0"/>
+        <text font-family="'IBM Plex Mono',monospace" font-size="10.6" letter-spacing="2.6" fill="currentColor">
+          <textPath href="#sealArc" textLength="492" lengthAdjust="spacingAndGlyphs">REPÚBLICA DE COLOMBIA · SVP MUN · CRISIS BICAMERAL ELECTORAL · MMXXVI ·</textPath>
+        </text>
+        <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="70s" repeatCount="indefinite"/>
+      </g>
+      <path d="M100,140 l3.2,7.2 7.8,.7 -5.9,5.2 1.8,7.6 -6.9,-4.2 -6.9,4.2 1.8,-7.6 -5.9,-5.2 7.8,-.7 z" fill="currentColor" fill-opacity=".25" transform="translate(0,-96) scale(.85) translate(17.6,17.6)"/>
+      <path d="M52,100 l2.4,5.4 5.8,.5 -4.4,3.9 1.3,5.7 -5.1,-3.1 -5.1,3.1 1.3,-5.7 -4.4,-3.9 5.8,-.5 z" fill="currentColor" fill-opacity=".3"/>
+      <path d="M148,100 l2.4,5.4 5.8,.5 -4.4,3.9 1.3,5.7 -5.1,-3.1 -5.1,3.1 1.3,-5.7 -4.4,-3.9 5.8,-.5 z" fill="currentColor" fill-opacity=".3"/>
+      <text x="100" y="156" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.2" letter-spacing="2.4" fill="currentColor" fill-opacity=".85">LIBERTAD Y ORDEN</text>
+      ${condorMarkup()}
+    </g>
+  </svg>`;
+}
+document.querySelectorAll('[data-seal]').forEach(el=>{ el.innerHTML = sealSVG(); });
+
+/* ---------- Ticker de prensa ---------- */
+const TICKERS = {
+  neutral:[
+    ['ÚLTIMA HORA','Empate técnico nacional: 43,1% frente a 42,6%, según firma CNA·Facto'],
+    ['EL CORREO NACIONAL','«La Colombia rural será el árbitro de mayo»'],
+    ['LA TRIBUNA','«Doce curules indecisas controlan el Congreso saliente»'],
+    ['EL FARO','«Bogotá y Medellín votan en direcciones opuestas»'],
+    ['VOZ DEL MAGDALENA','«El Pacífico bate récord de registro de nuevas votantes»'],
+    ['MERCADO ABIERTO','«La volatilidad del peso encadena su peor trimestre en siete años»'],
+    ['EL HERALDO','«Debates presidenciales: fecha sigue sin acuerdo entre los dos campamentos»'],
+    ['OBSERVATORIO ELECTORAL','Misión internacional confirma despliegue en 32 departamentos']
+  ]
+};
+function buildTicker(){
+  const set = TICKERS.neutral;
+  const html = set.map(([src,txt])=>`<span class="tk"><b>${src}</b> — «${txt}»</span><span class="tk-sep">///</span>`).join('');
+  $('#tickerTrack').innerHTML = html + html; 
+}
+buildTicker();
+
+/* ---------- Cenizas ascendentes ---------- */
+const ash = (function(){
+  const cv = $('#ashes'), ctx = cv.getContext('2d');
+  const PALETTE = [[201,164,86],[226,217,192],[255,255,255],[164,30,34]];
+  let W, H, DPR, particles=[], wind=0;
+  const N = matchMedia('(max-width:720px)').matches ? 70 : 150;
+  function resize(){
+    DPR = Math.min(devicePixelRatio||1, 2); W = innerWidth; H = innerHeight;
+    cv.width = W*DPR; cv.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function make(seed){
+    const p = {
+      x: Math.random()*W,
+      y: seed ? Math.random()*H : H + 10 + Math.random()*40,
+      vy: -(0.16 + Math.random()*0.5),
+      vx: (Math.random()-.5)*0.12,
+      r: 0.6 + Math.random()*Math.random()*3.2,
+      a: 0.25 + Math.random()*0.6,
+      fl: Math.random()*Math.PI*2,
+      fs: 0.6 + Math.random()*1.8,
+      ci: Math.floor(Math.random()*4),
+      c: null, t: null
+    };
+    const base = PALETTE[p.ci];
+    p.c = base.slice(); p.t = base.slice();
+    return p;
+  }
+  function init(){ resize(); particles = Array.from({length:N},()=>make(true)); }
+  init(); addEventListener('resize', ()=>{ init(); });
+  addEventListener('mousemove', e=>{ wind = clamp(wind + (e.movementX||0)*0.015, -4, 4); });
+  let t = 0;
+  function step(){
+    t += 0.016;
+    ctx.clearRect(0,0,W,H);
+    wind *= 0.94;
+    ctx.globalCompositeOperation = 'lighter';
+    for(const p of particles){
+      for(let i=0;i<3;i++) p.c[i] += (p.t[i]-p.c[i])*0.045;
+      p.x += p.vx + Math.sin(p.fl + t*p.fs)*0.32 + wind*0.5;
+      p.y += p.vy;
+      if(p.y < -14 || p.x < -20 || p.x > W+20){ Object.assign(p, make(false)); p.t = PALETTE[p.ci]; p.c = PALETTE[p.ci].slice(); }
+      const flick = 0.72 + 0.28*Math.sin(p.fl*3 + t*p.fs*2);
+      const [r,g,b] = p.c.map(Math.round);
+      if(p.r > 2.1){ ctx.fillStyle = `rgba(${r},${g},${b},${(p.a*flick*0.13).toFixed(3)})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*2.8,0,7); ctx.fill(); }
+      ctx.fillStyle = `rgba(${r},${g},${b},${(p.a*flick).toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill();
+    }
+  }
+  return { step };
+})();
+
+/* ---------- Bandera 3D (Three.js) ---------- */
+const flag = (function(){
+  const stage = $('#flagStage');
+  if(!window.THREE){ stage.style.display='none'; return {step(){}}; }
+
+  function fabricNoise(c, w, h){
+    for(let x=0;x<w;x+=5){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.03).toFixed(3)})`; c.fillRect(x,0,1,h); }
+    for(let y=0;y<h;y+=7){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.02).toFixed(3)})`; c.fillRect(0,y,w,1); }
+    for(let i=0;i<3200;i++){ c.fillStyle=`rgba(0,0,0,${(Math.random()*0.07).toFixed(3)})`;
+      c.fillRect(Math.random()*w, Math.random()*h, 1+Math.random()*1.6, 1+Math.random()*1.6); }
+    const g = c.createRadialGradient(w/2,h/2,h*0.25, w/2,h/2,w*0.62);
+    g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.30)');
+    c.fillStyle = g; c.fillRect(0,0,w,h);
+  }
+  function drawNeutral(c,w,h){
+    c.fillStyle='#f6c417'; c.fillRect(0,0,w,h*0.5);
+    c.fillStyle='#0a3f9e'; c.fillRect(0,h*0.5,w,h*0.25);
+    c.fillStyle='#ce1126'; c.fillRect(0,h*0.75,w,h*0.25);
+    c.fillStyle='rgba(28,18,4,0.07)'; c.fillRect(0,0,w,h);
+  }
+  function makeTexture(){
+    const c = document.createElement('canvas'); c.width=1024; c.height=590;
+    const x = c.getContext('2d');
+    drawNeutral(x, 1024, 590);
+    fabricNoise(x, 1024, 590);
+    const tex = new THREE.CanvasTexture(c);
+    tex.encoding = THREE.sRGBEncoding;
+    tex.anisotropy = 4;
+    return tex;
+  }
+
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  stage.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 60);
+  let camZ = 6.4, camZT = 6.4;
+  camera.position.set(0, 0.15, camZ);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.52));
+  const dirL = new THREE.DirectionalLight(0xfff2dc, 1.15); dirL.position.set(2,3,4); scene.add(dirL);
+  const emberL = new THREE.PointLight(0xc8a24a, 0.9, 16); emberL.position.set(0,-3,2.4); scene.add(emberL);
+
+  const group = new THREE.Group(); scene.add(group);
+  const mast = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.034,0.034,3.9,12),
+    new THREE.MeshStandardMaterial({color:0x8a6d2f, metalness:.75, roughness:.35})
+  );
+  mast.position.set(-2.88, 0.02, 0); group.add(mast);
+  const finial = new THREE.Mesh(new THREE.SphereGeometry(0.09,16,12), mast.material);
+  finial.position.set(-2.88, 1.98, 0); group.add(finial);
+  const FW=5.6, FH=3.2, SX=110, SY=64;
+  const geo = new THREE.PlaneGeometry(FW, FH, SX, SY);
+  const mat = new THREE.MeshStandardMaterial({map:makeTexture(), side:THREE.DoubleSide, roughness:.88, metalness:0});
+  const mesh = new THREE.Mesh(geo, mat); group.add(mesh);
+  const pos = geo.attributes.position;
+  const baseX = new Float32Array(pos.count), baseY = new Float32Array(pos.count);
+  for(let i=0;i<pos.count;i++){ baseX[i]=pos.getX(i); baseY[i]=pos.getY(i); }
+
+  let rotY=0, rotYT=0, rotX=0, rotXT=0, dragging=false, lx=0, ly=0, windF=0;
+  stage.addEventListener('pointerdown', e=>{ dragging=true; lx=e.clientX; ly=e.clientY; stage.classList.add('dragging'); stage.setPointerCapture(e.pointerId); });
+  stage.addEventListener('pointermove', e=>{
+    const dx = e.clientX-lx, dy = e.clientY-ly;
+    if(dragging){ rotYT += dx*0.0048; rotXT = clamp(rotXT + dy*0.003, -0.42, 0.5); }
+    windF = clamp(windF + Math.abs(dx)*0.0009, 0, 1.6);
+    lx = e.clientX; ly = e.clientY;
+  });
+  const endDrag = ()=>{ dragging=false; stage.classList.remove('dragging'); };
+  stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+  stage.addEventListener('wheel', e=>{ e.preventDefault(); camZT = clamp(camZT + e.deltaY*0.0022, 3.6, 9.6); }, {passive:false});
+
+  function resize(){
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+  resize(); addEventListener('resize', resize);
+
+  let t=0;
+  function step(){
+    t += 0.016;
+    windF *= 0.96;
+    for(let i=0;i<pos.count;i++){
+      const x = baseX[i], y = baseY[i];
+      const d = (x + FW/2)/FW;                     
+      const amp = (0.05 + d*d*0.95) * (1 + windF*1.5);
+      const z = ( Math.sin(x*1.15 - t*2.3)*0.22
+                + Math.sin(y*1.7 + t*1.15)*0.10
+                + Math.sin((x*0.6 + y*0.4) - t*1.8)*0.15 ) * amp;
+      pos.setZ(i, z);
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+    rotY += (rotYT-rotY)*0.08; rotX += (rotXT-rotX)*0.08;
+    group.rotation.set(rotX, rotY, 0);
+    group.position.y = Math.sin(t*0.8)*0.055;
+    camZ += (camZT-camZ)*0.08; camera.position.z = camZ;
+    renderer.render(scene, camera);
+  }
+  return { step };
+})();
+
+/* Bucle de animación general */
+(function loop(){
+  ash.step();
+  flag.step();
+  requestAnimationFrame(loop);
+})();
+
+if(window.lucide) lucide.createIcons();
+})();
+</script>
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMC · Crisis del Estrecho de Ormuz — Hero Exclusivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Carga de GSAP para animaciones de entrada fluidas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root{
+  --papel:#efe6d3;
+  --tinta:#16303f;
+  --tinta-2:#3f5a68;
+  --rojo:#c03b2e;
+  --crema:#f7f1e3;
+  --display:'Barlow Condensed',sans-serif;
+  --texto:'Barlow',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--papel); color:var(--tinta);
+  font-family:var(--texto); font-size:16px; line-height:1.6;
+  overflow-x:hidden;
+}
+img,svg{display:block}
+a{color:inherit}
+
+/* Grano de papel atmosférico */
+.grano{
+  position:fixed;inset:0;z-index:2000;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+
+/* ============ HERO — puerto al amanecer ============ */
+.hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
+.escena{position:absolute;inset:0}
+.capa{position:absolute;inset:0;will-change:transform}
+.capa.cielo{
+  background:linear-gradient(180deg,#a9c7cf 0%,#c9d6c9 34%,#ecdcbd 55%,#f2d9b4 66%);
+}
+.sol{
+  position:absolute;left:68%;bottom:34%;width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,#fdf3d7 0%,#f6dfae 55%,rgba(246,223,174,0) 72%);
+  filter:blur(1px);
+}
+.nube{
+  position:absolute;height:26px;border-radius:40px;background:rgba(250,246,235,.75);
+  filter:blur(3px);animation:deriva linear infinite;
+}
+.nube::before,.nube::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.nube::before{width:60%;height:180%;left:16%;top:-80%}
+.nube::after{width:44%;height:130%;right:12%;top:-50%}
+@keyframes deriva{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
+
+.gaviota{position:absolute;width:56px;animation:vuela linear infinite}
+.gaviota svg{overflow:visible}
+.alaL,.alaR{transform-box:fill-box;transform-origin:60% 90%}
+.alaL{animation:batL .5s ease-in-out infinite alternate}
+.alaR{animation:batR .5s ease-in-out infinite alternate}
+@keyframes batL{from{transform:rotate(16deg)}to{transform:rotate(-18deg)}}
+@keyframes batR{from{transform:rotate(-16deg)}to{transform:rotate(18deg)}}
+@keyframes vuela{
+  0%{transform:translate(-12vw,0)}
+  50%{transform:translate(50vw,-5vh)}
+  100%{transform:translate(112vw,2vh)}
+}
+
+.capa.mar{
+  background:linear-gradient(180deg,#8fbfc0 0%,#4c8b95 30%,#2a6b77 62%,#164652 100%);
+}
+.reflejo-sol{
+  position:absolute;left:66%;bottom:0;width:130px;height:100%;
+  background:repeating-linear-gradient(180deg,rgba(253,240,209,.34) 0 7px,transparent 7px 20px);
+  filter:blur(1.5px);mask:linear-gradient(90deg,transparent,#000 30% 70%,transparent);
+  animation:brillo 5s ease-in-out infinite alternate;
+}
+@keyframes brillo{from{opacity:.5}to{opacity:.95}}
+.ola-mar{
+  position:absolute;left:0;right:0;top:-2px;height:14px;
+  background:radial-gradient(60% 100% at 50% 100%,rgba(250,246,235,.5),transparent 70%);
+  mask:repeating-linear-gradient(90deg,#000 0 40px,transparent 40px 90px);
+  animation:marea 7s ease-in-out infinite alternate;
+}
+@keyframes marea{from{transform:translateX(-40px)}to{transform:translateX(40px)}}
+
+.capa.gruas svg{position:absolute;bottom:34%;left:0;width:100%;height:auto}
+.grua-cable{animation:pluma 9s ease-in-out infinite alternate}
+@keyframes pluma{from{transform:translateY(0)}to{transform:translateY(9px)}}
+.capa.skyline svg{position:absolute;bottom:34.2%;left:0;width:100%;height:auto;opacity:.16}
+
+.petrolero{position:absolute;bottom:35%;left:0;width:190px;animation:cruzar 68s linear infinite}
+.petrolero-bob{animation:barcoBob 5.5s ease-in-out infinite alternate}
+@keyframes cruzar{from{transform:translateX(108vw)}to{transform:translateX(-24vw)}}
+@keyframes barcoBob{from{transform:translateY(0) rotate(.6deg)}to{transform:translateY(-7px) rotate(-.8deg)}}
+.humo{animation:fumar 3.2s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes fumar{0%{transform:translateY(0);opacity:.5}100%{transform:translateY(-34px);opacity:0}}
+.estela{animation:estelaFade 3s linear infinite}
+@keyframes estelaFade{0%{opacity:.4}100%{opacity:0}}
+
+.muelle{
+  position:absolute;left:0;right:0;bottom:0;height:82px;background:#101f26;
+  border-top:7px solid #22404b;
+  box-shadow:inset 0 12px 24px rgba(0,0,0,.5);
+}
+.muelle::before{
+  content:"";position:absolute;inset:7px 0 0;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 86px,rgba(0,0,0,.35) 86px 90px);
+}
+.bita{position:absolute;bottom:48px}
+.cabo{transform-box:fill-box;transform-origin:top center;animation:mece 5s ease-in-out infinite alternate}
+@keyframes mece{from{transform:rotate(2.5deg)}to{transform:rotate(-2.5deg)}}
+
+.hero-cont{position:absolute;left:6vw;bottom:150px;max-width:760px;z-index:5}
+.kicker{
+  display:inline-flex;align-items:center;gap:12px;
+  font:500 .66rem var(--mono);letter-spacing:.3em;color:var(--tinta);
+  border:1.5px solid var(--tinta);padding:7px 16px;background:rgba(239,230,211,.55);
+  backdrop-filter:blur(3px);
+}
+.led{width:7px;height:7px;border-radius:50%;background:var(--rojo);box-shadow:0 0 8px var(--rojo);animation:latir 1.3s infinite;flex:none}
+@keyframes latir{0%,100%{opacity:1}50%{opacity:.35}}
+
+h1{
+  margin:1.6rem 0 1.2rem;
+  font:900 clamp(3.4rem,10.5vw,7.8rem)/0.94 var(--display);
+  text-transform:uppercase;letter-spacing:.01em;
+}
+.linea{display:block;overflow:hidden}
+.linea-in{display:block}
+.sello-zarpe{
+  display:inline-block;color:var(--rojo);border:6px double var(--rojo);
+  padding:.02em .22em .06em;transform:rotate(-2.5deg);
+  filter:url(#rugo);margin-top:.08em;
+}
+.hero-sub{max-width:520px;font-size:1.06rem;line-height:1.75;color:#2b4757}
+.hero-datos{
+  margin-top:2rem;display:flex;flex-wrap:wrap;align-items:center;gap:16px;
+  font:500 .66rem var(--mono);letter-spacing:.16em;color:var(--tinta);
+}
+.hero-datos .rombo{width:8px;height:8px;background:var(--rojo);transform:rotate(45deg);flex:none}
+
+.hero-firma{position:absolute;right:5vw;bottom:130px;width:150px;opacity:.8;z-index:4}
+.hero-firma .rosa-int{transform-box:fill-box;transform-origin:center;animation:girar 70s linear infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+
+.bajar{
+  position:absolute;right:5vw;bottom:34px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  text-decoration:none;font:600 .58rem var(--mono);letter-spacing:.34em;color:var(--crema);
+  writing-mode:vertical-rl;z-index:6;
+}
+.bajar svg{animation:anclaBaja 1.8s ease-in-out infinite}
+@keyframes anclaBaja{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+
+@media(max-width:760px){
+  .hero-cont{bottom:120px;left:5vw;right:5vw}
+  .hero-firma{display:none}
+  .bajar{right:18px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rugo">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5"/>
+    </filter>
+    <symbol id="i-ancla" viewBox="0 0 24 24">
+      <circle cx="12" cy="4.5" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="12" y1="6.7" x2="12" y2="19" stroke="currentColor" stroke-width="2"/>
+      <line x1="7.5" y1="10" x2="16.5" y2="10" stroke="currentColor" stroke-width="2"/>
+      <path d="M5,14.5 C5,19.6 8.5,21.6 12,21.6 C15.5,21.6 19,19.6 19,14.5" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="grano" aria-hidden="true"></div>
+
+<!-- ==================== HERO EXCLUSIVO ==================== -->
+<section class="hero" id="hero">
+  <div class="escena" id="escena" aria-hidden="true">
+    <div class="capa cielo" data-p="4"></div>
+    <div class="capa" data-p="7"><div class="sol"></div></div>
+    <div class="capa" data-p="10">
+      <div class="nube" style="top:12%;left:10%;width:150px;animation-duration:120s"></div>
+      <div class="nube" style="top:26%;left:55%;width:220px;opacity:.7;animation-duration:160s;animation-delay:-40s"></div>
+      <div class="nube" style="top:7%;left:70%;width:120px;opacity:.55;animation-duration:95s;animation-delay:-70s"></div>
+    </div>
+    <div class="capa" data-p="14">
+      <div class="gaviota" style="top:18%;animation-duration:34s"><svg viewBox="0 0 64 28"><g class="alaL" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M31,14 Q16,-2 2,10"/></g><g class="alaR" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M33,14 Q48,-2 62,10"/></g></svg></div>
+      <div class="gaviota" style="top:29%;animation-duration:46s;animation-delay:-18s;transform:scale(.65)"><svg viewBox="0 0 64 28"><g class="alaL" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M31,14 Q16,-2 2,10"/></g><g class="alaR" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M33,14 Q48,-2 62,10"/></g></svg></div>
+      <div class="gaviota" style="top:9%;animation-duration:58s;animation-delay:-33s;transform:scale(.8)"><svg viewBox="0 0 64 28"><g class="alaL" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M31,14 Q16,-2 2,10"/></g><g class="alaR" stroke="#33424d" stroke-width="3" fill="none" stroke-linecap="round"><path d="M33,14 Q48,-2 62,10"/></g></svg></div>
+    </div>
+    <div class="capa skyline" data-p="12">
+      <svg viewBox="0 0 1600 120" preserveAspectRatio="xMidYMax slice">
+        <g fill="#16303f">
+          <rect x="40" y="60" width="90" height="60"/><rect x="150" y="30" width="60" height="90"/>
+          <rect x="230" y="76" width="120" height="44"/><rect x="1290" y="50" width="80" height="70"/>
+          <rect x="1390" y="24" width="70" height="96"/><rect x="1180" y="72" width="90" height="48"/>
+        </g>
+      </svg>
+    </div>
+    <div class="capa gruas" data-p="18">
+      <svg viewBox="0 0 1600 300" preserveAspectRatio="xMidYMax slice">
+        <g stroke="#16303f" stroke-width="7" fill="none" opacity=".95">
+          <path d="M120,300 L158,140 M218,300 L180,140 M158,140 H330 M158,140 V96 M158,96 L330,140 M158,96 L100,140"/>
+          <g class="grua-cable" stroke-width="3"><line x1="300" y1="140" x2="300" y2="196"/><rect x="284" y="196" width="34" height="12" fill="#16303f" stroke="none"/></g>
+          <path d="M520,300 L558,140 M618,300 L580,140 M558,140 H730 M558,140 V96 M558,96 L730,140 M558,96 L500,140"/>
+          <path d="M940,300 L978,140 M1038,300 L1000,140 M978,140 H1050 M978,140 V96 M978,96 L1140,140 M978,96 L920,140"/>
+          <g class="grua-cable" stroke-width="3" style="animation-delay:-4s"><line x1="1100" y1="140" x2="1100" y2="188"/><rect x="1084" y="188" width="34" height="12" fill="#16303f" stroke="none"/></g>
+        </g>
+        <g fill="#16303f">
+          <rect x="380" y="252" width="46" height="20"/><rect x="426" y="252" width="46" height="20" opacity=".8"/><rect x="380" y="230" width="46" height="20" opacity=".9"/><rect x="470" y="252" width="46" height="20" opacity=".7"/>
+          <rect x="810" y="252" width="46" height="20" fill="#8a4436"/><rect x="856" y="252" width="46" height="20"/><rect x="810" y="230" width="46" height="20" opacity=".85"/><rect x="900" y="252" width="46" height="20" opacity=".75"/>
+        </g>
+      </svg>
+    </div>
+    <div class="capa mar" data-p="8">
+      <div class="ola-mar"></div>
+      <div class="reflejo-sol"></div>
+      <div class="petrolero">
+        <div class="petrolero-bob">
+          <svg viewBox="0 0 190 74" width="190">
+            <ellipse class="estela" cx="24" cy="66" rx="26" ry="4" fill="#eaf4f0"/>
+            <ellipse class="estela" cx="-14" cy="66" rx="18" ry="3" fill="#eaf4f0" style="animation-delay:1.4s"/>
+            <path d="M6,50 H184 L168,66 H24 Z" fill="#16303f"/>
+            <path d="M6,50 H184 L180,55 H8 Z" fill="#8a4436"/>
+            <rect x="120" y="26" width="44" height="24" fill="#efe6d3" stroke="#16303f" stroke-width="2"/>
+            <rect x="132" y="32" width="8" height="8" fill="#16303f"/>
+            <rect x="98" y="34" width="10" height="16" fill="#16303f"/>
+            <line x1="70" y1="50" x2="70" y2="24" stroke="#16303f" stroke-width="2.5"/>
+            <circle class="humo" cx="102" cy="28" r="4" fill="#d9d2c2"/>
+            <circle class="humo" cx="104" cy="26" r="3" fill="#d9d2c2" style="animation-delay:1.1s"/>
+            <circle class="humo" cx="100" cy="26" r="2.5" fill="#d9d2c2" style="animation-delay:2.2s"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="capa" data-p="26">
+      <div class="muelle">
+        <div class="bita" style="left:7%">
+          <svg viewBox="0 0 44 62" width="46"><path class="cabo" d="M22,12 C10,30 26,40 14,60" stroke="#5a4632" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="15" y="8" width="14" height="50" fill="#0b171d"/><rect x="4" y="2" width="36" height="9" rx="2" fill="#132530"/><rect x="8" y="56" width="28" height="6" fill="#0b171d"/></svg>
+        </div>
+        <div class="bita" style="right:9%">
+          <svg viewBox="0 0 44 62" width="42"><rect x="15" y="8" width="14" height="50" fill="#0b171d"/><rect x="4" y="2" width="36" height="9" rx="2" fill="#132530"/><rect x="8" y="56" width="28" height="6" fill="#0b171d"/><path d="M30,4 Q36,-2 42,4 L42,8 L30,8 Z" fill="#20343e"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-cont">
+    <span class="kicker"><span class="led"></span>DESPACHO OMC · SISTEMA DE MONITOREO MARÍTIMO · EN DIRECTO</span>
+    <h1>
+      <span class="linea"><span class="linea-in">EL ESTRECHO</span></span>
+      <span class="linea"><span class="linea-in">ESTÁ <span class="sello-zarpe">CERRADO</span></span></span>
+    </h1>
+    <p class="hero-sub">La arteria energética más importante del planeta ha sido clausurada militarmente. Las aseguradoras marítimas abandonan las flotas, los mercados se asfixian y Estados Unidos e Irán llevan el comercio internacional al límite.</p>
+    <div class="hero-datos">
+      <span>ESTRECHO DE ORMUZ · 26°34′N — 056°15′E</span>
+      <span class="rombo" aria-hidden="true"></span>
+      <span>ÓRGANO DE SOLUCIÓN DE DIFERENCIAS · CONVOCADO</span>
+    </div>
+  </div>
+
+  <div class="hero-firma" aria-hidden="true">
+    <svg viewBox="0 0 160 160">
+      <circle cx="80" cy="80" r="72" fill="none" stroke="#16303f" stroke-width="2.5"/>
+      <circle cx="80" cy="80" r="56" fill="none" stroke="#16303f" stroke-width="1" opacity=".5"/>
+      <g class="rosa-int" fill="#16303f">
+        <path d="M80,24 L86,80 L80,136 L74,80 Z"/><path d="M24,80 L80,74 L136,80 L80,86 Z"/>
+        <path d="M80,24 L86,80 L80,136 L74,80 Z" transform="rotate(45 80 80)" opacity=".45"/>
+        <path d="M24,80 L80,74 L136,80 L80,86 Z" transform="rotate(45 80 80)" opacity=".45"/>
+        <circle cx="80" cy="80" r="7" fill="#efe6d3" stroke="#16303f" stroke-width="2"/>
+      </g>
+      <text x="80" y="14" text-anchor="middle" style="font:700 14px var(--mono)" fill="#16303f">N</text>
+    </svg>
+  </div>
+
+  <a class="bajar" href="#hero">
+    <svg width="18" height="18" viewBox="0 0 24 24"><use href="#i-ancla" style="color:#f7f1e3"/></svg>
+    DESCIENDE
+  </a>
+</section>
+
+<script>
+(function(){
+  "use strict";
+  const capas = [...document.querySelectorAll('#escena .capa')];
+  let mx=0, my=0, smx=0, smy=0;
+
+  if(matchMedia('(pointer:fine)').matches){
+    addEventListener('pointermove', e => {
+      mx = e.clientX / innerWidth - .5;
+      my = e.clientY / innerHeight - .5;
+    });
+  }
+
+  function pasoParallax(dt){
+    if(!capas.length) return;
+    smx += (mx - smx) * Math.min(1, dt * 4);
+    smy += (my - smy) * Math.min(1, dt * 4);
+    capas.forEach(c => {
+      const p = +c.dataset.p || 0;
+      c.style.transform = `translate(${(smx * p).toFixed(1)}px, ${(smy * p * .6).toFixed(1)}px)`;
+    });
+  }
+
+  let tPrev = performance.now();
+  function loop(t){
+    const dt = Math.min(.05, (t - tPrev) / 1000);
+    tPrev = t;
+    pasoParallax(dt);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Animación de entrada GSAP opcional para el contenido del Hero
+  if(window.gsap){
+    gsap.timeline({delay: 0.1})
+      .fromTo('.hero .kicker', {y: 24, opacity: 0}, {y: 0, opacity: 1, duration: .7, ease: 'power3.out'})
+      .fromTo('.hero h1 .linea-in', {yPercent: 114}, {yPercent: 0, duration: 1, stagger: .13, ease: 'power4.out'}, '-=.4')
+      .fromTo('.hero-sub', {y: 26, opacity: 0}, {y: 0, opacity: 1, duration: .8, ease: 'power3.out'}, '-=.6')
+      .fromTo('.hero-datos', {y: 18, opacity: 0}, {y: 0, opacity: 1, duration: .7}, '-=.55')
+      .fromTo('.hero-firma,.bajar', {opacity: 0}, {opacity: 1, duration: .9}, '-=.4');
+  }
+})();
+</script>
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE GLOBAL CHRONICLE | Reporte NSA JFK 1964</title>
+    <!-- Google Fonts: Sans Serif Geométricas e imponentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    
+<!-- Carga de React y ReactDOM -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- Carga de Babel para interpretar JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* === VARIABLES & BASE === */
+        :root {
+            --paper-bg: #ece5d3;
+            --ink-black: #111111;
+            --alert-red: #8b0000;
+            --paper-border: #333333;
+        }
+
+        body {
+            background-color: var(--paper-bg);
+            color: var(--ink-black);
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px),
+                radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 4px 4px;
+            background-position: 0 0, 2px 2px;
+            overflow-x: hidden;
+        }
+
+        /* === CONTENEDOR PRINCIPAL === */
+        .newspaper-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            background-color: var(--paper-bg);
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Ruido y manchas en el papel */
+        .newspaper-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, transparent 20%, transparent 80%, rgba(139, 69, 19, 0.15) 100%);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* === CABECERA DEL PERIÓDICO === */
+        header {
+            text-align: center;
+            border-bottom: 6px double var(--paper-border);
+            border-top: 6px double var(--paper-border);
+            padding: 20px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--paper-border);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        h1.title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 8vw;
+            margin: 0;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            color: var(--ink-black);
+        }
+
+        .subtitle {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .alert-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(139, 0, 0, 0.15);
+            font-family: 'Oswald', sans-serif;
+            border: 8px solid rgba(139, 0, 0, 0.15);
+            padding: 10px 30px;
+            pointer-events: none;
+        }
+
+        /* === GRILLA DEL CONTENIDO === */
+        .main-news {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 40px;
+            border-bottom: 3px solid var(--paper-border);
+            padding-bottom: 40px;
+            margin-bottom: 30px;
+        }
+
+        h2.headline {
+            font-family: 'Oswald', sans-serif;
+            font-size: 5.5rem;
+            line-height: 1.1;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        h2.headline span.highlight {
+            color: var(--alert-red);
+        }
+
+        .story-text {
+            column-count: 2;
+            column-gap: 30px;
+            column-rule: 1px solid var(--paper-border);
+            font-size: 1.15rem;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .story-text p {
+            margin-top: 0;
+            margin-bottom: 1.5em;
+        }
+
+        .story-text p:first-child::first-letter {
+            float: left;
+            font-family: 'Oswald', sans-serif;
+            font-size: 6rem;
+            line-height: 4.5rem;
+            padding-top: 4px;
+            padding-right: 8px;
+            padding-left: 3px;
+        }
+
+        /* === IMÁGENES Y CENSURA === */
+        figure {
+            margin: 0 0 20px 0;
+            position: relative;
+        }
+
+        figure img, .seal-image img {
+            width: 100%;
+            height: auto;
+            filter: grayscale(100%) contrast(140%) sepia(20%);
+            border: 2px solid var(--paper-border);
+            display: block;
+        }
+
+        figcaption {
+            font-size: 0.9rem;
+            font-style: italic;
+            border-bottom: 1px solid var(--paper-border);
+            padding: 5px 0;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .jfk-portrait {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .censor-bar {
+            position: absolute;
+            background-color: var(--ink-black);
+            color: #fff;
+            top: 25%;
+            left: 20%;
+            width: 60%;
+            height: 15%;
+            transform: rotate(-3deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 2vw;
+            letter-spacing: 5px;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+
+        /* === BARRA LATERAL === */
+        .sidebar {
+            border-left: 3px solid var(--paper-border);
+            padding-left: 40px;
+        }
+
+        .sidebar h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            margin-top: 0;
+            border-bottom: 4px double var(--paper-border);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        /* === RESPONSIVO === */
+        @media (max-width: 900px) {
+            .main-news {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-left: none;
+                border-top: 3px solid var(--paper-border);
+                padding-left: 0;
+                padding-top: 30px;
+            }
+            .story-text {
+                column-count: 1;
+            }
+            h1.title { font-size: 12vw; }
+            h2.headline { font-size: 3.5rem; }
+            .censor-bar { top: 30%; font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="newspaper-container">
+    <div class="alert-stamp">CLASSIFIED NSA EYES ONLY</div>
+    
+    <header>
+        <div class="header-meta">
+            <span>VOL. CXI NO. 39.421</span>
+            <span>EDICIÓN NACIONAL EXCLUSIVA — NO DISTRIBUIR PUBLICAMENTE</span>
+            <span>JUEVES, 12 DE NOVIEMBRE DE 1964</span>
+            <span>PRECIO: CENSURADO</span>
+        </div>
+        <h1 class="title">THE GLOBAL CHRONICLE</h1>
+        <div class="subtitle">EDICIÓN ESPECIAL: INFORME DEL COMITÉ INVESTIGATIVO - SEÑALES SIGINT</div>
+    </header>
+
+    <main class="main-news">
+        <section class="lead-story">
+            <h2 class="headline">REPORTE NSA 1964: <span class="highlight">LA COMISIÓN WARREN MINTIÓ</span>, MÚLTIPLES TIRADORES IDENTIFICADOS</h2>
+            
+            <div class="story-text">
+                <p>WASHINGTON, D.C. — Documentos internos ultra-clasificados obtenidos en exclusiva, provenientes del recientemente establecido Comité Investigativo de Intercepciones de la Agencia de Seguridad Nacional (NSA), detallan conclusiones estremecedoras que desafían la narrativa oficial sobre la tragedia ocurrida en Dealey Plaza el pasado 22 de noviembre[cite: 4].</p>
+                
+                <p>El informe secreto, bautizado operativamente como <em>"Viento Cruzado"</em>, establece de manera inequívoca y utilizando interceptaciones acústicas y telemetría de señales clasificadas (SIGINT), que la narrativa de un solo "francotirador solitario" disparando desde el sexto piso del Depósito de Libros Escolares de Texas es físicamente y militarmente inconsistente con la telemetría acústica recabada ese fatídico viernes al mediodía[cite: 4].</p>
+
+                <p>"La secuencia balística detectada y el análisis del eco en los edificios colindantes indican la detonación de armas incompatibles con el fusil Carcano M91/38 en poder de Lee H. Oswald. Se ha confirmado fuego cruzado desde la loma cubierta de hierba", reza el memorándum censurado dirigido a la rama de Inteligencia[cite: 4].</p>
+
+                <p>Las ramificaciones de esta filtración sin precedentes amenazan con sacudir los mismísimos cimientos del actual gobierno. Analistas de inteligencia advirtieron inmediatamente al Director que el patrón direccional apuntaba a que operativos experimentados utilizaron geometría triangular, creando un 'pasillo de fuego' imposible de eludir[cite: 4].</p>
+
+                <p>Adicionalmente, archivos revelan que durante las semanas previas, la red de telecomunicaciones soviéticas entre la embajada en la Ciudad de México y Moscú emitió un aluvión anómalo de encriptaciones masivas que coincidieron matemáticamente con los movimientos documentados de Lee Harvey Oswald y otros agentes de procedencia no identificada, hoy catalogados como fantasmas operativos[cite: 4].</p>
+                
+                <p>Fuentes desde el seno del comité imploran protección, manifestando que cualquier desvío del veredicto oficial preestablecido conlleva una terminación letal y silenciada. La historia está escribiéndose entre tinta tachada[cite: 4].</p>
+            </div>
+        </section>
+
+        <aside class="sidebar">
+            <figure class="jfk-portrait">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg" alt="Presidente Kennedy">
+                <div class="censor-bar">CLASIFICADO</div>
+            </figure>
+            <figcaption>ARCHIVO OBJETO #41: Rostro del 35° Presidente tras impacto. Informe médico primario difiere severamente de Bethesda[cite: 4].</figcaption>
+            
+            <h3>OPERACIÓN CORTINA NEGRA</h3>
+            <p><strong>El vínculo con Cuba:</strong> El rastro no se detiene en Dallas. Análisis de radio de onda corta por el cuartel general de Fort Meade registraron actividad de transmisiones encubiertas utilizando el método de estaciones de números horas antes del desfile presidencial[cite: 4].</p>
+            
+            <figure style="padding:20px; background-color:#dfdac7; text-align: center; border: 2px dashed #000;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Seal_of_the_Federal_Bureau_of_Investigation.svg" alt="Sello de Investigaciones" style="border: none; mix-blend-mode: multiply; max-width: 80%; display:inline-block; margin-bottom: 0;">
+            </figure>
+            <figcaption>Exclusiva: La participación y coacción departamental inter-agencias está al descubierto en este lote filtrado de grabaciones fonográficas y comunicados entre J. Edgar Hoover y ramas del Ejecutivo[cite: 4].</figcaption>
+
+            <p>Se presume la purga sistemática de cintas magnetofónicas originales correspondientes al Departamento de Policía de Dallas, Canal 1. Todo parece apuntar a la coordinación interna y a la creación premeditada del chivo expiatorio perfecto[cite: 4].</p>
+        </aside>
+    </main>
+</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLASSIFIED // I.C.E. DOSSIER</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<!-- Carga de Tailwind CSS para dar formato a las clases del componente -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    /* === CORE VARIABLES & RESETS === */
+    :root {
+        --bg-color: #000000;
+        --doc-bg: #e6e6e6; /* Rough white document color */
+        --ink: #000000;
+        --font-geo: 'Montserrat', sans-serif;
+        --font-mono: 'Space Mono', monospace;
+        --mouseX: 50%;
+        --mouseY: -100%;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        cursor: crosshair; /* Tactical cursor */
+    }
+
+    body, html {
+        width: 100%;
+        max-width: 100vw;
+        min-height: 100vh;
+        background-color: var(--bg-color);
+        overflow-x: hidden !important; /* Bloqueo obligatorio contra desbordamientos para solo permitir vista vertical */
+        font-family: var(--font-geo);
+        scroll-behavior: smooth;
+    }
+
+    /* Hide scrollbar for immersion */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: black; }
+    ::-webkit-scrollbar-thumb { background: #333; }
+
+    /* === LAMP CORD PULL SWITCH (COMPUTADORA) === */
+    #lamp-cord {
+        position: fixed;
+        top: 0;
+        right: 60px;
+        z-index: 99999;
+        cursor: pointer;
+        transition: transform 0.15s ease-out;
+        user-select: none;
+    }
+    #lamp-cord:hover {
+        transform: translateY(8px);
+    }
+    #lamp-cord.pulling {
+        transform: translateY(30px);
+    }
+    .cord-line {
+        width: 3px;
+        height: 120px;
+        background: repeating-linear-gradient(0deg, #ccc, #ccc 4px, #444 4px, #444 8px);
+        margin: 0 auto;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+    .cord-handle {
+        width: 18px;
+        height: 32px;
+        background: linear-gradient(135deg, #e6c653, #9e7d1b);
+        border-radius: 4px;
+        border: 2px solid #222;
+        margin: 0 auto;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.7);
+    }
+
+    /* === FLASHLIGHT AND TOP LIGHT MECHANICS === */
+    #reveal-wrapper {
+        position: relative;
+        width: 100%;
+        min-height: 350vh;
+        background-color: var(--doc-bg);
+        
+        background-image: 
+            radial-gradient(1200px 900px ellipse at 50% 0%, rgba(255, 180, 40, 0.35) 0%, transparent 60%),
+            repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 20px),
+            url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='50' font-size='10' font-family='monospace' fill='rgba(0,0,0,0.08)'%3E%3C!--CLASSIFIED DOC %2388220--%3E ENCRYPTED STRATUM %3C/text%3E%3Ctext x='30' y='180' font-size='12' font-family='sans-serif' font-weight='bold' fill='rgba(0,0,0,0.03)' transform='rotate(-45 50 150)'%3ESTRICTLY CONFIDENTIAL%3C/text%3E%3C/svg%3E");
+            
+        color: var(--ink);
+        padding: 5rem 10vw;
+        
+        -webkit-mask-image: 
+            radial-gradient(1200px 900px ellipse at 50% 0%, black 15%, transparent 60%),
+            radial-gradient(450px circle at var(--mouseX) var(--offsetY), black 10%, rgba(0,0,0,0.5) 40%, transparent 100%);
+        -webkit-mask-repeat: no-repeat;
+        mask-image: 
+            radial-gradient(1200px 900px ellipse at 50% 0%, black 15%, transparent 60%),
+            radial-gradient(450px circle at var(--mouseX) var(--offsetY), black 10%, rgba(0,0,0,0.5) 40%, transparent 100%);
+        mask-repeat: no-repeat;
+        
+        -webkit-mask-composite: source-over;
+        mask-composite: add;
+        overflow-x: hidden !important;
+    }
+
+    #reveal-wrapper.light-on {
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
+    }
+
+    .mobile-only {
+        display: none;
+    }
+
+    .content-flow {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5rem;
+        align-items: center;
+        max-width: 100vw;
+    }
+
+    .hero {
+        position: relative;
+        text-align: center;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60vh;
+        z-index: 10;
+    }
+
+    h1 {
+        font-family: var(--font-mono);
+        font-size: 21vw !important;
+        font-weight: 700;
+        font-style: italic;
+        line-height: 0.8;
+        letter-spacing: -0.05em;
+        text-transform: uppercase;
+        color: #fffaf0;
+        -webkit-text-stroke: 3px #1a1a1a; 
+        text-shadow: 
+            10px 10px 0px rgba(0, 0, 0, 0.95), 
+            -6px -6px 0px rgba(220, 50, 0, 0.85),
+            0 0 50px rgba(255, 180, 0, 0.7);
+        padding-bottom: 20px;
+    }
+
+    .meta-data {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        text-align: justify;
+        width: 100%;
+        border-top: 4px solid var(--ink);
+        border-bottom: 2px dashed var(--ink);
+        padding: 1rem 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem;
+        text-transform: uppercase;
+    }
+
+    p {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        max-width: 900px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        position: relative;
+        background: repeating-linear-gradient(0deg, transparent, transparent 1.4rem, rgba(0,0,0,0.05) 1.4rem, rgba(0,0,0,0.05) 1.5rem);
+        padding-top: 2px;
+    }
+
+    p::first-letter {
+        font-size: 4rem;
+        float: left;
+        line-height: 1;
+        margin-right: 0.5rem;
+        font-weight: 900;
+    }
+
+    .censored {
+        background-color: var(--ink);
+        color: var(--ink);
+        padding: 0 4px;
+        cursor: not-allowed;
+        user-select: none;
+        display: inline-block;
+        transition: 0.1s background;
+    }
+    
+    .censored:hover { background-color: #2a2a2a; color: #2a2a2a; }
+
+    .evidence-board {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4rem;
+        align-items: center;
+        border-left: 15px solid var(--ink);
+        padding-left: 2rem;
+    }
+
+    .polaroid {
+        background: white;
+        padding: 10px 10px 40px 10px;
+        box-shadow: 0px 10px 30px rgba(0,0,0,0.4);
+        transform: rotate(-3deg);
+        position: relative;
+        transition: 0.3s transform;
+    }
+
+    .polaroid:nth-child(even) {
+        transform: rotate(4deg);
+    }
+
+    .polaroid:hover {
+        transform: scale(1.05) rotate(0);
+        z-index: 10;
+    }
+
+    .polaroid img {
+        width: 100%;
+        height: auto;
+        display: block;
+        filter: grayscale(100%) contrast(150%);
+        mix-blend-mode: multiply;
+    }
+
+    .polaroid::after {
+        content: "SEIZED MATERIAL REF #77X";
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .table-data {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        margin-bottom: 2rem;
+        box-shadow: -20px 20px 0 rgba(0,0,0,0.1);
+        background: rgba(255,255,255,0.9);
+    }
+    .table-data th, .table-data td {
+        border: 2px solid var(--ink);
+        padding: 0.8rem;
+        text-align: left;
+    }
+    .table-data th {
+        background: var(--ink);
+        color: var(--doc-bg);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .torn {
+        position: absolute;
+        background-color: var(--doc-bg);
+        color: var(--ink);
+        font-family: var(--font-geo);
+        font-weight: 900;
+        padding: 1.5rem;
+        filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.8));
+        clip-path: polygon(2% 4%, 96% 2%, 99% 98%, 3% 96%); 
+        background-image: linear-gradient(135deg, transparent 40%, rgba(0,0,0,0.1) 100%), 
+                          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Ccircle cx='2' cy='2' r='1' fill='black'/%3E%3C/svg%3E");
+        background-size: cover, 15px;
+        border: 1px solid var(--ink);
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        font-size: 3rem;
+        text-transform: uppercase;
+        z-index: 50;
+        cursor: pointer;
+    }
+    .torn span { background: var(--ink); color: white; padding: 5px 15px; mix-blend-mode: difference;}
+
+    .f1 { top: 75vh; left: -2vw; transform: rotate(-15deg); }
+    .f2 { top: 120vh; right: 0; transform: rotate(12deg); }
+    .f3 { top: 210vh; left: 10vw; transform: rotate(-8deg); }
+    .f4 { top: 290vh; right: 8vw; transform: rotate(25deg); }
+    .f5 { top: 40vh; right: -5vw; transform: rotate(70deg) scale(0.6); }
+
+    .barcode {
+        position: absolute;
+        top: 5vh;
+        left: 2vw;
+        width: 150px;
+        height: auto;
+        mix-blend-mode: darken;
+        opacity: 0.6;
+        transform: rotate(-90deg);
+    }
+
+    .fingerprint {
+        position: absolute;
+        opacity: 0.15;
+        z-index: -1;
+        mix-blend-mode: darken;
+        pointer-events: none;
+        width: 400px;
+    }
+    .fp1 { top: 60vh; right: 10%; transform: rotate(23deg);}
+    .fp2 { top: 180vh; left: 5%; transform: rotate(-10deg);}
+
+    .decor-drone {
+        position: absolute;
+        right: 0;
+        top: 250vh;
+        width: 50vw;
+        max-width: 600px;
+        opacity: 0.3;
+        mix-blend-mode: multiply;
+        z-index: -1;
+    }
+
+    .mun-badge {
+        font-family: var(--font-mono);
+        border: 4px solid var(--ink);
+        display: inline-block;
+        padding: 10px;
+        font-weight: bold;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        background: transparent;
+        margin: 20px 0;
+        letter-spacing: 5px;
+    }
+
+    .end-marker {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 900;
+        margin-top: 10rem;
+        padding: 2rem;
+        border-top: 10px double var(--ink);
+    }
+
+    @media (max-width: 768px) {
+        html, body {
+            overflow-x: hidden !important; 
+            max-width: 100vw;
+            width: 100%;
+        }
+
+        #lamp-cord {
+            display: none !important;
+        }
+
+        #reveal-wrapper {
+            -webkit-mask-image: none !important;
+            mask-image: none !important;
+            min-height: auto !important;
+            padding: 2rem 4vw !important;
+        }
+
+        .decor-drone, .fingerprint, .torn, .barcode {
+            display: none !important;
+        }
+
+        .desktop-only {
+            display: none !important;
+        }
+
+        .mobile-only {
+            display: block !important;
+        }
+
+        .content-flow {
+            gap: 2.5rem !important;
+        }
+
+        .hero {
+            height: 25vh !important;
+        }
+
+        h1 {
+            font-size: 28vw !important;
+            text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 180, 0, 0.5) !important;
+        }
+
+        .meta-data {
+            grid-template-columns: 1fr !important;
+            gap: 0.5rem !important;
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0 !important;
+        }
+
+        .mun-badge {
+            font-size: 0.9rem !important;
+            letter-spacing: 2px !important;
+            padding: 6px !important;
+            margin: 10px 0 !important;
+            width: 100%; 
+            word-wrap: break-word;
+        }
+
+        p {
+            font-size: 0.95rem !important;
+            line-height: 1.4 !important;
+            word-break: break-word; 
+        }
+
+        p::first-letter {
+            font-size: 2.5rem !important;
+        }
+
+        .evidence-board {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+            border-left: 6px solid var(--ink) !important;
+            padding-left: 1rem !important;
+            max-width: 100%;
+        }
+
+        .polaroid {
+            transform: none !important;
+            margin-top: 0 !important;
+        }
+
+        .table-data {
+            display: block; 
+            overflow-x: auto; 
+            max-width: 100%;
+            font-size: 0.7rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .table-data th, .table-data td {
+            padding: 0.4rem !important;
+            white-space: nowrap; 
+        }
+
+        .end-marker {
+            margin-top: 3rem !important;
+            font-size: 1.2rem !important;
+            padding: 1rem !important;
+            word-break: break-word;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- CUERDA DE LÁMPARA (SOLO COMPUTADORA) -->
+<div id="lamp-cord" title="Tirar para prender/apagar luz">
+    <div class="cord-line"></div>
+    <div class="cord-handle"></div>
+</div>
+
+<!-- MAIN DOSSIER MASK AREA -->
+<div id="reveal-wrapper">
+        
+    <!-- DECORATIONS -->
+    <img src="https://images.unsplash.com/photo-1644332851892-9ebce07ba5fc?q=80&w=2472&auto=format&fit=crop" class="barcode" alt="barcode dec">
+    <img src="https://cdn-icons-png.flaticon.com/512/8207/8207901.png" class="fingerprint fp1" alt="thumb">
+    <img src="https://cdn-icons-png.flaticon.com/512/8207/8207901.png" class="fingerprint fp2" alt="thumb">
+    
+    <!-- Fragments (Desktop Only) -->
+    <div class="torn f1"><span>ABSOLUTE</span></div>
+    <div class="torn f5">FILE: 00-<span>ERR</span></div>
+    <div class="torn f2"><span>POWER</span> / CORRUPTS</div>
+    <div class="torn f3">ACTS <span>BEYOND</span> JURISDICTION</div>
+    <div class="torn f4">OVERRIDE <span>ALL BORDERS</span></div>
+
+    <!-- STRUCTURAL DOCUMENT -->
+    <div class="content-flow">
+
+        <header class="hero">
+            <h1 title="ICE">ICE</h1>
+        </header>
+
+        <div style="width: 100%; max-width: 1000px; background: rgba(255,255,255,0.6); padding: 2rem; outline: 3px dashed black; box-sizing: border-box;">
+            <div class="meta-data">
+                <div>ORG: HOMELAND SEC <br> CMTE: DIR. SUB-ALPHA<br> AUTH: HIGH SECURITY</div>
+                <div>CLASS: EYES ONLY <br> SUBJ: BORDER SOVEREIGNTY <br> DT: <span class="censored">12-NOV-XXXX</span></div>
+                <div>OP: BLACK RAIN <br> REF: GLOBAL CRISIS DELEGATION <br> ID: X-93A/V</div>
+            </div>
+
+            <div class="mun-badge">DELEGATES INVOLVED // MODEL U.N. DIRECTIVE #344</div>
+
+            <!-- CONTENIDO PARA COMPUTADORA (LARGO Y DETALLADO) -->
+            <div class="desktop-only">
+                <p>
+                    The framework of national security is dissolving. As sovereign limits fade beneath the bureaucratic weight of a collapsing state mechanism, Immigration and Customs Enforcement (<span class="censored">I.C.E.</span>) has engaged protocols exceeding conventional constitutional allowances. You are holding raw intel derived from intercepted logistics arrays and kinetic strikes on subterranean infrastructure along Sector <span class="censored">404</span>.
+                </p>
+                <br>
+                <p>
+                    Be advised. Elements from international factions (NATO, INTERPOL, local warlords operating as state actors) have discovered traces of <strong>OPERATION OMEGA BORDER</strong>. It is imperative that these structural breaches are neutralized by any <span class="censored">violent</span> means deemed strategically necessary to project dominance. The white pages mean nothing anymore. What matters is the ink written in shadows. The enforcement arm is no longer protecting borders—it is extending them unilaterally.
+                </p>
+
+                <div style="height: 5rem;"></div>
+
+                <table class="table-data">
+                    <thead>
+                        <tr><th>TARGET ID</th><th>THREAT LEVEL</th><th>LAST LOCATION</th><th>DISPOSITION</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>#844-A (Ghost)</td><td>APEX RED</td><td><span class="censored">CHIHUAHUA, MEX</span></td><td>TERMINATED (CONF)</td></tr>
+                        <tr><td>#921-X (Node)</td><td>CRITICAL</td><td>LANGLEY INT. DB</td><td>PENDING RAID</td></tr>
+                        <tr><td>DELEGATE Y.</td><td>ORANGE 3</td><td>UN GENERAL ASSEMBLY</td><td>UNDER SURVEILLANCE</td></tr>
+                        <tr><td>COYOTE BRG.</td><td>HIGH-VIS</td><td>TEXAS CORRIDOR 7</td><td><span class="censored">DRONE STRIKE APP</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CONTENIDO RESUMIDO PARA TELÉFONO -->
+            <div class="mobile-only">
+                <p>
+                    <strong>DOSSIER SUMMARY:</strong> I.C.E. has initiated protocols exceeding constitutional limits under <strong>OPERATION OMEGA BORDER</strong>. Sovereign borders have been unilaterally nullified.
+                </p>
+                <br>
+                <table class="table-data">
+                    <thead>
+                        <tr><th>TARGET</th><th>THREAT</th><th>STATUS</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>#844-A</td><td>APEX RED</td><td>TERMINATED</td></tr>
+                        <tr><td>#921-X</td><td>CRITICAL</td><td>PENDING</td></tr>
+                        <tr><td>DELEGATE Y</td><td>ORANGE 3</td><td>SURVEILLANCE</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Photos & Intel area -->
+        <section class="evidence-board" style="max-width: 1000px; box-sizing: border-box; overflow-x: hidden;">
+            <div class="polaroid">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" style="width: 100%; height: auto; background: #0a0a0a; display: block; border-radius: 4px;">
+                    <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <rect width="20" height="20" fill="none" stroke="#22aa22" stroke-width="0.5" stroke-opacity="0.2"/>
+                        </pattern>
+                        <linearGradient id="scanline" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#22aa22" stop-opacity="0" />
+                            <stop offset="50%" stop-color="#22aa22" stop-opacity="0.4" />
+                            <stop offset="100%" stop-color="#22aa22" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                    <circle cx="200" cy="150" r="90" fill="none" stroke="#22aa22" stroke-width="1.5" stroke-opacity="0.5"/>
+                    <circle cx="200" cy="150" r="130" fill="none" stroke="#22aa22" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+                    <path d="M 200 10 L 200 290 M 10 150 L 390 150" stroke="#22aa22" stroke-width="0.5" stroke-opacity="0.4"/>
+                    
+                    <g>
+                        <path d="M 200 150 L 200 60 A 90 90 0 0 1 290 150 Z" fill="#22aa22" fill-opacity="0.3">
+                            <animateTransform attributeName="transform" type="rotate" from="0 200 150" to="360 200 150" dur="4s" repeatCount="indefinite" />
+                        </path>
+                    </g>
+                    <circle cx="250" cy="100" r="4" fill="#22aa22">
+                        <animate attributeName="opacity" values="0;1;0" dur="4s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="140" cy="200" r="3" fill="#ff2222">
+                        <animate attributeName="opacity" values="0;1;0" dur="4s" begin="2s" repeatCount="indefinite" />
+                    </circle>
+                    
+                    <rect width="100%" height="30" fill="url(#scanline)">
+                        <animate attributeName="y" values="-30;300" dur="2.5s" repeatCount="indefinite" />
+                    </rect>
+                    
+                    <text x="10" y="20" fill="#22aa22" font-family="monospace" font-size="12">SYS.TRACKING_</text>
+                    <text x="10" y="285" fill="#22aa22" font-family="monospace" font-size="12">LIVE FEED</text>
+                </svg>
+            </div>
+            
+            <div style="padding: 1rem;">
+                <h3>SURVEILLANCE ASSET X-22</h3>
+                <p class="desktop-only" style="font-size: 0.95rem; font-family: var(--font-mono); margin-top: 1rem;">
+                    Perimeter sensors detect unsanctioned border breaches originating from coordinates 33°14'N. Automated sentinel arrays deployed payload class C. The collateral remains strictly off the record, buried in unnumbered reports. They think the cameras missed them. <span class="censored">They never stop watching.</span> Every document here is blood-stained in administrative whiteout.
+                </p>
+                <p class="mobile-only" style="font-size: 0.85rem; font-family: var(--font-mono); margin-top: 0.5rem;">
+                    Breach detected at 33°14'N. Sensors deployed. Constant monitoring active. <span class="censored">24/7 Surveillance.</span>
+                </p>
+            </div>
+
+            <div style="padding: 1.5rem; background: var(--ink); color: var(--doc-bg); border-radius: 10px; font-family: var(--font-mono); box-sizing: border-box; max-width: 100%; word-break: break-word;">
+                <h3 style="color:white; border-bottom: 2px dashed #666; padding-bottom:10px;">SEIZED COMMUNIQUE</h3>
+                <div style="margin-top: 15px; line-height: 1.8; font-size: 0.85rem;">
+                    > REQUESTING ASSET EXTRACTION<br>
+                    > FIREARM SHIPMENTS DETECTED<br>
+                    > ████ ████ HAS COMPROMISED FACILITY<br>
+                    > AUTHORITY: BURN THIS IMMEDIATELY.<br>
+                    <img src="https://images.unsplash.com/photo-1549722359-0010beebcff2?q=80&w=2670&auto=format&fit=crop" style="width: 100%; margin-top: 10px; filter: grayscale(1) invert(1);" alt="wireframe scan">
+                </div>
+            </div>
+            
+            <div class="polaroid desktop-only" style="margin-top:-50px;">
+                <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=2670&auto=format&fit=crop" alt="unmanned aerial drone intel">
+            </div>
+        </section>
+        
+        <div style="width: 100%; max-width: 900px; padding: 1.5rem; text-align:center; font-family: var(--font-mono); line-height: 1.3; box-sizing: border-box;">
+            <span style="display:inline-block; max-width: 100%; word-break: break-all; white-space: normal;">
+                #########################################
+            </span><br>
+            01001001 01000011 01000101 <br>
+            <br>
+            <span class="desktop-only">
+                IF THIS DOCUMENT HAS REACHED YOU CONGRATULATIONS<br>
+                YOU ARE THE PRIMARY TARGET OF COMMITTEE VOTE.<br>
+                READ THE SCATTERED FRAGMENTS. FIND THE MESSAGE.<br>
+                PREPARE FOR WAR.<br>
+            </span>
+            <span class="mobile-only">
+                TARGET IDENTIFIED.<br>
+                PREPARE FOR COMMITTEE VOTE.<br>
+            </span>
+            <br>
+            <span style="font-size: 3rem;">&#x2620;</span><br>
+            <span style="display:inline-block; max-width: 100%; word-break: break-all; white-space: normal;">
+                #########################################
+            </span>
+        </div>
+
+        <div class="end-marker">
+            END OF CLASSIFIED RECORD<br>
+            <span style="font-size:0.85rem; font-family: var(--font-mono);">DESTROY AFTER READING. I.C.E OMNIBUS TIER PROTOCOL SEC-4</span>
+        </div>
+        
+        <br><br>
+    </div>
+</div>
+
+<svg style="width:0;height:0;position:absolute;">
+    <filter id="tornEdge" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+</svg>
+
+<script>
+    const wrapper = document.getElementById('reveal-wrapper');
+    const lampCord = document.getElementById('lamp-cord');
+    let maskRaf;
+
+    if (lampCord) {
+        lampCord.addEventListener('click', () => {
+            lampCord.classList.add('pulling');
+            setTimeout(() => lampCord.classList.remove('pulling'), 150);
+            wrapper.classList.toggle('light-on');
+        });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        if (window.innerWidth > 768 && !wrapper.classList.contains('light-on')) {
+            const rect = wrapper.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if(!maskRaf) {
+                maskRaf = requestAnimationFrame(() => {
+                    wrapper.style.setProperty('--mouseX', x + 'px');
+                    wrapper.style.setProperty('--offsetY', y + 'px');
+                    maskRaf = null;
+                });
+            }
+        }
+    });
+
+    wrapper.style.setProperty('--mouseX', window.innerWidth / 2 + 'px');
+    wrapper.style.setProperty('--offsetY', '300px');
+</script>
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSJ · Sala Político-Administrativa — Caso RCTV | SVP MUN</title>
+<meta name="description" content="Simulación académica del recurso de nulidad RCTV vs. Poder Ejecutivo ante la Sala Político-Administrática del Tribunal Supremo de Justicia de Venezuela. #svpmun #MUN">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+/* ============================================================
+   TRIBUNAL SUPREMO DE JUSTICIA · SALA POLÍTICO-ADMINISTRATIVA
+   Caso RCTV vs. Poder Ejecutivo — SVP MUN (ESTILOS DEL HERO)
+   ============================================================ */
+
+:root{
+  --negro:#0a0a0d;
+  --negro-2:#101014;
+  --carbon:#15151a;
+
+  --crema:#ece7da;
+  --texto-suave:rgba(236,231,218,.55);
+  --texto-tenue:rgba(236,231,218,.38);
+
+  --marfil:#f3eee2;
+  --papel:#faf6ec;
+  --blanco:#ffffff;
+
+  --tinta:#1b1812;
+  --tinta-2:#4c463a;
+  --tinta-3:#7d7566;
+
+  --oro:#c8a45c;
+  --oro-claro:#e2c990;
+  --oro-oscuro:#8f7239;
+  --oro-linea:rgba(200,164,92,.45);
+
+  --amarillo:#fcd116;
+  --azul:#2b4f9f;
+  --rojo:#cf142b;
+
+  --fuente:'Sora', sans-serif;
+  --vel:.85s cubic-bezier(.22,.61,.2,1);
+
+  --pad:clamp(1.25rem, 5vw, 4rem);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:90px;
+  background:var(--negro);
+  overflow-x:hidden;
+  max-width:100vw;
+}
+
+body{
+  font-family:var(--fuente);
+  background:var(--negro);
+  color:var(--crema);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  max-width:100vw;
+}
+
+::selection{ background:var(--oro); color:var(--negro); }
+
+img{ max-width:100%; display:block; }
+a{ text-decoration:none; color:inherit; }
+ul{ list-style:none; }
+
+.hero-3d {
+  width: 100%;
+  max-width: 100vw;
+  overflow: hidden; 
+}
+
+.escena {
+  max-width: 100%;
+}
+
+/* ================= HERO ================= */
+
+main{ position:relative; z-index:1; }
+
+.hero{
+  position:relative;
+  min-height:100vh; min-height:100svh;
+  display:flex; flex-direction:column; align-items:center;
+  padding:118px var(--pad) 150px;
+  overflow:hidden;
+}
+.hero::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,.03), transparent 55%);
+}
+
+.hero-centro{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; width:100%; max-width:1240px;
+}
+
+.kicker{
+  display:flex; align-items:center; gap:14px;
+  font-weight:600; font-size:.66rem;
+  letter-spacing:.3em; text-transform:uppercase;
+  color:var(--oro);
+}
+.kicker::before, .kicker.centro::after{
+  content:''; width:46px; height:1px;
+  background:currentColor; flex:none; opacity:.7;
+}
+.kicker.centro{ justify-content:center; }
+
+.hero-titular{ position:relative; display:block; width:100%; }
+
+.hero-anillos{
+  position:absolute; top:50%; left:50%;
+  width:0; height:0; pointer-events:none;
+}
+.anillo{ position:absolute; top:0; left:0; border-radius:50%; pointer-events:none; }
+
+.anillo.a1{
+  width:clamp(300px, 62vw, 660px); aspect-ratio:1;
+  border:1px dashed rgba(200,164,92,.26);
+  animation:gira-anillo 120s linear infinite;
+}
+.anillo.a2{
+  width:clamp(370px, 82vw, 830px); aspect-ratio:1;
+  background:repeating-conic-gradient(rgba(200,164,92,.15) 0deg .7deg, transparent .7deg 5.5deg);
+  -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation:gira-anillo-r 200s linear infinite;
+}
+.anillo.a3{
+  width:clamp(240px, 48vw, 530px); aspect-ratio:1;
+  border:1px solid rgba(200,164,92,.16);
+}
+@keyframes gira-anillo{
+  from{ transform:translate(-50%,-50%) rotate(0deg); }
+  to{ transform:translate(-50%,-50%) rotate(360deg); }
+}
+@keyframes gira-anillo-r{
+  from{ transform:translate(-50%,-50%) rotate(360deg); }
+  to{ transform:translate(-50%,-50%) rotate(0deg); }
+}
+
+.hero-luz{
+  position:absolute; top:50%; left:50%;
+  width:min(150vw, 1150px); aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side, rgba(200,164,92,.11), rgba(200,164,92,.03) 45%, transparent 70%);
+  animation:respirar 8s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes respirar{ 0%,100%{ opacity:.7; } 50%{ opacity:1; } }
+
+.hero h1{
+  position:relative;
+  margin-top:1.6rem;
+  font-weight:800;
+  font-size:clamp(3rem, 9vw, 7.1rem);
+  line-height:.97; letter-spacing:-.035em;
+  color:var(--crema);
+  text-shadow:
+    0 0 16px rgba(230,201,140,.30),
+    0 0 64px rgba(230,201,140,.16),
+    0 0 140px rgba(230,201,140,.08);
+}
+.hero h1 .vs{
+  display:block;
+  font-weight:300; font-style:italic;
+  font-size:.3em; letter-spacing:.12em;
+  color:var(--oro);
+  margin:.45em 0 .2em;
+  text-shadow:0 0 24px rgba(200,164,92,.35);
+}
+
+.pilar{
+  position:absolute; top:calc(50% - 190px);
+  width:180px; height:380px;
+  pointer-events:none;
+}
+.p-izq{ left:0; }
+.p-der{ right:0; }
+
+.pilar::before{
+  content:''; position:absolute; top:50%; left:50%;
+  width:340px; height:340px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side, rgba(200,164,92,.1), transparent 70%);
+  animation:respirar 9s ease-in-out infinite;
+}
+
+.p-escala{ position:absolute; inset:0; perspective:800px; }
+
+.pilar-3d{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  animation:girar-pilar 34s linear infinite;
+}
+.p-der .pilar-3d{ animation-name:girar-pilar-r; }
+@keyframes girar-pilar{
+  from{ transform:rotateY(0deg); }
+  to{ transform:rotateY(360deg); }
+}
+@keyframes girar-pilar-r{
+  from{ transform:rotateY(360deg); }
+  to{ transform:rotateY(0deg); }
+}
+
+.p-aguja{
+  position:absolute; left:50%; top:16px;
+  width:1.5px; height:30px; margin-left:-.75px;
+  background:linear-gradient(180deg, rgba(200,164,92,.15), var(--oro));
+}
+.p-punta{
+  position:absolute; left:50%; top:6px;
+  width:8px; height:8px; margin-left:-4px;
+  transform:rotate(45deg);
+  border:1px solid var(--oro);
+  background:rgba(200,164,92,.25);
+}
+.p-corona{
+  position:absolute; left:50%; top:44px;
+  width:18px; height:18px; margin-left:-9px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #f0dda5, #a8874a 55%, #6b5326 88%);
+}
+
+.p-fuste{
+  position:absolute; left:50%; top:66px;
+  width:9px; height:238px; margin-left:-4.5px;
+  transform-style:preserve-3d;
+}
+.p-fuste .fca{
+  position:absolute; left:0; top:0;
+  width:9px; height:238px; border-radius:5px;
+  background:linear-gradient(180deg, #dcb872, #8f7239 50%, #b99a55);
+}
+.p-fuste .fcb{
+  transform:rotateY(90deg);
+  background:linear-gradient(180deg, #a8874a, #5e4a24 50%, #8a6f3d);
+}
+
+.p-collar{
+  position:absolute; left:50%;
+  width:62px; height:62px;
+  margin:-31px 0 0 -31px;
+  border-radius:50%;
+  border:1.5px solid rgba(212,181,120,.65);
+  background:radial-gradient(closest-side, rgba(200,164,92,.18), transparent 70%);
+  transform:rotateX(75deg);
+}
+.p-collar.c1{ top:88px; }
+.p-collar.c2{ top:282px; }
+
+.p-pedestal{
+  position:absolute; left:50%; top:302px;
+  width:56px; height:22px; margin-left:-28px;
+  transform-style:preserve-3d;
+}
+.p-pedestal .pda{
+  position:absolute; inset:0; border-radius:3px;
+  background:linear-gradient(90deg, #8a6f3d, #c8a45c 50%, #8a6f3d);
+}
+.p-pedestal .pdb{
+  position:absolute; inset:0; border-radius:3px;
+  transform:rotateY(90deg);
+  background:#6b5326;
+}
+.p-zoclo{
+  position:absolute; left:50%; top:328px;
+  width:88px; height:12px; margin-left:-44px;
+  transform-style:preserve-3d;
+}
+.p-zoclo .pza{
+  position:absolute; inset:0; border-radius:3px;
+  background:linear-gradient(90deg, #6b5326, #a8874a 50%, #6b5326);
+}
+.p-zoclo .pzb{
+  position:absolute; inset:0; border-radius:3px;
+  transform:rotateY(90deg);
+  background:#54401f;
+}
+
+.p-anillo{
+  position:absolute; left:50%; top:344px;
+  width:150px; height:150px;
+  border-radius:50%;
+  border:1px dashed rgba(200,164,92,.3);
+  animation:girar-anillo-s 46s linear infinite;
+}
+
+.p-orbita{
+  position:absolute; left:50%; top:172px;
+  border-radius:50%;
+  background:repeating-conic-gradient(rgba(200,164,92,.22) 0deg .8deg, transparent .8deg 6deg);
+  -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask:radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation:gira-p-orbita 18s linear infinite;
+}
+.p-orbita.o1{ width:104px; height:104px; margin:-52px 0 0 -52px; }
+.p-orbita.o2{
+  width:150px; height:150px; margin:-75px 0 0 -75px;
+  background:none;
+  -webkit-mask:none; mask:none;
+  border:1px dashed rgba(200,164,92,.28);
+  animation:gira-p-orbita 28s linear infinite reverse;
+}
+@keyframes gira-p-orbita{
+  from{ transform:rotateX(16deg) rotateZ(0deg); }
+  to{ transform:rotateX(16deg) rotateZ(360deg); }
+}
+
+.p-conector{
+  position:absolute; top:50%; margin-top:-.5px; height:1px;
+}
+.p-izq .p-conector{
+  left:calc(100% - 12px); width:clamp(56px, 9vw, 140px);
+  background:linear-gradient(90deg, rgba(200,164,92,.55), transparent);
+}
+.p-der .p-conector{
+  right:calc(100% - 12px); width:clamp(56px, 9vw, 140px);
+  background:linear-gradient(270deg, rgba(200,164,92,.55), transparent);
+}
+.p-conector::after{
+  content:''; position:absolute; top:-4px;
+  width:8px; height:8px;
+  transform:rotate(45deg);
+  border:1px solid rgba(200,164,92,.7);
+  background:rgba(200,164,92,.15);
+}
+.p-izq .p-conector::after{ left:-4px; }
+.p-der .p-conector::after{ right:-4px; }
+
+.p-vtext{
+  position:absolute; top:50%;
+  transform:translateY(-50%);
+  writing-mode:vertical-rl;
+  font-weight:600; font-size:.55rem;
+  letter-spacing:.5em; text-transform:uppercase;
+  color:rgba(200,164,92,.42);
+  white-space:nowrap;
+}
+.p-izq .p-vtext{ left:-30px; }
+.p-der .p-vtext{ right:-30px; transform:translateY(-50%) rotate(180deg); }
+
+.firma-tricolor{ display:flex; gap:7px; margin-top:2.2rem; }
+.firma-tricolor.centro{ justify-content:center; }
+.firma-tricolor span{ height:3px; border-radius:2px; }
+.firma-tricolor span:nth-child(1){ width:66px; background:var(--amarillo); }
+.firma-tricolor span:nth-child(2){ width:42px; background:var(--azul); }
+.firma-tricolor span:nth-child(3){ width:26px; background:var(--rojo); }
+
+.hero-sub{
+  margin-top:1.8rem; max-width:56ch;
+  font-weight:300; font-size:1.02rem; line-height:1.8;
+  color:var(--texto-suave);
+}
+.hero-sub.centro{ margin-inline:auto; }
+.hero-sub strong{ font-weight:600; color:var(--crema); }
+
+.hero-acciones{ margin-top:2.4rem; display:flex; align-items:center; gap:2rem; flex-wrap:wrap; }
+.hero-acciones.centro{ justify-content:center; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:12px;
+  padding:1rem 1.9rem;
+  border:1px solid var(--oro);
+  color:var(--oro);
+  font-weight:600; font-size:.74rem;
+  letter-spacing:.24em; text-transform:uppercase;
+  background:transparent; cursor:pointer;
+  transition:background .4s ease, color .4s ease, transform .4s var(--vel);
+}
+.btn i{ font-size:.7rem; transition:transform .4s var(--vel); }
+.btn:hover{ background:var(--oro); color:var(--negro); transform:translateY(-3px); }
+.btn:hover i{ transform:translateY(3px); }
+
+.link-linea{
+  position:relative; display:inline-block;
+  font-weight:600; font-size:.72rem;
+  letter-spacing:.24em; text-transform:uppercase;
+  color:var(--texto-suave); padding-bottom:.35rem;
+  transition:color .3s ease; text-align:center;
+}
+.link-linea::after{
+  content:''; position:absolute; left:0; bottom:0;
+  width:100%; height:1px; background:var(--oro);
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .45s var(--vel);
+}
+.link-linea:hover{ color:var(--oro); }
+.link-linea:hover::after{ transform:scaleX(1); }
+
+.hero-meta{
+  position:absolute; bottom:0; left:0; right:0;
+  display:flex; justify-content:center; flex-wrap:wrap;
+  gap:0; padding:1.15rem var(--pad) 1.35rem;
+  border-top:1px solid rgba(200,164,92,.18);
+}
+.hero-meta > div{
+  display:flex; flex-direction:column; gap:.35rem;
+  padding:0 2.2rem;
+}
+.hero-meta > div + div{ border-left:1px solid rgba(200,164,92,.22); }
+.hero-meta strong{
+  font-weight:600; font-size:.56rem;
+  letter-spacing:.26em; text-transform:uppercase;
+  color:var(--oro);
+}
+.hero-meta span{ font-weight:300; font-size:.74rem; color:var(--texto-suave); }
+
+/* ================= BALANZA ================= */
+
+.hero-3d{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  margin-top:clamp(1.2rem, 3vh, 2.4rem);
+}
+
+.escena{
+  position:relative;
+  width:400px; height:470px;
+  perspective:1100px;
+  transform:scale(.82);
+  margin-bottom:-82px;
+}
+
+.balanza{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  animation:girar 28s linear infinite;
+}
+@keyframes girar{
+  from{ transform:rotateY(0deg); }
+  to{ transform:rotateY(360deg); }
+}
+
+.b-anillo{
+  position:absolute; left:50%; top:420px;
+  width:330px; height:330px; border-radius:50%;
+  border:1px dashed rgba(200,164,92,.3);
+  transform:translate(-50%,-50%) rotateX(75deg);
+  animation:girar-anillo-s 46s linear infinite;
+}
+@keyframes girar-anillo-s{
+  from{ transform:translate(-50%,-50%) rotateX(75deg) rotateZ(0deg); }
+  to{ transform:translate(-50%,-50%) rotateX(75deg) rotateZ(360deg); }
+}
+
+.b-base{
+  position:absolute; left:50%; top:414px;
+  width:230px; height:230px; border-radius:50%;
+  border:1px solid rgba(200,164,92,.55);
+  background:radial-gradient(closest-side, rgba(200,164,92,.16), rgba(200,164,92,.03) 68%, transparent 72%);
+  transform:translate(-50%,-50%) rotateX(75deg);
+}
+
+.b-poste{
+  position:absolute; left:50%; top:96px;
+  width:7px; height:316px; margin-left:-3.5px;
+  transform-style:preserve-3d;
+}
+.pcara{
+  position:absolute; left:0; top:0;
+  width:7px; height:316px; border-radius:4px;
+  background:linear-gradient(180deg, #dcb872, #8f7239 50%, #b99a55);
+}
+.pcara.b{
+  transform:rotateY(90deg);
+  background:linear-gradient(180deg, #a8874a, #5e4a24 50%, #8a6f3d);
+}
+
+.b-esfera{
+  position:absolute; left:50%; top:70px;
+  width:22px; height:22px; margin-left:-11px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #f0dda5, #a8874a 55%, #6b5326 88%);
+}
+.b-aguja{
+  position:absolute; left:50%; top:44px;
+  width:1.5px; height:28px; margin-left:-.75px;
+  background:linear-gradient(180deg, rgba(200,164,92,.2), var(--oro));
+}
+
+.b-brazo-wrap{
+  position:absolute; left:50%; top:84px;
+  width:300px; height:8px; margin-left:-150px;
+  transform-style:preserve-3d;
+}
+.b-brazo{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  transform-origin:50% 50%;
+  animation:oscilar 7.5s ease-in-out infinite alternate;
+}
+@keyframes oscilar{
+  from{ transform:rotateZ(-5deg); }
+  to{ transform:rotateZ(5deg); }
+}
+.bcara{
+  position:absolute; inset:0; border-radius:4px;
+  background:linear-gradient(90deg, #a8874a, #e6cc8e 50%, #a8874a);
+}
+.bcara.b{
+  transform:rotateY(90deg);
+  background:linear-gradient(180deg, #8a6f3d, #6b5326);
+}
+
+.plata{
+  position:absolute; top:4px; width:0; height:0;
+  transform-style:preserve-3d;
+  animation:contraoscilar 7.5s ease-in-out infinite alternate;
+}
+@keyframes contraoscilar{
+  from{ transform:rotateZ(5deg); }
+  to{ transform:rotateZ(-5deg); }
+}
+.plata.izq{ left:0; }
+.plata.der{ left:300px; }
+
+.cable{
+  position:absolute; top:0; left:-1px;
+  width:2px; height:150px;
+  transform-origin:top center;
+  background:linear-gradient(180deg, rgba(212,181,120,.9), rgba(212,181,120,.22));
+}
+.cable.c1{ transform:rotateZ(17deg); }
+.cable.c2{ transform:rotateZ(-17deg); }
+
+.plato{
+  position:absolute; top:88px; left:-63px;
+  width:126px; height:126px; border-radius:50%;
+  border:1.5px solid rgba(212,181,120,.75);
+  background:radial-gradient(closest-side, rgba(200,164,92,.16), rgba(200,164,92,.04) 62%, transparent 72%);
+  transform:rotateX(90deg);
+}
+.plato::after{
+  content:''; position:absolute; inset:20px;
+  border-radius:50%;
+  border:1px solid rgba(212,181,120,.3);
+}
+.objeto{
+  position:absolute; top:140px; left:-17px;
+  width:34px; height:10px; border-radius:2px;
+  transform:rotateX(90deg);
+  background:rgba(200,164,92,.45);
+  border:1px solid rgba(212,181,120,.85);
+}
+
+.escena-frase{
+  margin-top:1rem; text-align:center;
+  font-weight:300; font-style:italic;
+  font-size:.9rem; letter-spacing:.06em;
+  color:var(--oro);
+}
+.escena-frase small{
+  display:block; margin-top:.4rem;
+  font-style:normal; font-weight:300;
+  font-size:.6rem; letter-spacing:.2em;
+  color:var(--texto-tenue); text-transform:uppercase;
+}
+
+/* Responsive para el Hero */
+@media (max-width: 1200px){
+  .p-escala{ transform:scale(.85); }
+}
+
+@media (max-width: 940px){
+  .pilar{ display:none; }
+  .escena{ transform:scale(.68); margin-bottom:-148px; }
+  .hero{ padding-bottom:150px; }
+}
+
+@media (max-width: 720px){
+  .hero-meta{
+    position:static;
+    flex-direction:column; gap:1.1rem; align-items:center;
+    margin-top:1.8rem; padding:1.4rem var(--pad);
+  }
+  .hero-meta > div{ align-items:center; padding:0; }
+  .hero-meta > div + div{ border-left:none; }
+  .hero{ padding-bottom:0; }
+  .escena-frase{ display:none; }
+}
+
+@media (max-width: 480px){
+  .escena{ transform:scale(.56); margin-bottom:-200px; }
+  .hero-3d{ margin-top:.5rem; }
+  .hero-acciones{ flex-direction: column; width: 100%; gap:1.2rem; }
+  .btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+
+<body>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="hero-centro">
+      <p class="kicker centro">Recurso contencioso administrativo de nulidad</p>
+      <div class="hero-titular">
+        <div class="hero-anillos" aria-hidden="true">
+          <span class="anillo a3"></span>
+          <span class="anillo a1"></span>
+          <span class="anillo a2"></span>
+        </div>
+        <span class="hero-luz" aria-hidden="true"></span>
+        <div class="pilar p-izq" aria-hidden="true">
+          <div class="p-escala">
+            <div class="pilar-3d">
+              <span class="p-aguja"></span>
+              <span class="p-punta"></span>
+              <span class="p-corona"></span>
+              <div class="p-fuste">
+                <span class="fca"></span>
+                <span class="fcb"></span>
+              </div>
+              <span class="p-collar c1"></span>
+              <span class="p-collar c2"></span>
+              <div class="p-pedestal">
+                <span class="pda"></span>
+                <span class="pdb"></span>
+              </div>
+              <div class="p-zoclo">
+                <span class="pza"></span>
+                <span class="pzb"></span>
+              </div>
+              <span class="p-anillo"></span>
+            </div>
+            <span class="p-orbita o1"></span>
+            <span class="p-orbita o2"></span>
+            <span class="p-conector"></span>
+            <span class="p-vtext">Sala Político-Administrativa · MMXXV</span>
+          </div>
+        </div>
+
+        <div class="pilar p-der" aria-hidden="true">
+          <div class="p-escala">
+            <div class="pilar-3d">
+              <span class="p-aguja"></span>
+              <span class="p-punta"></span>
+              <span class="p-corona"></span>
+              <div class="p-fuste">
+                <span class="fca"></span>
+                <span class="fcb"></span>
+              </div>
+              <span class="p-collar c1"></span>
+              <span class="p-collar c2"></span>
+              <div class="p-pedestal">
+                <span class="pda"></span>
+                <span class="pdb"></span>
+              </div>
+              <div class="p-zoclo">
+                <span class="pza"></span>
+                <span class="pzb"></span>
+              </div>
+              <span class="p-anillo"></span>
+            </div>
+            <span class="p-orbita o1"></span>
+            <span class="p-orbita o2"></span>
+            <span class="p-conector"></span>
+            <span class="p-vtext">República Bolivariana de Venezuela</span>
+          </div>
+        </div>
+
+        <h1>
+          RCTV
+          <span class="vs">vs.</span>
+          PODER<br>EJECUTIVO
+        </h1>
+      </div>
+
+      <div class="firma-tricolor centro" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+
+      <p class="hero-sub centro">
+        Caracas, 2007. Una concesión que no se renueva, un recurso que no se rinde
+        y un país entero mirando hacia la Sala. Bienvenido al expediente más discutido
+        del <strong>derecho administrativo venezolano</strong>.
+      </p>
+
+      <div class="hero-acciones centro">
+        <a class="btn" href="#caso">Sustanciar el caso <i class="fa-solid fa-arrow-down"></i></a>
+        <a class="link-linea" href="#cronologia">Ver cronología</a>
+      </div>
+    </div>
+
+    <div class="hero-3d">
+      <div class="escena">
+        <div class="balanza">
+          <div class="b-anillo"></div>
+          <div class="b-base"></div>
+          <div class="b-poste">
+            <div class="pcara a"></div>
+            <div class="pcara b"></div>
+          </div>
+          <div class="b-aguja"></div>
+          <div class="b-esfera"></div>
+          <div class="b-brazo-wrap">
+            <div class="b-brazo">
+              <div class="bcara a"></div>
+              <div class="bcara b"></div>
+              <div class="plata izq">
+                <div class="cable c1"></div>
+                <div class="cable c2"></div>
+                <div class="plato"></div>
+              </div>
+              <div class="plata der">
+                <div class="cable c1"></div>
+                <div class="cable c2"></div>
+                <div class="plato"></div>
+                <div class="objeto"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="escena-frase">
+        «Fiat justitia, ruat caelum»
+        <small>Hágase justicia aunque caiga el cielo</small>
+      </p>
+    </div>
+
+    <div class="hero-meta">
+      <div>
+        <strong>Expediente</strong>
+        <span>N.º 2007 · Sala Político-Administrativa</span>
+      </div>
+      <div>
+        <strong>Sede</strong>
+        <span>Caracas — Venezuela</span>
+      </div>
+      <div>
+        <strong>Carácter</strong>
+        <span>Caso académico · alta controversia</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
+</body>
+</html>
+</body>
+</html>
+</body>
+</html>
+</body>
+</html>
+</body>
+</html>
