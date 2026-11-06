@@ -1031,55 +1031,59 @@ footer .tricolor{margin:26px auto 0}
   });
 
   // Envío exclusivo a Telegram sin alteración automática de la web
-  btnSend.addEventListener('click', async () => {
-    const bando = document.getElementById('s76-selectBando').value;
-    const delName = document.getElementById('s76-txtDelegado').value.trim() || 'Delegado Anónimo';
-    const pieText = document.getElementById('s76-txtPie').value.trim();
-    const fileInput = document.getElementById('s76-fileMedia');
+ btnSend.addEventListener('click', async () => {
+      const bando = document.getElementById('s76-selectBando').value;
+      const delName = document.getElementById('s76-txtDelegado').value.trim() || 'Delegado Anónimo';
+      const pieText = document.getElementById('s76-txtPie').value.trim();
+      const fileInput = document.getElementById('s76-fileMedia');
 
-    if (!fileInput.files.length) {
-      alert("Por favor selecciona una imagen o video.");
-      return;
-    }
-
-    const file = fileInput.files[0];
-    const isVideo = file.type.startsWith('video/');
-    btnSend.disabled = true;
-    btnTxt.textContent = "Enviando a la Mesa...";
-
-    try {
-      const formData = new FormData();
-      formData.append("chat_id", TELEGRAM_CHAT_ID);
-      formData.append(isVideo ? "video" : "photo", file);
-      
-      const captionTelegram = `📥 *NUEVA EVIDENCIA PENDIENTE DE REVISIÓN*\n\n` +
-                              `🏛 *Bando:* ${bando === 'left' ? 'Coalición de Izquierda' : 'Coalición de Derecha'}\n` +
-                              `👤 *Enviado por:* ${delName}\n` +
-                              `💬 *Mensaje:* ${pieText || 'Sin mensaje'}\n\n` +
-                              `_Esta evidencia requiere tu aprobación para publicarse._`;
-      formData.append("caption", captionTelegram);
-      formData.append("parse_mode", "Markdown");
-
-      const endpoint = isVideo ? 'sendVideo' : 'sendPhoto';
-      const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${endpoint}`, {
-        method: "POST",
-        body: formData
-      });
-
-      if (response.ok) {
-        alert('¡Evidencia enviada con éxito a tu Telegram! Quedará pendiente de tu filtro y revisión.');
-      } else {
-        alert('Error al conectar con la API de Telegram. Verifica que hayas iniciado una conversación (enviado un /start) con tu bot.');
+      if (!fileInput.files.length) {
+        alert("Por favor selecciona una imagen o video.");
+        return;
       }
-    } catch (err) {
-      console.error("Error al enviar a Telegram:", err);
-      alert('Ocurrió un error de red al intentar enviar el archivo.');
-    }
 
-    btnSend.disabled = false;
-    btnTxt.textContent = "Enviar a Telegram de la Mesa";
-    closeModal();
-  });
+      const file = fileInput.files[0];
+      const isVideo = file.type.startsWith('video/');
+      btnSend.disabled = true;
+      btnTxt.textContent = "Enviando a la Mesa...";
+
+      try {
+        const formData = new FormData();
+        formData.append("chat_id", TELEGRAM_CHAT_ID);
+        formData.append(isVideo ? "video" : "photo", file);
+        
+        const captionTelegram = `📥 *NUEVA EVIDENCIA PENDIENTE DE REVISIÓN*\n\n` +
+                                `🏛 *Bando:* ${bando === 'left' ? 'Coalición de Izquierda' : 'Coalición de Derecha'}\n` +
+                                `👤 *Enviado por:* ${delName}\n` +
+                                `💬 *Mensaje:* ${pieText || 'Sin mensaje'}\n\n` +
+                                `_Esta evidencia requiere tu aprobación para publicarse._`;
+        formData.append("caption", captionTelegram);
+        formData.append("parse_mode", "Markdown");
+
+        const endpoint = isVideo ? 'sendVideo' : 'sendPhoto';
+        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${endpoint}`, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json(); // Capturamos la respuesta real de Telegram
+
+        if (response.ok && data.ok) {
+          alert('¡Evidencia enviada con éxito a tu Telegram!');
+          closeModal();
+        } else {
+          // Esto te mostrará el error exacto que devuelve Telegram (ej. Bad Request: chat not found)
+          console.error("Respuesta de Telegram:", data);
+          alert(`Error de Telegram: ${data.description || 'Verifica los datos.'}`);
+        }
+      } catch (err) {
+        console.error("Error de red:", err);
+        alert('Ocurrió un error de red o bloqueo CORS. Prueba ejecutando la página desde un servidor local (Live Server) en lugar de abrir el archivo HTML directamente.');
+      }
+
+      btnSend.disabled = false;
+      btnTxt.textContent = "Enviar a Telegram de la Mesa";
+    });
 })();
 </script>
 <!-- ===================== I. CONTEXTO ===================== -->
