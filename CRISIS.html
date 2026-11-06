@@ -804,7 +804,327 @@ footer .tricolor{margin:26px auto 0}
 </header>
 
 <main>
+<!-- ============================================================
+   SECCIÓN 76 — MURAL DE CAMPAÑA & DESPACHO DE MEDIOS DE CRISIS
+   ============================================================ -->
+<style>
+  /* Estilos encapsulados para la Sección 76 */
+  #sec-76-prensa {
+    position: relative;
+    z-index: 10;
+    padding: 80px 0;
+    background: rgba(10, 8, 6, 0.6);
+    border-top: 1px solid var(--gold-dim, rgba(200,162,74,.32));
+    border-bottom: 1px solid var(--gold-dim, rgba(200,162,74,.32));
+  }
+  .s76-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .s76-card {
+    background: var(--paper2, #f2ecdc);
+    color: var(--paper-ink, #1d1810);
+    padding: 20px 18px 16px;
+    border: 2px solid var(--gold-dim, rgba(200,162,74,.32));
+    box-shadow: 6px 10px 0 rgba(24,18,10,.16);
+    position: relative;
+    transition: transform 0.4s ease, border-color 0.4s ease;
+  }
+  .s76-card:hover { transform: translateY(-4px); }
+  .s76-card.s76-left { border-color: var(--side-l, #d5382c); }
+  .s76-card.s76-right { border-color: var(--side-r, #4e78e6); }
+  .s76-card media-container { display: block; width: 100%; }
+  .s76-card img, .s76-card video {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border: 1px solid rgba(24,18,10,.2);
+    display: block;
+  }
+  .s76-badge {
+    font: 700 9px/1 var(--font-mono, monospace);
+    letter-spacing: .2em;
+    padding: 5px 8px;
+    margin-top: 12px;
+    display: inline-block;
+  }
+  .s76-badge.left { background: var(--side-l, #d5382c); color: #fff; }
+  .s76-badge.right { background: var(--side-r, #4e78e6); color: #fff; }
+  .s76-caption {
+    font: italic 500 14px/1.5 var(--font-serif, Georgia, serif);
+    color: #1d1810;
+    margin-top: 8px;
+  }
+  .s76-meta {
+    font: 600 9px/1 var(--font-mono, monospace);
+    letter-spacing: .18em;
+    color: var(--paper-muted, #5b5140);
+    margin-top: 10px;
+    border-top: 1px dashed rgba(24,18,10,.25);
+    padding-top: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
 
+  /* Modal de Envíos */
+  #s76-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #s76-modal.show { display: flex; }
+  .s76-modal-box {
+    background: var(--bg2, #14110c);
+    border: 1px solid var(--gold, #c8a24a);
+    max-width: 480px;
+    width: 100%;
+    padding: 32px 26px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,.9);
+  }
+  .s76-field { margin-bottom: 16px; }
+  .s76-field label {
+    display: block;
+    font: 600 10px/1 var(--font-mono, monospace);
+    letter-spacing: .2em;
+    color: var(--muted, #a3987f);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .s76-field input, .s76-field select, .s76-field textarea {
+    width: 100%;
+    background: #0d0b08;
+    border: 1px solid var(--gold-dim, rgba(200,162,74,.32));
+    color: var(--bone, #efe7d6);
+    padding: 10px 12px;
+    font: 400 12px/1.4 var(--font-mono, monospace);
+  }
+  .s76-field input:focus, .s76-field select:focus, .s76-field textarea:focus {
+    outline: none;
+    border-color: var(--accent, #c8a24a);
+  }
+</style>
+
+<section id="sec-76-prensa">
+  <div class="wrap">
+    <p class="kicker">SECCIÓN 76 · DESPACHO DE GUERRA & PROPAGANDA ELECTORAL</p>
+    <h2 class="sec-title"><em>76.</em> El Mural de <em>Movilización</em></h2>
+    <div class="rule"></div>
+    <p class="sec-sub">Espacio exclusivo para delegados acreditados del comité de Crisis. Publica evidencia fotográfica o audiovisual en defensa de tu bando.</p>
+
+    <div style="margin-top: 28px; text-align: center;">
+      <button id="s76-btnOpen" class="btn solid" type="button">
+        <span class="wipe"></span>
+        <i data-lucide="camera"></i>
+        <span>Publicar Evidencia / Propaganda</span>
+      </button>
+    </div>
+
+    <!-- Módulo donde se muestran las imágenes subidas en la web -->
+    <div id="s76-muralGrid" class="s76-grid">
+      <!-- Ejemplo estático de muestra -->
+      <div class="s76-card s76-left">
+        <div class="tape"></div>
+        <img src="https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?auto=format&fit=crop&w=600&q=80" alt="Mitin de campaña">
+        <span class="s76-badge left">COALICIÓN DE IZQUIERDA</span>
+        <p class="s76-caption">«Cierre de campaña en la plaza principal. La masa no se rinde ante la desinformación.»</p>
+        <div class="s76-meta"><span>DELEGACIÓN 04</span><span>VERIFICADO · CRISIS</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL DE VERIFICACIÓN Y PUBLICACIÓN -->
+<div id="s76-modal" role="dialog" aria-modal="true">
+  <div class="s76-modal-box">
+    <button id="s76-btnClose" type="button" style="position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer;">✕</button>
+
+    <!-- PASO 1: VALIDACIÓN DE CREDENCIAL -->
+    <div id="s76-stepPass">
+      <p class="kicker" style="margin-bottom:6px;">ACCESO RESTRINGIDO</p>
+      <h3 style="font: 600 1.4rem var(--font-serif); color: var(--bone);">Ingresa tu Clave de Delegado</h3>
+      <p style="font-size:12px; color:var(--muted); margin: 10px 0 20px;">Solo los delegados con la clave oficial concedida por la Mesa Directiva pueden emitir publicaciones.</p>
+
+      <div class="s76-field">
+        <label for="s76-passInput">CLAVE PRIVADA DE CRISIS</label>
+        <input type="password" id="s76-passInput" placeholder="Ej: CRISIS2026">
+      </div>
+      <button id="s76-btnVerify" class="btn solid" style="width:100%; justify-content:center;" type="button">
+        <span class="wipe"></span><span>Verificar Credencial</span>
+      </button>
+      <p id="s76-passErr" style="color:var(--danger, #a41e22); font:600 11px var(--font-mono); margin-top:10px; display:none;">Clave inválida. Acceso denegado.</p>
+    </div>
+
+    <!-- PASO 2: FORMULARIO DE ENVÍO -->
+    <div id="s76-stepForm" style="display:none;">
+      <p class="kicker" style="margin-bottom:6px;">EMISIÓN OFICIAL DE CRISIS</p>
+      <h3 style="font: 600 1.3rem var(--font-serif); color: var(--bone); margin-bottom:16px;">Sube tu Foto o Video</h3>
+
+      <div class="s76-field">
+        <label for="s76-selectBando">BANDO AL QUE REPRESENTAS</label>
+        <select id="s76-selectBando">
+          <option value="left">Coalición de Izquierda (Pacto por la Transformación)</option>
+          <option value="right">Coalición de Derecha (Frente Horizonte)</option>
+        </select>
+      </div>
+
+      <div class="s76-field">
+        <label for="s76-txtDelegado">NÚMERO DE CURUL O DELEGACIÓN</label>
+        <input type="text" id="s76-txtDelegado" placeholder="Ej: Delegación de Bogotá / Curul 012">
+      </div>
+
+      <div class="s76-field">
+        <label for="s76-txtPie">DESCRIPCIÓN / CONSIGNA POLÍTICA</label>
+        <textarea id="s76-txtPie" rows="3" placeholder="Escribe el pie de foto o comunicado..."></textarea>
+      </div>
+
+      <div class="s76-field">
+        <label for="s76-fileMedia">SELECCIONA FOTO O VIDEO (MÁX 20MB)</label>
+        <input type="file" id="s76-fileMedia" accept="image/*,video/*">
+      </div>
+
+      <button id="s76-btnSend" class="btn solid" style="width:100%; justify-content:center;" type="button">
+        <span class="wipe"></span><span id="s76-btnTxt">Publicar y Transmitir a la Mesa</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // -------------------------------------------------------------
+  // CONFIGURACIÓN CENTRAL DE CRISIS
+  // -------------------------------------------------------------
+  const CLAVE_DELEGADO_CRISIS = "CRISIS2026"; // Cambia esta clave si deseas
+  const TELEGRAM_BOT_TOKEN = "8935617039:AAFYLiQZdIePul8cHwJJx1G5w2KIAKjL_f8"; // Pega aquí el token que te dé BotFather
+  const TELEGRAM_CHAT_ID = "6950500589";     // Pega aquí tu ID numérico de Telegram
+
+  // Elementos DOM
+  const modal = document.getElementById('s76-modal');
+  const btnOpen = document.getElementById('s76-btnOpen');
+  const btnClose = document.getElementById('s76-btnClose');
+  const stepPass = document.getElementById('s76-stepPass');
+  const stepForm = document.getElementById('s76-stepForm');
+  const passInput = document.getElementById('s76-passInput');
+  const passErr = document.getElementById('s76-passErr');
+  const btnVerify = document.getElementById('s76-btnVerify');
+  const btnSend = document.getElementById('s76-btnSend');
+  const btnTxt = document.getElementById('s76-btnTxt');
+  const muralGrid = document.getElementById('s76-muralGrid');
+
+  // Abrir y cerrar modal
+  btnOpen.addEventListener('click', () => modal.classList.add('show'));
+  btnClose.addEventListener('click', closeModal);
+
+  function closeModal() {
+    modal.classList.remove('show');
+    stepPass.style.display = 'block';
+    stepForm.style.display = 'none';
+    passInput.value = '';
+    passErr.style.display = 'none';
+  }
+
+  // 1. Verificación de clave
+  btnVerify.addEventListener('click', () => {
+    if (passInput.value.trim() === CLAVE_DELEGADO_CRISIS) {
+      stepPass.style.display = 'none';
+      stepForm.style.display = 'block';
+    } else {
+      passErr.style.display = 'block';
+    }
+  });
+
+  // 2. Procesar y publicar foto/video + Envío a Telegram
+  btnSend.addEventListener('click', async () => {
+    const bando = document.getElementById('s76-selectBando').value;
+    const delName = document.getElementById('s76-txtDelegado').value.trim() || 'Delegado de Crisis';
+    const pieText = document.getElementById('s76-txtPie').value.trim();
+    const fileInput = document.getElementById('s76-fileMedia');
+
+    if (!fileInput.files.length) {
+      alert("Por favor selecciona una imagen o un video.");
+      return;
+    }
+
+    const file = fileInput.files[0];
+    const isVideo = file.type.startsWith('video/');
+    btnSend.disabled = true;
+    btnTxt.textContent = "Transmitiendo...";
+
+    // A) Mostrar localmente en la web para la sesión del delegado
+    const localUrl = URL.createObjectURL(file);
+    renderCardInGrid(bando, delName, pieText, localUrl, isVideo);
+
+    // B) Enviar directamente a tu Telegram personal
+    if (TELEGRAM_BOT_TOKEN !== "8935617039:AAFYLiQZdIePul8cHwJJx1G5w2KIAKjL_f8" && TELEGRAM_CHAT_ID !== "6950500589") {
+      try {
+        const formData = new FormData();
+        formData.append("chat_id", TELEGRAM_CHAT_ID);
+        formData.append(isVideo ? "video" : "photo", file);
+        
+        const captionTelegram = `🚨 *NUEVA EVIDENCIA DE CRISIS (SECCIÓN 76)*\n\n` +
+                                `🏛 *Bando:* ${bando === 'left' ? 'Coalición de Izquierda' : 'Coalición de Derecha'}\n` +
+                                `👤 *Origen:* ${delName}\n` +
+                                `💬 *Mensaje:* ${pieText || 'Sin mensaje'}`;
+        formData.append("caption", captionTelegram);
+        formData.append("parse_mode", "Markdown");
+
+        const endpoint = isVideo ? 'sendVideo' : 'sendPhoto';
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${endpoint}`, {
+          method: "POST",
+          body: formData
+        });
+
+        if (typeof window.toast === 'function') {
+          window.toast('Evidencia publicada y enviada a la Mesa Directiva.');
+        } else {
+          alert('¡Publicación realizada y transmitida con éxito!');
+        }
+      } catch (err) {
+        console.error("Error al enviar a Telegram:", err);
+      }
+    } else {
+      alert('Publicado localmente. (Configura el TOKEN de Telegram para recibirlo en tu teléfono).');
+    }
+
+    btnSend.disabled = false;
+    btnTxt.textContent = "Publicar y Transmitir a la Mesa";
+    closeModal();
+  });
+
+  // Función para insertar la tarjeta en la galería de la web
+  function renderCardInGrid(bando, del, pie, mediaUrl, isVideo) {
+    const isLeft = bando === 'left';
+    const card = document.createElement('div');
+    card.className = `s76-card ${isLeft ? 's76-left' : 's76-right'}`;
+    
+    const mediaHTML = isVideo 
+      ? `<video src="${mediaUrl}" controls></video>`
+      : `<img src="${mediaUrl}" alt="Evidencia">`;
+
+    card.innerHTML = `
+      <div class="tape"></div>
+      ${mediaHTML}
+      <span class="s76-badge ${isLeft ? 'left' : 'right'}">${isLeft ? 'COALICIÓN DE IZQUIERDA' : 'COALICIÓN DE DERECHA'}</span>
+      <p class="s76-caption">«${pie}»</p>
+      <div class="s76-meta"><span>${del.toUpperCase()}</span><span>DESPACHO VERIFICADO</span></div>
+    `;
+
+    muralGrid.prepend(card);
+    if (window.lucide) lucide.createIcons();
+  }
+})();
+</script>
 <!-- ===================== I. CONTEXTO ===================== -->
 <section id="contexto">
   <div class="wrap">
