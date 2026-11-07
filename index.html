@@ -306,8 +306,11 @@
                         </div>
                     </div>
                 </section>
+
+
             );
         };
+        
         // ═══ COMPONENTE 1: EL MANIFIESTO ═══
         const TheManifesto = () => {
             return (
@@ -338,9 +341,200 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- ============================================================
+   SECCIÓN DE ENVÍO DE FOTOS A TELEGRAM (MINIMALISTA Y LIBRE)
+   ============================================================ -->
+<style>
+  #sec-telegram-envio {
+    position: relative;
+    z-index: 10;
+    padding: 80px 0;
+    background: rgba(10, 8, 6, 0.6);
+    border-top: 1px solid var(--gold-dim, rgba(200,162,74,.32));
+    border-bottom: 1px solid var(--gold-dim, rgba(200,162,74,.32));
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .stg-wrap {
+    width: min(900px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+  .stg-card {
+    background: #14110c;
+    border: 1px solid rgba(200, 162, 74, 0.32);
+    padding: 36px 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  }
+  .stg-field {
+    margin-bottom: 20px;
+  }
+  .stg-field label {
+    display: block;
+    font: 600 10px/1 'Space Grotesk', monospace;
+    letter-spacing: .2em;
+    color: #a3987f;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .stg-field input, .stg-field select, .stg-field textarea {
+    width: 100%;
+    background: #0d0b08;
+    border: 1px solid rgba(200, 162, 74, 0.32);
+    color: #efe7d6;
+    padding: 12px 14px;
+    font: 400 13px/1.4 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+  }
+  .stg-field input:focus, .stg-field select:focus, .stg-field textarea:focus {
+    border-color: #c8a24a;
+  }
+  .stg-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 24px;
+    background: #efe7d6;
+    color: #0d0b08;
+    font: 700 11px/1 'Space Grotesk', monospace;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+  .stg-btn:hover {
+    background: #c8a24a;
+  }
+</style>
+
+<section id="sec-telegram-envio">
+  <div class="stg-wrap">
+    <div style="text-align: center; margin-bottom: 36px;">
+      <span style="font: 600 11px 'Space Grotesk', monospace; letter-spacing: .3em; color: #c8a24a; text-transform: uppercase; display: block; margin-bottom: 8px;">Participación Ciudadana y Delegados</span>
+      <h2 style="font: 400 clamp(2rem, 3.5vw, 2.8rem)/1.1 'Instrument Serif', Georgia, serif; color: #fafafa; margin: 0;">Pasa tu foto para la <span style="font-style: italic; color: #c8a24a;">Web</span></h2>
+      <p style="color: #a3987f; font-size: 14px; margin-top: 10px;">Sube tu registro visual o evidencia de campaña de forma completamente libre para su posterior publicación.</p>
+    </div>
+
+    <div class="stg-card">
+      <form id="stgForm">
+        <div class="stg-field">
+          <label for="stgBando">Bando o Afiliación</label>
+          <select id="stgBando">
+            <option value="Coalición de Izquierda">Coalición de Izquierda</option>
+            <option value="Coalición de Derecha">Coalición de Derecha</option>
+            <option value="Independiente / Prensa">Independiente / Prensa / Ciudadanía</option>
+          </select>
+        </div>
+
+        <div class="stg-field">
+          <label for="stgNombre">Tu Nombre o Delegación</label>
+          <input type="text" id="stgNombre" placeholder="Ej. Delegación Curul 12 o Ciudadano Anónimo" required>
+        </div>
+
+        <div class="stg-field">
+          <label for="stgMensaje">Descripción o Mensaje (Opcional)</label>
+          <textarea id="stgMensaje" rows="3" placeholder="Contexto de la foto o mensaje que deseas enviar..."></textarea>
+        </div>
+
+        <div class="stg-field">
+          <label for="stgArchivo">Seleccionar Foto o Video</label>
+          <input type="file" id="stgArchivo" accept="image/*,video/*" required>
+        </div>
+
+        <button type="submit" id="stgBtnSubmit" class="stg-btn">
+          <span id="stgBtnTxt">Enviar archivo a Telegram</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  'use strict';
+  // Lógica de envío a Telegram integrada y aislada
+  const TELEGRAM_BOT_TOKEN = "8935617039:AAFYLiQZdIePul8cHwJJx1G5w2KIAKjL_f8"; 
+  const TELEGRAM_CHAT_ID = "6950500589";     
+
+  const form = document.getElementById('stgForm');
+  const btnSubmit = document.getElementById('stgBtnSubmit');
+  const btnTxt = document.getElementById('stgBtnTxt');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const bando = document.getElementById('stgBando').value;
+    const nombre = document.getElementById('stgNombre').value.trim();
+    const mensaje = document.getElementById('stgMensaje').value.trim();
+    const archivoInput = document.getElementById('stgArchivo');
+
+    if (!archivoInput.files.length) {
+      alert("Por favor selecciona una imagen o video.");
+      return;
+    }
+
+    const file = archivoInput.files[0];
+    const isVideo = file.type.startsWith('video/');
+
+    btnSubmit.disabled = true;
+    btnTxt.textContent = "Transmitiendo a Telegram...";
+
+    try {
+      const formData = new FormData();
+      formData.append("chat_id", TELEGRAM_CHAT_ID);
+
+      let endpoint = 'sendDocument';
+      let fileField = 'document';
+
+      if (isVideo) {
+        endpoint = 'sendVideo';
+        fileField = 'video';
+      }
+
+      formData.append(fileField, file);
+
+      const captionTelegram = `🌐 *NUEVO ENVÍO LIBRE DESDE EL INDEX*\n\n` +
+                              `🏛 *Bando/Grupo:* ${bando}\n` +
+                              `👤 *Remitente:* ${nombre}\n` +
+                              `💬 *Mensaje:* ${mensaje || 'Sin descripción'}\n\n` +
+                              `_Enviado de forma libre desde la web principal._`;
+
+      formData.append("caption", captionTelegram);
+      formData.append("parse_mode", "Markdown");
+
+      const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${endpoint}`, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.ok) {
+        alert('¡Tu archivo ha sido enviado con éxito a Telegram!');
+        form.reset();
+      } else {
+        console.error("Error Telegram:", data);
+        alert(`No se pudo enviar: ${data.description || 'Verifica el archivo o formato.'}`);
+      }
+    } catch (err) {
+      console.error("Error de red:", err);
+      alert('Ocurrió un error de conexión al intentar enviar el archivo.');
+    }
+
+    btnSubmit.disabled = false;
+    btnTxt.textContent = "Enviar archivo a Telegram";
+  });
+})();
+</script>
             );
         };
+                
 
+        
         // ═══ COMPONENTE C: COMITÉS (Adaptado a Vertical en Móvil y Horizontal en Escritorio) ═══
         const CommitteesAccordion = () => {
             const [activeId, setActiveId] = useState(0);
