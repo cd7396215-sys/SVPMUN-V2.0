@@ -1109,7 +1109,7 @@ footer .tricolor{margin:26px auto 0}
     border-bottom: 1px solid rgba(200, 162, 74, 0.32);
   }
   .grafica-container {
-    width: min(1100px, calc(100% - 40px));
+    width: min(1150px, calc(100% - 40px));
     margin: 0 auto;
   }
   .grafica-title {
@@ -1129,7 +1129,7 @@ footer .tricolor{margin:26px auto 0}
     align-items: center;
     margin-top: 30px;
   }
-  @media (max-width: 900px) {
+  @media (max-width: 950px) {
     .charts-grid {
       grid-template-columns: 1fr;
     }
@@ -1181,41 +1181,32 @@ footer .tricolor{margin:26px auto 0}
     background: #d5382c;
   }
 
-  /* Estilos para el gráfico de torta/circular */
+  /* Gráfico circular/torta más grande y exclusivo para los 5 puestos */
   .pie-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
   }
   .pie-chart {
-    width: 190px;
-    height: 190px;
+    width: 240px;
+    height: 240px;
     border-radius: 50%;
-    /* Porcentajes acumulados convertidos a ángulos deg:
-       14.37% (0° -> 51.7°) -> #d5382c
-       11.98% (51.7° -> 74.8°) -> #4e78e6
-       9.58%  (74.8° -> 89.3°) -> #c8a24a
-       8.98%  (89.3° -> 101.6°) -> #e09f3e
-       8.98%  (101.6° -> 113.9°) -> #90be6d
-       Resto (56.09%) -> rgba(200,162,74,0.15)
-    */
     background: conic-gradient(
-      #d5382c 0deg 51.73deg,
-      #4e78e6 51.73deg 74.86deg,
-      #c8a24a 74.86deg 89.31deg,
-      #e09f3e 89.31deg 101.64deg,
-      #90be6d 101.64deg 113.97deg,
-      rgba(200, 162, 74, 0.15) 113.97deg 360deg
+      #d5382c 0deg 96deg,
+      #4e78e6 96deg 176deg,
+      #c8a24a 176deg 240deg,
+      #e09f3e 240deg 300deg,
+      #90be6d 300deg 360deg
     );
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    box-shadow: 0 0 25px rgba(0,0,0,0.7);
     border: 2px solid rgba(200, 162, 74, 0.4);
     position: relative;
   }
   .pie-chart::after {
     content: '';
     position: absolute;
-    inset: 45px;
+    inset: 65px;
     background: #14110c;
     border-radius: 50%;
     border: 1px solid rgba(200, 162, 74, 0.3);
@@ -1223,21 +1214,21 @@ footer .tricolor{margin:26px auto 0}
   .pie-legend {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: 0.1em;
     color: #a3987f;
   }
   .pie-leg-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   .pie-dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     flex: none;
   }
 </style>
@@ -1245,7 +1236,7 @@ footer .tricolor{margin:26px auto 0}
 <section class="grafica-seccion" id="resultadosDual">
   <div class="grafica-container">
     <p style="font: 600 11px monospace; letter-spacing: .3em; color: #c8a24a; margin-bottom: 8px; text-transform: uppercase;">Resultados Oficiales · Escrutinio Electoral</p>
-    <h2 class="grafica-title"><em>Análisis Gráfico:</em> Barras y Distribución</h2>
+    <h2 class="grafica-title"><em>Análisis Gráfico:</em> Barras y Distribución por Puestos</h2>
     <div style="height: 1px; background: rgba(200, 162, 74, 0.32); margin: 20px 0 30px;"></div>
 
     <div class="charts-grid">
@@ -1294,18 +1285,17 @@ footer .tricolor{margin:26px auto 0}
         </div>
       </div>
 
-      <!-- Gráfica Circular / Torta -->
+      <!-- Gráfica Circular / Torta (Solo los 5 puestos, más grande y sin sección de "otros") -->
       <div class="chart-box">
-        <h3>Gráfica Circular / Torta (Proporción Total)</h3>
+        <h3>Gráfica Circular / Torta (Proporción de los 5 Puestos)</h3>
         <div class="pie-wrapper">
-          <div class="pie-chart" aria-label="Gráfica de torta de votaciones"></div>
+          <div class="pie-chart" aria-label="Gráfica de torta de los 5 puestos"></div>
           <div class="pie-legend">
             <div class="pie-leg-item"><span class="pie-dot" style="background:#d5382c"></span><span>1. Edison Mosquera (14.37%)</span></div>
             <div class="pie-leg-item"><span class="pie-dot" style="background:#4e78e6"></span><span>2. Abelardo de la Espriella (11.98%)</span></div>
             <div class="pie-leg-item"><span class="pie-dot" style="background:#c8a24a"></span><span>3. María Cabal (9.58%)</span></div>
             <div class="pie-leg-item"><span class="pie-dot" style="background:#e09f3e"></span><span>4. Cepeda (8.98%)</span></div>
-            <div class="pie-leg-item"><span class="pie-dot" style="background:#90be6d"></span><span>5. Gustavo Bolívar / A. Guerra (8.98%)</span></div>
-            <div class="pie-leg-item"><span class="pie-dot" style="background:rgba(200,162,74,0.3)"></span><span>Otros / Abstención (56.09%)</span></div>
+            <div class="pie-leg-item"><span class="pie-dot" style="background:#90be6d"></span><span>5. Gustavo Bolívar y A. Guerra (8.98%)</span></div>
           </div>
         </div>
       </div>
