@@ -1098,18 +1098,18 @@ footer .tricolor{margin:26px auto 0}
 </script>
 
 <style>
-  .grafica-resultados {
+  .grafica-seccion {
     position: relative;
     z-index: 10;
     padding: 70px 0;
-    background: rgba(13, 11, 8, 0.9);
+    background: rgba(13, 11, 8, 0.92);
     color: #efe7d6;
     font-family: 'Archivo', Verdana, sans-serif;
     border-top: 1px solid rgba(200, 162, 74, 0.32);
     border-bottom: 1px solid rgba(200, 162, 74, 0.32);
   }
   .grafica-container {
-    width: min(900px, calc(100% - 40px));
+    width: min(1100px, calc(100% - 40px));
     margin: 0 auto;
   }
   .grafica-title {
@@ -1122,25 +1122,52 @@ footer .tricolor{margin:26px auto 0}
     color: #c8a24a;
     font-style: italic;
   }
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+    align-items: center;
+    margin-top: 30px;
+  }
+  @media (max-width: 900px) {
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .chart-box {
+    background: rgba(20, 17, 12, 0.75);
+    border: 1px solid rgba(200, 162, 74, 0.32);
+    padding: 28px 24px;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.5);
+  }
+  .chart-box h3 {
+    font: 700 11px/1.5 'IBM Plex Mono', monospace;
+    letter-spacing: .24em;
+    color: #c8a24a;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(200, 162, 74, 0.2);
+    padding-bottom: 8px;
+  }
   .bar-item {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
   .bar-info {
     display: flex;
     justify-content: space-between;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    margin-bottom: 6px;
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    margin-bottom: 5px;
     color: #a3987f;
   }
   .bar-info b {
     color: #efe7d6;
   }
   .bar-track {
-    height: 14px;
+    height: 12px;
     background: rgba(200, 162, 74, 0.12);
-    border: 1px solid rgba(200, 162, 74, 0.32);
+    border: 1px solid rgba(200, 162, 74, 0.28);
     padding: 1px;
     overflow: hidden;
   }
@@ -1153,52 +1180,135 @@ footer .tricolor{margin:26px auto 0}
   .bar-fill.winner {
     background: #d5382c;
   }
+
+  /* Estilos para el gráfico de torta/circular */
+  .pie-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .pie-chart {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    /* Porcentajes acumulados convertidos a ángulos deg:
+       14.37% (0° -> 51.7°) -> #d5382c
+       11.98% (51.7° -> 74.8°) -> #4e78e6
+       9.58%  (74.8° -> 89.3°) -> #c8a24a
+       8.98%  (89.3° -> 101.6°) -> #e09f3e
+       8.98%  (101.6° -> 113.9°) -> #90be6d
+       Resto (56.09%) -> rgba(200,162,74,0.15)
+    */
+    background: conic-gradient(
+      #d5382c 0deg 51.73deg,
+      #4e78e6 51.73deg 74.86deg,
+      #c8a24a 74.86deg 89.31deg,
+      #e09f3e 89.31deg 101.64deg,
+      #90be6d 101.64deg 113.97deg,
+      rgba(200, 162, 74, 0.15) 113.97deg 360deg
+    );
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    border: 2px solid rgba(200, 162, 74, 0.4);
+    position: relative;
+  }
+  .pie-chart::after {
+    content: '';
+    position: absolute;
+    inset: 45px;
+    background: #14110c;
+    border-radius: 50%;
+    border: 1px solid rgba(200, 162, 74, 0.3);
+  }
+  .pie-legend {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: #a3987f;
+  }
+  .pie-leg-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pie-dot {
+    width: 10px;
+    height: 10px;
+    flex: none;
+  }
 </style>
 
-<section class="grafica-resultados" id="resultadosElectorales">
+<section class="grafica-seccion" id="resultadosDual">
   <div class="grafica-container">
-    <p style="font: 600 11px monospace; letter-spacing: .3em; color: #c8a24a; margin-bottom: 8px; text-transform: uppercase;">Resultados Oficiales · Escrutinio</p>
-    <h2 class="grafica-title"><em>Gráfica de</em> Votaciones y Porcentajes</h2>
+    <p style="font: 600 11px monospace; letter-spacing: .3em; color: #c8a24a; margin-bottom: 8px; text-transform: uppercase;">Resultados Oficiales · Escrutinio Electoral</p>
+    <h2 class="grafica-title"><em>Análisis Gráfico:</em> Barras y Distribución</h2>
     <div style="height: 1px; background: rgba(200, 162, 74, 0.32); margin: 20px 0 30px;"></div>
 
-    <div class="bar-item">
-      <div class="bar-info">
-        <span><b>1. Edison Mosquera</b> (Ganador)</span>
-        <span>24 votos — <b>14.37%</b></span>
-      </div>
-      <div class="bar-track"><div class="bar-fill winner" style="--w: 14.37%;"></div></div>
-    </div>
+    <div class="charts-grid">
+      <!-- Gráfica de Barras Horizontales -->
+      <div class="chart-box">
+        <h3>Gráfica de Barras Horizontales (Votos y Porcentajes)</h3>
 
-    <div class="bar-item">
-      <div class="bar-info">
-        <span><b>2. Abelardo de la Espriella</b> (2.° lugar)</span>
-        <span>20 votos — <b>11.98%</b></span>
-      </div>
-      <div class="bar-track"><div class="bar-fill" style="--w: 11.98%;"></div></div>
-    </div>
+        <div class="bar-item">
+          <div class="bar-info">
+            <span><b>1. Edison Mosquera</b> (Ganador)</span>
+            <span>24 votos — <b>14.37%</b></span>
+          </div>
+          <div class="bar-track"><div class="bar-fill winner" style="--w: 14.37%;"></div></div>
+        </div>
 
-    <div class="bar-item">
-      <div class="bar-info">
-        <span><b>3. María Cabal</b></span>
-        <span>16 votos — <b>9.58%</b></span>
-      </div>
-      <div class="bar-track"><div class="bar-fill" style="--w: 9.58%;"></div></div>
-    </div>
+        <div class="bar-item">
+          <div class="bar-info">
+            <span><b>2. Abelardo de la Espriella</b> (2.° lugar)</span>
+            <span>20 votos — <b>11.98%</b></span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="--w: 11.98%;"></div></div>
+        </div>
 
-    <div class="bar-item">
-      <div class="bar-info">
-        <span><b>4. Cepeda</b></span>
-        <span>15 votos — <b>8.98%</b></span>
-      </div>
-      <div class="bar-track"><div class="bar-fill" style="--w: 8.98%;"></div></div>
-    </div>
+        <div class="bar-item">
+          <div class="bar-info">
+            <span><b>3. María Cabal</b></span>
+            <span>16 votos — <b>9.58%</b></span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="--w: 9.58%;"></div></div>
+        </div>
 
-    <div class="bar-item">
-      <div class="bar-info">
-        <span><b>5. Gustavo Bolívar y Andrés Guerra</b> (Empate en el 5.° puesto)</span>
-        <span>15 votos c/u — <b>8.98% cada uno</b></span>
+        <div class="bar-item">
+          <div class="bar-info">
+            <span><b>4. Cepeda</b></span>
+            <span>15 votos — <b>8.98%</b></span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="--w: 8.98%;"></div></div>
+        </div>
+
+        <div class="bar-item">
+          <div class="bar-info">
+            <span><b>5. Gustavo Bolívar y Andrés Guerra</b> (Empate)</span>
+            <span>15 v. c/u — <b>8.98% c/u</b></span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="--w: 8.98%;"></div></div>
+        </div>
       </div>
-      <div class="bar-track"><div class="bar-fill" style="--w: 8.98%;"></div></div>
+
+      <!-- Gráfica Circular / Torta -->
+      <div class="chart-box">
+        <h3>Gráfica Circular / Torta (Proporción Total)</h3>
+        <div class="pie-wrapper">
+          <div class="pie-chart" aria-label="Gráfica de torta de votaciones"></div>
+          <div class="pie-legend">
+            <div class="pie-leg-item"><span class="pie-dot" style="background:#d5382c"></span><span>1. Edison Mosquera (14.37%)</span></div>
+            <div class="pie-leg-item"><span class="pie-dot" style="background:#4e78e6"></span><span>2. Abelardo de la Espriella (11.98%)</span></div>
+            <div class="pie-leg-item"><span class="pie-dot" style="background:#c8a24a"></span><span>3. María Cabal (9.58%)</span></div>
+            <div class="pie-leg-item"><span class="pie-dot" style="background:#e09f3e"></span><span>4. Cepeda (8.98%)</span></div>
+            <div class="pie-leg-item"><span class="pie-dot" style="background:#90be6d"></span><span>5. Gustavo Bolívar / A. Guerra (8.98%)</span></div>
+            <div class="pie-leg-item"><span class="pie-dot" style="background:rgba(200,162,74,0.3)"></span><span>Otros / Abstención (56.09%)</span></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1216,7 +1326,7 @@ footer .tricolor{margin:26px auto 0}
       });
     }, { threshold: 0.2 });
     
-    const section = document.getElementById('resultadosElectorales');
+    const section = document.getElementById('resultadosDual');
     if (section) observer.observe(section);
   });
 </script>
