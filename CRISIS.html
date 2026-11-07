@@ -1096,6 +1096,130 @@ footer .tricolor{margin:26px auto 0}
     });
 })();
 </script>
+
+<style>
+  .grafica-resultados {
+    position: relative;
+    z-index: 10;
+    padding: 70px 0;
+    background: rgba(13, 11, 8, 0.9);
+    color: #efe7d6;
+    font-family: 'Archivo', Verdana, sans-serif;
+    border-top: 1px solid rgba(200, 162, 74, 0.32);
+    border-bottom: 1px solid rgba(200, 162, 74, 0.32);
+  }
+  .grafica-container {
+    width: min(900px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+  .grafica-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    color: #efe7d6;
+    margin-bottom: 6px;
+  }
+  .grafica-title em {
+    color: #c8a24a;
+    font-style: italic;
+  }
+  .bar-item {
+    margin-bottom: 20px;
+  }
+  .bar-info {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+    color: #a3987f;
+  }
+  .bar-info b {
+    color: #efe7d6;
+  }
+  .bar-track {
+    height: 14px;
+    background: rgba(200, 162, 74, 0.12);
+    border: 1px solid rgba(200, 162, 74, 0.32);
+    padding: 1px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0;
+    background: #c8a24a;
+    transition: width 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .bar-fill.winner {
+    background: #d5382c;
+  }
+</style>
+
+<section class="grafica-resultados" id="resultadosElectorales">
+  <div class="grafica-container">
+    <p style="font: 600 11px monospace; letter-spacing: .3em; color: #c8a24a; margin-bottom: 8px; text-transform: uppercase;">Resultados Oficiales · Escrutinio</p>
+    <h2 class="grafica-title"><em>Gráfica de</em> Votaciones y Porcentajes</h2>
+    <div style="height: 1px; background: rgba(200, 162, 74, 0.32); margin: 20px 0 30px;"></div>
+
+    <div class="bar-item">
+      <div class="bar-info">
+        <span><b>1. Edison Mosquera</b> (Ganador)</span>
+        <span>24 votos — <b>14.37%</b></span>
+      </div>
+      <div class="bar-track"><div class="bar-fill winner" style="--w: 14.37%;"></div></div>
+    </div>
+
+    <div class="bar-item">
+      <div class="bar-info">
+        <span><b>2. Abelardo de la Espriella</b> (2.° lugar)</span>
+        <span>20 votos — <b>11.98%</b></span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="--w: 11.98%;"></div></div>
+    </div>
+
+    <div class="bar-item">
+      <div class="bar-info">
+        <span><b>3. María Cabal</b></span>
+        <span>16 votos — <b>9.58%</b></span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="--w: 9.58%;"></div></div>
+    </div>
+
+    <div class="bar-item">
+      <div class="bar-info">
+        <span><b>4. Cepeda</b></span>
+        <span>15 votos — <b>8.98%</b></span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="--w: 8.98%;"></div></div>
+    </div>
+
+    <div class="bar-item">
+      <div class="bar-info">
+        <span><b>5. Gustavo Bolívar y Andrés Guerra</b> (Empate en el 5.° puesto)</span>
+        <span>15 votos c/u — <b>8.98% cada uno</b></span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="--w: 8.98%;"></div></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.bar-fill').forEach(bar => {
+            bar.style.width = bar.style.getPropertyValue('--w');
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    
+    const section = document.getElementById('resultadosElectorales');
+    if (section) observer.observe(section);
+  });
+</script>
 <!-- ===================== I. CONTEXTO ===================== -->
 <section id="contexto">
   <div class="wrap">
